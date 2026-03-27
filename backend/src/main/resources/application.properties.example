@@ -1,0 +1,43 @@
+# Server
+server.port=8080
+
+# Upload file
+spring.servlet.multipart.max-file-size=50MB
+spring.servlet.multipart.max-request-size=100MB
+
+# Database Configuration
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/KLTN_BOOKNEST?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=YOUR_DB_USERNAME
+spring.datasource.password=YOUR_DB_PASSWORD
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# JPA Configuration
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.properties.hibernate.format_sql=true
+
+# Logging
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
+# JWT
+jwt.secret=YOUR_JWT_SECRET_MIN_32_CHARS
+jwt.expiration=86400000
+
+# AWS S3
+cloud.aws.credentials.access-key=YOUR_AWS_ACCESS_KEY
+cloud.aws.credentials.secret-key=YOUR_AWS_SECRET_KEY
+cloud.aws.region.static=YOUR_REGION
+cloud.aws.s3.bucket=YOUR_BUCKET_NAME
+cloud.aws.s3.covers-folder=covers/
+cloud.aws.s3.books-folder=books/
+
+# Mail (Gmail App Password)
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=YOUR_EMAIL@gmail.com
+spring.mail.password=YOUR_GMAIL_APP_PASSWORD
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true

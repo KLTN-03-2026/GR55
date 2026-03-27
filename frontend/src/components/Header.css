@@ -1,0 +1,244 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.header_logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e3a5f;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.header_logo span {
+  color: #2563eb;
+}
+
+.header_nguoi_dung {
+  position: relative;
+}
+
+.nut_nguoi_dung {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.nut_nguoi_dung:hover {
+  background: #f0f4f8;
+  border-color: #cbd5e1;
+}
+
+.ten_viet_tat {
+  width: 30px;
+  height: 30px;
+  background: #2563eb;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.mui_ten {
+  font-size: 10px;
+  color: #9ca3af;
+  transition: transform 0.2s;
+}
+
+.mui_ten.mo {
+  transform: rotate(180deg);
+}
+
+.menu_dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  overflow: hidden;
+  animation: hien_menu 0.15s ease-out;
+}
+
+@keyframes hien_menu {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu_thong_tin {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.menu_ho_ten {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 2px;
+}
+
+.menu_vai_tro {
+  font-size: 12px;
+  color: #64748b;
+  text-transform: capitalize;
+}
+
+.menu_muc {
+  display: block;
+  width: 100%;
+  padding: 11px 16px;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+  transition: background 0.15s;
+  text-decoration: none;
+}
+
+.menu_muc:hover {
+  background: #f8fafc;
+}
+
+.menu_muc.dang_xuat {
+  color: #ef4444;
+  border-top: 1px solid #f1f5f9;
+}
+
+.menu_muc.dang_xuat:hover {
+  background: #fef2f2;
+}
+
+/* Modal xác nhận đăng xuất */
+.nen_modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+  animation: hien_nen 0.15s ease;
+}
+
+@keyframes hien_nen {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.hop_modal {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 28px 32px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  animation: hien_hop 0.2s ease-out;
+}
+
+@keyframes hien_hop {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal_tieu_de {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 8px;
+}
+
+.modal_noi_dung {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.modal_nut_nhom {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.nut_khong {
+  padding: 10px 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.nut_khong:hover {
+  background: #f8fafc;
+}
+
+.nut_co {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.nut_co:hover {
+  background: #dc2626;
+}
+
+.nut_co:disabled {
+  background: #fca5a5;
+  cursor: not-allowed;
+}
