@@ -1,16 +1,16 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import DangKy from './pages/DangKy';
-import DangNhap from './pages/DangNhap';
-import TrangChu from './pages/TrangChu';
-import QuanTri from './pages/QuanTri';
-import QuenMatKhau from './pages/QuenMatKhau';
-import QuanLyDanhMuc from './pages/admin/QuanLyDanhMuc';
-import QuanLySach from './pages/admin/QuanLySach';
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import DangKy from "./pages/DangKy";
+import DangNhap from "./pages/DangNhap";
+import TrangChu from "./pages/TrangChu";
+import QuanTri from "./pages/QuanTri";
+import QuenMatKhau from "./pages/QuenMatKhau";
+import QuanLyDanhMuc from "./pages/admin/QuanLyDanhMuc";
+import QuanLySach from "./pages/admin/QuanLySach";
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
           <Route
             path="/quan_tri"
             element={
-              <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
+              <ProtectedRoute vai_tro_duoc_phep={["quan_tri"]}>
                 <QuanTri />
               </ProtectedRoute>
             }
@@ -33,7 +33,7 @@ function App() {
           <Route
             path="/quan_tri/danh_muc"
             element={
-              <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
+              <ProtectedRoute vai_tro_duoc_phep={["quan_tri"]}>
                 <QuanLyDanhMuc />
               </ProtectedRoute>
             }
@@ -41,7 +41,7 @@ function App() {
           <Route
             path="/quan_tri/sach"
             element={
-              <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
+              <ProtectedRoute vai_tro_duoc_phep={["quan_tri"]}>
                 <QuanLySach />
               </ProtectedRoute>
             }

@@ -1,0 +1,93 @@
+package com.backend.backend.service;
+
+import com.backend.backend.dto.*;
+import com.backend.backend.entity.DanhMucSach;
+import com.backend.backend.entity.Sach;
+import com.backend.backend.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class TrangChuService {
+
+    private final SachRepository sachRepository;
+    private final DanhMucSachRepository danhMucSachRepository;
+    private final TienDoDocSachRepository tienDoDocSachRepository;
+
+    private SachHomeResponse chuyenDoiSachSangDto(Sach sach) {
+        return new SachHomeResponse(
+                sach.getMaSach(),
+                sach.getTenSach(),
+                sach.getTacGia(),
+                sach.getGia(),
+                sach.getAnhBiaUrl(),
+                sach.getDanhGiaTrungBinh() != null ? sach.getDanhGiaTrungBinh().doubleValue() : 0.0,
+                sach.getLuotXem() != null ? sach.getLuotXem() : 0);
+    }
+
+    private DanhSachSachHomeResponse taoKetQuaPhanTrang(Page<Sach> page) {
+        List<SachHomeResponse> danhSach = page.getContent().stream()
+                .map(this::chuyenDoiSachSangDto)
+                .collect(Collectors.toList());
+        return new DanhSachSachHomeResponse(
+                danhSach,
+                page.getNumber() + 1,
+                page.getTotalPages(),
+                page.getTotalElements());
+    }
+
+    @Cacheable(value = "danh_muc_trang_chu", key = "'all'")
+    public List<DanhMucHomeResponse> layDanhSachDanhMuc() {
+        return danhMucSachRepository.findAllOrderByTen().stream()
+                .map(dm -> new DanhMucHomeResponse(
+                        dm.getMaDm(),
+                        dm.getTenDanhMuc(),
+                        danhMucSachRepository.countSachByDanhMuc(dm.getMaDm())))
+                .collect(Collectors.toList());
+    }
+
+    @Cacheable(value = "sach_noi_bat", key = "#trang + '_' + #kichThuoc")
+    public DanhSachSachHomeResponse laySachNoiBat(int trang, int kichThuoc) {
+        Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
+        return taoKetQuaPhanTrang(sachRepository.findSachNoiBat(pageable));
+    }
+
+    @Cacheable(value = "sach_moi_nhat", key = "#trang + '_' + #kichThuoc")
+    public DanhSachSachHomeResponse laySachMoiNhat(int trang, int kichThuoc) {
+        Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
+        return taoKetQuaPhanTrang(sachRepository.findSachMoiNhat(pageable));
+    }
+
+    @Cacheable(value = "sach_hoi_vien", key = "#trang + '_' + #kichThuoc")
+    public DanhSachSachHomeResponse laySachHoiVien(int trang, int kichThuoc) {
+        Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
+        return taoKetQuaPhanTrang(sachRepository.findSachHoiVien(pageable));
+    }
+
+    public DanhSachSachHomeResponse laySachGoiY(Long maNd, int trang, int kichThuoc) {
+        Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
+        Page<Sach> page;
+
+        if (maNd == null) {
+            page = sachRepository.findSachNoiBat(pageable);
+        } else {
+            List<Long> sachDaDoc = tienDoDocSachRepository.findSachDaDocByUserId(maNd);
+            if (sachDaDoc.isEmpty()) {
+                page = sachRepository.findSachNoiBat(pageable);
+            } else {
+                // Lấy danh mục yêu thích từ sách đã đọc để gợi ý chính xác hơn
+                page = sachRepository.findSachNoiBat(pageable);
+            }
+        }
+
+        return taoKetQuaPhanTrang(page);
+    }
+}

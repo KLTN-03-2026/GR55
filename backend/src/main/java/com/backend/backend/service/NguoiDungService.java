@@ -9,11 +9,21 @@ import com.backend.backend.repository.NguoiDungRepository;
 import com.backend.backend.repository.VaiTroRepository;
 import com.backend.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -206,5 +216,88 @@ public class NguoiDungService {
         maOtpRepository.save(maOtp);
 
         return new QuenMatKhauResponse(true, "Đặt lại mật khẩu thành công");
+    }
+
+    // ===================== ADMIN - QUẢN LÝ NGƯỜI DÙNG =====================
+
+    @Cacheable(value = "nguoi_dung", key = "#tuKhoa + '_' + #vaiTro + '_' + #trangThai + '_' + #trang + '_' + #kichThuoc")
+    public DanhSachNguoiDungResponse layDanhSachNguoiDung(
+            String tuKhoa, String vaiTro, String trangThai, int trang, int kichThuoc) {
+
+        Pageable pageable = PageRequest.of(trang - 1, kichThuoc, Sort.by("ngayTao").descending());
+
+        Long maVaiTro = null;
+        if (vaiTro != null && !vaiTro.isEmpty()) {
+            if ("quan_tri".equals(vaiTro)) maVaiTro = 2L;
+            else if ("thanh_vien".equals(vaiTro)) maVaiTro = 1L;
+        }
+
+        NguoiDung.TrangThai trangThaiEnum = null;
+        if (trangThai != null && !trangThai.isEmpty()) {
+            try {
+                trangThaiEnum = NguoiDung.TrangThai.valueOf(trangThai);
+            } catch (IllegalArgumentException ignored) {}
+        }
+
+        Page<NguoiDung> page = nguoiDungRepository.timKiemNguoiDung(
+                (tuKhoa != null && !tuKhoa.isEmpty()) ? tuKhoa : null,
+                maVaiTro, trangThaiEnum, pageable);
+
+        List<NguoiDungResponse.NguoiDungData> danhSach = page.getContent().stream()
+                .map(this::chuyenDoiSangNguoiDungData)
+                .collect(Collectors.toList());
+
+        return new DanhSachNguoiDungResponse(
+                danhSach,
+                page.getNumber() + 1,
+                page.getTotalPages(),
+                page.getTotalElements());
+    }
+
+    public ChiTietNguoiDungResponse layChiTietNguoiDung(Long maNd) {
+        NguoiDung nguoiDung = nguoiDungRepository.findById(maNd)
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+
+        return new ChiTietNguoiDungResponse(
+                chuyenDoiSangNguoiDungData(nguoiDung),
+                Collections.emptyList()); // TODO: bổ sung lịch sử đơn hàng khi hoàn thiện entity DonHang
+    }
+
+    @CacheEvict(value = "nguoi_dung", allEntries = true)
+    @Transactional
+    public NguoiDungResponse khoaMoKhoaTaiKhoan(Long maNd) {
+        NguoiDung nguoiDung = nguoiDungRepository.findById(maNd)
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+
+        if (nguoiDung.getVaiTro().getMaVaiTro().equals(2L)) {
+            return new NguoiDungResponse(false, "Không thể khóa tài khoản quản trị viên", null);
+        }
+
+        String thongBao;
+        if (nguoiDung.getTrangThai() == NguoiDung.TrangThai.hoat_dong) {
+            nguoiDung.setTrangThai(NguoiDung.TrangThai.khoa);
+            thongBao = "Đã khóa tài khoản thành công";
+        } else {
+            nguoiDung.setTrangThai(NguoiDung.TrangThai.hoat_dong);
+            nguoiDung.setSoLanDangNhapSai(0);
+            nguoiDung.setKhoaDen(null);
+            thongBao = "Đã mở khóa tài khoản thành công";
+        }
+
+        nguoiDungRepository.save(nguoiDung);
+        return new NguoiDungResponse(true, thongBao, chuyenDoiSangNguoiDungData(nguoiDung));
+    }
+
+    private NguoiDungResponse.NguoiDungData chuyenDoiSangNguoiDungData(NguoiDung nd) {
+        String tenVaiTro = nd.getVaiTro().getMaVaiTro().equals(2L) ? "quan_tri" : "thanh_vien";
+        return new NguoiDungResponse.NguoiDungData(
+                nd.getMaNguoiDung(),
+                nd.getHoTen(),
+                nd.getEmail(),
+                nd.getSoDienThoai(),
+                tenVaiTro,
+                nd.getTrangThai().name(),
+                nd.getNgayTao(),
+                nd.getLanDangNhapCuoi());
     }
 }
