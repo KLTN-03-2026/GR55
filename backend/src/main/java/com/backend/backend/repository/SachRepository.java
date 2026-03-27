@@ -4,6 +4,7 @@ import com.backend.backend.entity.Sach;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -35,6 +36,18 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
     Page<Sach> findSachGoiYThanhVien(@Param("maNd") Long maNd,
                                       @Param("danhSachDanhMuc") List<Long> danhSachDanhMuc,
                                       Pageable pageable);
+
+    @Modifying
+    @Query("UPDATE Sach s SET s.luotXem = s.luotXem + 1 WHERE s.maSach = :maSach")
+    void tangLuotXem(@Param("maSach") Long maSach);
+
+    @Query("SELECT DISTINCT s FROM Sach s " +
+           "JOIN SachDanhMuc sd ON s.maSach = sd.maSach " +
+           "WHERE s.daXoa = false AND s.maSach <> :maSach AND sd.maDm IN :danhSachDanhMuc " +
+           "ORDER BY s.luotXem DESC, s.danhGiaTrungBinh DESC")
+    Page<Sach> findSachCungTheLoai(@Param("maSach") Long maSach,
+                                    @Param("danhSachDanhMuc") List<Long> danhSachDanhMuc,
+                                    Pageable pageable);
 
     @Query("SELECT DISTINCT s FROM Sach s " +
            "LEFT JOIN SachDanhMuc sd ON sd.maSach = s.maSach " +

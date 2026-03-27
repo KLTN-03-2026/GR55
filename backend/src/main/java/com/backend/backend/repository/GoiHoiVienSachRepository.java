@@ -15,4 +15,7 @@ public interface GoiHoiVienSachRepository extends JpaRepository<GoiHoiVienSach, 
     boolean kiemTraSachTrongDanhMucCoTrongGoiHoiVien(@Param("ma_dm") Long maDm);
 
     boolean existsByMaSach(Long maSach);
+
+    @Query("SELECT COUNT(g) > 0 FROM GoiHoiVienSach g WHERE g.maSach = :maSach")
+    boolean isSachHoiVien(@Param("maSach") Long maSach);
 }
