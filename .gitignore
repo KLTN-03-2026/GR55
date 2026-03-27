@@ -23,6 +23,9 @@ frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
 
+# Claude Code
+.claude/
+
 # OS
 .DS_Store
 Thumbs.db
