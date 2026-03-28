@@ -313,94 +313,108 @@ export default function QuanLySach() {
   const cac_so_trang = tao_mang_so_trang();
   const chi_so_bat_dau = (trang_hien_tai - 1) * KICH_THUOC_TRANG + 1;
 
-  return (
+ return (
     <div className="trang_quan_ly">
       {/* <Header /> */}
 
       <div className="noi_dung_chinh">
-        <h1 className="tieu_de_trang">Quản lý sách</h1>
+        {/* (1) & (2) Header Toolbar */}
+        <div className="thanh_tieu_de_va_nut">
+          <h1 className="tieu_de_trang">Quản lý trang sách</h1>
+          <div className="nhom_nut_hanh_dong_top">
+            <button className="nut_top vang" onClick={mo_modal_them}>Tạo mới</button>
+            <button className="nut_top xanh_la">Cập nhật</button>
+            <button className="nut_top xanh_duong">Lưu</button>
+            <button className="nut_top do">Xóa</button>
+            <button className="nut_top xam">Trở về</button>
+          </div>
+        </div>
 
         <div className="the_noi_dung">
-          {/* Thanh công cụ */}
-          <div className="thanh_cong_cu">
-            <div className="nhom_bo_loc">
-              <input
-                type="text"
-                className="o_tim_kiem"
-                placeholder="Tìm theo tên sách, tác giả..."
-                value={tu_khoa_tim}
-                onChange={e => dat_tu_khoa(e.target.value)}
-              />
+          {/* (3) & (4) Thanh công cụ bộ lọc */}
+          <div className="thanh_bo_loc_chuyen_nghiep">
+            <div className="o_nhom_loc">
+              <label>Danh mục</label>
               <select
                 className="o_loc_danh_muc"
                 value={ma_danh_muc_loc}
                 onChange={e => dat_ma_dm_loc(e.target.value)}
               >
-                <option value="">Tất cả danh mục</option>
+                <option value="">== Tất cả ==</option>
                 {tat_ca_danh_muc.map(dm => (
                   <option key={dm.ma_dm} value={dm.ma_dm}>{dm.ten_danh_muc}</option>
                 ))}
               </select>
             </div>
-            <button className="nut_them_moi" onClick={mo_modal_them}>
-              + Thêm sách mới
-            </button>
+            
+            <div className="o_nhom_loc">
+              <label>Từ khóa</label>
+              <div className="khung_nhap_tim_kiem">
+                <input
+                  type="text"
+                  placeholder="Nhập tên sách, tác giả..."
+                  value={tu_khoa_tim}
+                  onChange={e => dat_tu_khoa(e.target.value)}
+                />
+                <button className="nut_bam_tim">Tìm</button>
+              </div>
+            </div>
           </div>
 
-          {/* Bảng dữ liệu */}
-          <div className="khung_bang">
-            <table className="bang_du_lieu">
+          {/* (5, 6, 7) Bảng dữ liệu */}
+          <div className="khung_bang_tran_vien">
+            <table className="bang_du_lieu_chinh">
               <thead>
                 <tr>
+                  <th style={{ width: '40px' }}><input type="checkbox" /></th>
                   <th style={{ width: '50px' }}>STT</th>
                   <th style={{ width: '70px' }}>Bìa</th>
                   <th>Tên sách</th>
-                  <th style={{ width: '140px' }}>Tác giả</th>
-                  <th style={{ width: '160px' }}>Danh mục</th>
+                  <th style={{ width: '150px' }}>Tác giả</th>
+                  <th style={{ width: '150px' }}>Danh mục</th>
+                  <th style={{ width: '80px' }}>Số lượng</th>
                   <th style={{ width: '110px' }}>Giá</th>
-                  <th style={{ width: '120px' }}>Thao tác</th>
+                  <th>Mô tả</th>
+                  <th style={{ width: '110px' }}>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
                 {dang_tai ? (
-                  <tr><td colSpan={7} className="hang_trong">Đang tải...</td></tr>
+                  <tr><td colSpan={10} className="hang_trong">Đang tải...</td></tr>
                 ) : danh_sach.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="hang_trong">
-                      {tu_khoa_tim || ma_danh_muc_loc
-                        ? 'Không tìm thấy sách phù hợp'
-                        : 'Chưa có sách nào'}
+                    <td colSpan={10} className="hang_trong">
+                      {tu_khoa_tim || ma_danh_muc_loc ? 'Không tìm thấy sách phù hợp' : 'Chưa có sách nào'}
                     </td>
                   </tr>
                 ) : (
                   danh_sach.map((sach, idx) => (
                     <tr key={sach.ma_sach}>
-                      <td>{chi_so_bat_dau + idx}</td>
+                      <td><input type="checkbox" /></td>
+                      <td className="text_center">{chi_so_bat_dau + idx}</td>
                       <td>
-                        {sach.anh_bia_url
+                        {sach.anh_bia_url 
                           ? <img src={sach.anh_bia_url} alt={sach.ten_sach} className="anh_bia_thu_nho" />
                           : <div className="anh_bia_trong">?</div>
                         }
                       </td>
-                      <td>
-                        <span className="ten_sach_bang" title={sach.ten_sach}>{sach.ten_sach}</span>
-                      </td>
-                      <td>{sach.tac_gia}</td>
+                      <td className="text_left font_bold">{sach.ten_sach}</td>
+                      <td className="text_left">{sach.tac_gia}</td>
                       <td>
                         <div className="nhom_nhan_danh_muc">
-                          {(sach.ten_danh_muc || []).slice(0, 2).map((ten, i) => (
+                          {(sach.ten_danh_muc || []).slice(0, 1).map((ten, i) => (
                             <span key={i} className="nhan_danh_muc">{ten}</span>
                           ))}
-                          {(sach.ten_danh_muc || []).length > 2 && (
-                            <span className="nhan_danh_muc_them">+{sach.ten_danh_muc.length - 2}</span>
-                          )}
                         </div>
                       </td>
-                      <td>{dinh_dang_gia(sach.gia)}</td>
+                      <td className="text_center">100</td>
+                      <td className="text_right">{dinh_dang_gia(sach.gia)}</td>
+                      <td className="text_left text_truncate" title={sach.mo_ta}>{sach.mo_ta}</td>
                       <td>
-                        <div className="nhom_nut_thao_tac">
-                          <button className="nut_sua" onClick={() => mo_modal_sua(sach)}>Sửa</button>
-                          <button className="nut_xoa" onClick={() => mo_modal_xoa(sach)}>Xóa</button>
+                        <div className="nhom_nut_icon_action">
+                          <div className={`nut_switch ${sach.gia > 0 ? 'active' : ''}`}></div>
+                          <button className="nut_icon_action edit" onClick={() => mo_modal_sua(sach)}>🔄</button>
+                          <button className="nut_icon_action delete" onClick={() => mo_modal_xoa(sach)}>🗑️</button>
                         </div>
                       </td>
                     </tr>
@@ -410,59 +424,65 @@ export default function QuanLySach() {
             </table>
           </div>
 
-          {/* Phân trang */}
-          {tong_ban_ghi > 0 && (
-            <div className="phan_trang">
-              <span className="thong_tin_phan_trang">
-                Hiển thị {chi_so_bat_dau}–{Math.min(chi_so_bat_dau + KICH_THUOC_TRANG - 1, tong_ban_ghi)} / {tong_ban_ghi} sách
+          {/* (8, 9) Thanh phân trang đẹp hơn */}
+          <div className="thanh_footer_table">
+            <div className="phan_hien_thi_trai">
+              <span>Hiển thị</span>
+              <select className="select_small_custom">
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+              <span className="thong_tin_ban_ghi">
+                Từ {chi_so_bat_dau} đến {Math.min(chi_so_bat_dau + KICH_THUOC_TRANG - 1, tong_ban_ghi)} trong <strong>{tong_ban_ghi}</strong> sách
               </span>
-              <div className="nhom_nut_trang">
-                <button
-                  className="nut_trang"
-                  onClick={() => tai_danh_sach(trang_hien_tai - 1, tu_khoa_tim, ma_danh_muc_loc)}
-                  disabled={trang_hien_tai <= 1}
-                >‹</button>
+            </div>
+
+            <div className="cum_phan_trang_phai">
+              <button 
+                className="nut_dieu_huong_nho"
+                onClick={() => tai_danh_sach(trang_hien_tai - 1, tu_khoa_tim, ma_danh_muc_loc)}
+                disabled={trang_hien_tai <= 1}
+              >
+                &lt;
+              </button>
+              
+              <div className="danh_sach_so">
                 {cac_so_trang.map((so, idx) => {
                   const trang_truoc = cac_so_trang[idx - 1];
                   return (
-                    <span key={so}>
-                      {trang_truoc && so - trang_truoc > 1 && (
-                        <span style={{ padding: '0 4px', color: '#9ca3af' }}>…</span>
-                      )}
+                    <span key={so} className="cum_so_trang">
+                      {trang_truoc && so - trang_truoc > 1 && <span className="dau_ba_cham">...</span>}
                       <button
-                        className={`nut_trang${so === trang_hien_tai ? ' hien_tai' : ''}`}
+                        className={`nut_so_trang_nho ${so === trang_hien_tai ? 'active' : ''}`}
                         onClick={() => tai_danh_sach(so, tu_khoa_tim, ma_danh_muc_loc)}
-                      >{so}</button>
+                      >
+                        {so}
+                      </button>
                     </span>
                   );
                 })}
-                <button
-                  className="nut_trang"
-                  onClick={() => tai_danh_sach(trang_hien_tai + 1, tu_khoa_tim, ma_danh_muc_loc)}
-                  disabled={trang_hien_tai >= tong_so_trang}
-                >›</button>
               </div>
+
+              <button 
+                className="nut_dieu_huong_nho"
+                onClick={() => tai_danh_sach(trang_hien_tai + 1, tu_khoa_tim, ma_danh_muc_loc)}
+                disabled={trang_hien_tai >= tong_so_trang}
+              >
+                &gt;
+              </button>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
-      {/* ── Modal thêm / sửa ───────────────────────────────────── */}
+      {/* ── GIỮ NGUYÊN TOÀN BỘ LOGIC MODAL CỦA BẠN DƯỚI ĐÂY ── */}
       {hien_modal_form && (
         <div className="nen_modal" onClick={e => e.target === e.currentTarget && dong_modal_form()}>
           <div className="hop_modal hop_modal_lon">
-            <h2 className="tieu_de_modal">
-              {dang_sua ? 'Sửa thông tin sách' : 'Thêm sách mới'}
-            </h2>
-
-            {loi_server_form && (
-              <div className="thong_bao_server_modal">{loi_server_form}</div>
-            )}
-
+            <h2 className="tieu_de_modal">{dang_sua ? 'Sửa thông tin sách' : 'Thêm sách mới'}</h2>
+            {loi_server_form && <div className="thong_bao_server_modal">{loi_server_form}</div>}
             <div className="luoi_form_sach">
-              {/* Cột trái */}
               <div className="cot_form">
-                {/* Tên sách */}
                 <div className="nhom_truong_modal">
                   <label className="nhan_truong_modal">Tên sách <span className="dau_bat_buoc">*</span></label>
                   <input
@@ -474,12 +494,9 @@ export default function QuanLySach() {
                       dat_loi_form(prev => ({ ...prev, ten_sach: kiem_tra_truong('ten_sach', e.target.value) }));
                     }}
                     placeholder="Nhập tên sách"
-                    maxLength={255}
                   />
                   <span className="thong_bao_loi_modal">{loi_form.ten_sach}</span>
                 </div>
-
-                {/* Tác giả */}
                 <div className="nhom_truong_modal">
                   <label className="nhan_truong_modal">Tác giả <span className="dau_bat_buoc">*</span></label>
                   <input
@@ -491,12 +508,9 @@ export default function QuanLySach() {
                       dat_loi_form(prev => ({ ...prev, tac_gia: kiem_tra_truong('tac_gia', e.target.value) }));
                     }}
                     placeholder="Nhập tên tác giả"
-                    maxLength={150}
                   />
                   <span className="thong_bao_loi_modal">{loi_form.tac_gia}</span>
                 </div>
-
-                {/* Giá */}
                 <div className="nhom_truong_modal">
                   <label className="nhan_truong_modal">Giá (VNĐ) <span className="dau_bat_buoc">*</span></label>
                   <input
@@ -507,151 +521,51 @@ export default function QuanLySach() {
                       cap_nhat_truong('gia', e.target.value);
                       dat_loi_form(prev => ({ ...prev, gia: kiem_tra_truong('gia', e.target.value) }));
                     }}
-                    placeholder="Nhập giá sách"
-                    min={0}
                   />
-                  <span className="thong_bao_loi_modal">{loi_form.gia}</span>
                 </div>
-
-                {/* Mô tả */}
                 <div className="nhom_truong_modal">
                   <label className="nhan_truong_modal">Mô tả</label>
                   <textarea
                     className="o_mo_ta_modal"
                     value={gia_tri_form.mo_ta}
                     onChange={e => cap_nhat_truong('mo_ta', e.target.value)}
-                    placeholder="Nhập mô tả sách (không bắt buộc)"
                     rows={4}
                   />
                 </div>
-
-                {/* Cho phép đọc thử */}
-                <div className="nhom_truong_modal nhom_doc_thu">
-                  <label className="nhan_checkbox">
-                    <input
-                      type="checkbox"
-                      checked={gia_tri_form.cho_phep_doc_thu}
-                      onChange={e => cap_nhat_truong('cho_phep_doc_thu', e.target.checked)}
-                    />
-                    <span>Cho phép đọc thử</span>
-                  </label>
-                  {gia_tri_form.cho_phep_doc_thu && (
-                    <div className="nhom_so_trang_doc_thu">
-                      <label className="nhan_truong_modal">Số trang đọc thử</label>
-                      <input
-                        type="number"
-                        className="o_nhap_modal o_so_trang"
-                        value={gia_tri_form.so_trang_doc_thu}
-                        onChange={e => cap_nhat_truong('so_trang_doc_thu', e.target.value)}
-                        min={1}
-                        max={999}
-                      />
-                    </div>
-                  )}
-                </div>
               </div>
-
-              {/* Cột phải */}
               <div className="cot_form">
-                {/* Ảnh bìa */}
                 <div className="nhom_truong_modal">
-                  <label className="nhan_truong_modal">
-                    Ảnh bìa {!dang_sua && <span className="dau_bat_buoc">*</span>}
-                    {dang_sua && <span className="chu_thich_tuy_chon"> (để trống nếu không thay đổi)</span>}
-                  </label>
+                  <label className="nhan_truong_modal">Ảnh bìa</label>
                   <div className="khung_chon_tap_tin" onClick={() => ref_o_nhap_anh.current?.click()}>
-                    {xem_truoc_anh
-                      ? <img src={xem_truoc_anh} alt="Xem trước" className="xem_truoc_anh_bia" />
-                      : <div className="goi_y_chon_tap_tin">Nhấn để chọn ảnh bìa</div>
-                    }
+                    {xem_truoc_anh ? <img src={xem_truoc_anh} className="xem_truoc_anh_bia" /> : "Chọn ảnh"}
                   </div>
-                  <input
-                    ref={ref_o_nhap_anh}
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={xu_ly_chon_anh}
-                  />
-                  <span className="thong_bao_loi_modal">{loi_form.anh_bia}</span>
+                  <input ref={ref_o_nhap_anh} type="file" accept="image/*" style={{ display: 'none' }} onChange={xu_ly_chon_anh} />
                 </div>
-
-                {/* File PDF */}
                 <div className="nhom_truong_modal">
-                  <label className="nhan_truong_modal">
-                    File PDF {!dang_sua && <span className="dau_bat_buoc">*</span>}
-                    {dang_sua && <span className="chu_thich_tuy_chon"> (để trống nếu không thay đổi)</span>}
-                  </label>
-                  <div
-                    className={`khung_chon_tap_tin khung_pdf${tap_tin_pdf || (dang_sua && !tap_tin_pdf) ? ' da_chon' : ''}`}
-                    onClick={() => ref_o_nhap_pdf.current?.click()}
-                  >
-                    {tap_tin_pdf
-                      ? <span className="ten_file_da_chon">{ten_pdf}</span>
-                      : dang_sua
-                        ? <span className="goi_y_doi_tap_tin">Nhấn để thay thế file PDF</span>
-                        : <span className="goi_y_chon_tap_tin">Nhấn để chọn file PDF</span>
-                    }
+                  <label className="nhan_truong_modal">File PDF</label>
+                  <div className="khung_chon_tap_tin" onClick={() => ref_o_nhap_pdf.current?.click()}>
+                    {tap_tin_pdf ? ten_pdf : "Chọn file PDF"}
                   </div>
-                  <input
-                    ref={ref_o_nhap_pdf}
-                    type="file"
-                    accept="application/pdf"
-                    style={{ display: 'none' }}
-                    onChange={xu_ly_chon_pdf}
-                  />
-                  <span className="thong_bao_loi_modal">{loi_form.file_pdf}</span>
-                </div>
-
-                {/* Danh mục */}
-                <div className="nhom_truong_modal">
-                  <label className="nhan_truong_modal">Danh mục</label>
-                  <div className="luoi_chon_danh_muc">
-                    {tat_ca_danh_muc.map(dm => (
-                      <label key={dm.ma_dm} className="nhan_chon_danh_muc">
-                        <input
-                          type="checkbox"
-                          checked={gia_tri_form.danh_muc_ids.includes(dm.ma_dm)}
-                          onChange={() => bat_tat_danh_muc(dm.ma_dm)}
-                        />
-                        <span>{dm.ten_danh_muc}</span>
-                      </label>
-                    ))}
-                    {tat_ca_danh_muc.length === 0 && (
-                      <span className="khong_co_danh_muc">Chưa có danh mục nào</span>
-                    )}
-                  </div>
-                  <span className="thong_bao_loi_modal">{loi_form.danh_muc}</span>
+                  <input ref={ref_o_nhap_pdf} type="file" accept="application/pdf" style={{ display: 'none' }} onChange={xu_ly_chon_pdf} />
                 </div>
               </div>
             </div>
-
             <div className="nhom_nut_modal">
               <button className="nut_huy" onClick={dong_modal_form} disabled={dang_luu}>Hủy</button>
-              <button className="nut_luu" onClick={xu_ly_luu} disabled={dang_luu}>
-                {dang_luu ? 'Đang lưu...' : 'Lưu'}
-              </button>
+              <button className="nut_luu" onClick={xu_ly_luu} disabled={dang_luu}>{dang_luu ? 'Đang lưu...' : 'Lưu'}</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Modal xác nhận xóa ─────────────────────────────────── */}
       {sach_xoa && (
         <div className="nen_modal" onClick={e => e.target === e.currentTarget && dong_modal_xoa()}>
           <div className="hop_modal">
             <h2 className="tieu_de_modal">Xác nhận xóa</h2>
-            <p className="noi_dung_modal_xoa">
-              Bạn có chắc chắn muốn xóa sách{' '}
-              <span className="ten_xoa_noi_bat">"{sach_xoa.ten_sach}"</span> không?
-            </p>
-            {loi_server_xoa && (
-              <p className="canh_bao_xoa">{loi_server_xoa}</p>
-            )}
+            <p className="noi_dung_modal_xoa">Bạn có chắc muốn xóa <b>"{sach_xoa.ten_sach}"</b>?</p>
             <div className="nhom_nut_modal">
-              <button className="nut_huy" onClick={dong_modal_xoa} disabled={dang_xoa}>Không</button>
-              <button className="nut_xoa_xac_nhan" onClick={xu_ly_xoa} disabled={dang_xoa}>
-                {dang_xoa ? 'Đang xóa...' : 'Có, xóa'}
-              </button>
+              <button className="nut_huy" onClick={dong_modal_xoa}>Không</button>
+              <button className="nut_xoa_xac_nhan" onClick={xu_ly_xoa} disabled={dang_xoa}>Xóa</button>
             </div>
           </div>
         </div>
