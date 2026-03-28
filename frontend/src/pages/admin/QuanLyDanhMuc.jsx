@@ -164,7 +164,7 @@ export default function QuanLyDanhMuc() {
 
   return (
     <div className="trang_quan_ly">
-      <Header />
+      {/* <Header /> */}
 
       <div className="noi_dung_chinh">
         <h1 className="tieu_de_trang">Quản lý danh mục sách</h1>

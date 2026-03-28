@@ -1,0 +1,160 @@
+/* =========================================
+   FOOTER CHÍNH CỦA HỆ THỐNG BOOKNEST
+========================================= */
+.bn-footer {
+    background-color: #1e293b; /* Màu xanh đen sang trọng, đỡ mỏi mắt */
+    color: #f8fafc;
+    padding: 20px 0 20px; /* Padding trên lớn để tách biệt với nội dung trang */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin-top: auto; /* Bổ trợ cho layout khung xương để luôn nằm ở đáy */
+}
+
+/* =========================================
+   GIỚI HẠN CHIỀU RỘNG (Đồng bộ với Header)
+========================================= */
+.bn-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* =========================================
+   LƯỚI CHIA CỘT (TỰ ĐỘNG RESPONSIVE)
+========================================= */
+.bn-footer-row {
+    display: grid;
+    /* Lệnh Grid thần thánh: Cột rộng tối thiểu 250px, tối đa 1 phần đều nhau. 
+       Nếu màn hình nhỏ, nó tự rớt xuống thành 2 cột hoặc 1 cột. */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px; /* Khoảng cách giữa các cột */
+    margin-bottom: 50px;
+}
+
+/* =========================================
+   CỘT 1: THÔNG TIN & LOGO
+========================================= */
+.bn-footer-logo {
+    font-size: 28px;
+    font-weight: 800;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.bn-footer-desc {
+    color: #94a3b8; /* Màu xám nhạt cho text phụ */
+    line-height: 1.7;
+    font-size: 15px;
+    margin-top: 10px;
+}
+
+/* =========================================
+   CỘT 2 & 3: TIÊU ĐỀ & DANH SÁCH LINK
+========================================= */
+.bn-footer-col h4 {
+    font-size: 18px;
+    color: #ffffff;
+    margin-bottom: 25px;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Đường gạch dưới nhỏ trang trí tiêu đề */
+.bn-footer-col h4::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 3px;
+    background-color: rgb(37, 99, 235); /* Màu xanh lá đồng bộ với chữ Nest */
+    border-radius: 2px;
+}
+
+.bn-footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bn-footer-col ul li {
+    margin-bottom: 12px;
+}
+
+/* Hiệu ứng hover cho link: Sáng màu và nhích nhẹ sang phải */
+.bn-footer-col ul li a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.bn-footer-col ul li a:hover {
+    color: rgb(37, 99, 235);
+    transform: translateX(5px); /* Hiệu ứng trượt text đẹp mắt */
+}
+
+/* =========================================
+   CỘT 4: LIÊN HỆ & ICONS
+========================================= */
+.bn-contact-item {
+    display: flex;
+    align-items: flex-start; /* Căn trên để icon không bị lệch nếu text dài 2 dòng */
+    gap: 15px;
+    margin-bottom: 18px;
+    color: #94a3b8;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.bn-contact-item svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0; /* Tránh icon bị méo nếu màn hình nhỏ */
+    color: rgb(37, 99, 235);
+    margin-top: 2px;
+}
+
+/* =========================================
+   DÒNG BẢN QUYỀN CUỐI TRANG
+========================================= */
+.bn-footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Đường kẻ mờ phân cách */
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.bn-footer-bottom span {
+    color: rgb(37, 99, 235);
+    font-weight: 600;
+}
+
+/* =========================================
+   RESPONSIVE CHO ĐIỆN THOẠI
+========================================= */
+@media (max-width: 768px) {
+    .bn-footer {
+        padding-top: 50px;
+    }
+    
+    .bn-footer-row {
+        gap: 30px;
+    }
+
+    /* Đưa dòng bản quyền thành một cột dọc nằm giữa ở mobile */
+    .bn-footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+}

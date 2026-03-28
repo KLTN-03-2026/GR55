@@ -1,182 +1,199 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
+/* =========================================
+   BỐ CỤC TỔNG THỂ TRANG ĐĂNG NHẬP
+========================================= */
 .trang_dang_nhap {
-  min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: #f0f4f8;
+  align-items: center;
+  /* Nếu nội dung ngắn, form sẽ nằm giữa khoảng trống của Header và Footer */
+  min-height: calc(100vh - 300px); 
   padding: 20px;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+/* =========================================
+   HỘP FORM ĐĂNG NHẬP (CARD)
+========================================= */
 .hop_dang_nhap {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  padding: 40px 36px;
+  background-color: #ffffff;
   width: 100%;
-  max-width: 440px;
+  max-width: 420px; /* Độ rộng vừa phải để form không bị bè ra */
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Đổ bóng tạo chiều sâu */
+  border: 1px solid #f1f5f9;
 }
 
+/* =========================================
+   LOGO VÀ TIÊU ĐỀ
+========================================= */
 .logo_khu_vuc {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 15px;
 }
 
 .logo_ten {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1e3a5f;
-  letter-spacing: -0.5px;
-}
-
-.logo_ten span {
-  color: #2563eb;
+  font-size: 32px;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: 1px;
 }
 
 .tieu_de_dang_nhap {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1a202c;
   text-align: center;
-  margin: 0 0 24px;
+  font-size: 20px;
+  color: #475569;
+  font-weight: 600;
+  margin-bottom: 25px;
 }
 
+/* =========================================
+   THÔNG BÁO LỖI TỪ SERVER
+========================================= */
+.thong_bao_server_loi {
+  background-color: #fef2f2;
+  color: #ef4444;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 1px solid #fca5a5;
+}
+
+/* =========================================
+   CÁC TRƯỜNG NHẬP LIỆU (INPUT)
+========================================= */
 .nhom_truong {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  position: relative;
 }
 
 .nhan_truong {
   display: block;
   font-size: 14px;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 6px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
 }
 
 .o_nhap {
   width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 12px 15px;
   font-size: 15px;
-  color: #1a202c;
+  color: #1e293b;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  background: #fafafa;
 }
 
+/* Hiệu ứng khi click vào ô nhập */
 .o_nhap:focus {
+  background-color: #ffffff;
   border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
 }
 
+/* Trạng thái lỗi của ô nhập */
 .o_nhap.loi {
   border-color: #ef4444;
+  background-color: #fef2f2;
 }
 
 .o_nhap.loi:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
 .thong_bao_loi {
-  font-size: 12px;
-  color: #ef4444;
-  margin-top: 5px;
   display: block;
-  min-height: 16px;
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 5px;
+  min-height: 18px; /* Giữ khoảng trống để form không bị giật cụng khi hiện lỗi */
 }
 
+/* =========================================
+   NÚT BẤM VÀ LIÊN KẾT
+========================================= */
 .nut_dang_nhap {
   width: 100%;
-  padding: 13px;
-  background: #2563eb;
+  padding: 14px;
+  background-color: #2563eb;
   color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
   border: none;
   border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
   cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.2s, transform 0.15s;
+  transition: background-color 0.3s ease, transform 0.1s;
+  margin-top: 5px;
 }
 
 .nut_dang_nhap:hover:not(:disabled) {
-  background: #1d4ed8;
+  background-color: #2563eb; /* Đậm hơn khi hover */
 }
 
 .nut_dang_nhap:active:not(:disabled) {
-  transform: scale(0.98);
+  transform: scale(0.98); /* Hiệu ứng lún nút khi click */
 }
 
 .nut_dang_nhap:disabled {
-  background: #93c5fd;
+  background-color: #94a3b8;
   cursor: not-allowed;
+  opacity: 0.8;
 }
 
 .lien_ket_quen_mat_khau {
   display: block;
   text-align: right;
-  font-size: 13px;
-  color: #2563eb;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #3b82f6;
   text-decoration: none;
-  font-weight: 500;
-  margin-top: 14px;
   transition: color 0.2s;
 }
 
 .lien_ket_quen_mat_khau:hover {
-  color: #1d4ed8;
+  color: #2563eb;
   text-decoration: underline;
 }
 
+/* =========================================
+   PHẦN ĐĂNG KÝ BÊN DƯỚI
+========================================= */
 .phan_cach {
   border: none;
   border-top: 1px solid #e2e8f0;
-  margin: 20px 0;
+  margin: 25px 0;
 }
 
 .khu_vuc_dang_ky {
   text-align: center;
-  font-size: 14px;
-  color: #6b7280;
+  font-size: 15px;
+  color: #64748b;
 }
 
 .lien_ket_dang_ky {
   color: #2563eb;
+  font-weight: 600;
   text-decoration: none;
-  font-weight: 500;
   transition: color 0.2s;
+  margin-left: 5px;
 }
 
 .lien_ket_dang_ky:hover {
-  color: #1d4ed8;
+  color: #2563eb;
   text-decoration: underline;
 }
 
-.thong_bao_server_loi {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  padding: 12px 14px;
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: #dc2626;
-  text-align: center;
-}
-
+/* =========================================
+   RESPONSIVE CHO ĐIỆN THOẠI
+========================================= */
 @media (max-width: 480px) {
   .hop_dang_nhap {
-    padding: 28px 20px;
-  }
-
-  .trang_dang_nhap {
-    padding: 16px;
+    padding: 30px 20px;
+    box-shadow: none; /* Bỏ bóng trên mobile cho phẳng */
+    border: none;
   }
 }

@@ -1,0 +1,115 @@
+.admin-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background-color: #f4f6f9;
+}
+
+/* --- ĐỔI NỀN SIDEBAR THÀNH XANH ĐEN --- */
+.admin-sidebar {
+    width: 260px;
+    background-color: #2A3F54; /* Màu Xanh Đen Slate */
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
+}
+
+.sidebar-header {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.menu-icon { font-size: 28px; cursor: pointer; }
+
+.sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px 0;
+}
+
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 4px solid transparent; /* Chuẩn bị viền cho hiệu ứng hover */
+}
+
+/* --- THÊM HIỆU ỨNG VẠCH XANH NGỌC KHI HOVER / ACTIVE --- */
+.nav-item:hover, .nav-item.active {
+    background-color: #213345; /* Sáng hơn màu nền một chút */
+    color: #ffffff;
+    border-right: 4px solid #1ABB9C; /* Vạch Xanh Ngọc (Teal) đặc trưng */
+}
+
+.group-title { 
+    justify-content: space-between; 
+    border-right: none !important; /* Riêng tiêu đề nhóm thì không cần vạch */
+}
+.group-title .arrow { transition: transform 0.3s; }
+.group-title .arrow.open { transform: rotate(90deg); }
+
+/* --- ĐỔI NỀN MENU CON --- */
+.sub-menu {
+    background-color: #213345; /* Xanh đen nhạt hơn nền chính */
+    padding: 5px 0;
+}
+
+.sub-item {
+    display: block;
+    padding: 10px 20px 10px 45px;
+    color: #cccccc;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+/* --- CHỮ MENU CON ĐỔI MÀU XANH NGỌC --- */
+.sub-item:hover, .sub-item.active { 
+    color: #1ABB9C; 
+    font-weight: bold; 
+}
+
+/* --- ĐỔI NỀN FOOTER CHỨA USER --- */
+.sidebar-footer {
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: #172D44; /* Màu xanh đen đậm nhất ở đáy */
+}
+
+.user-avatar {
+    width: 35px; height: 35px;
+    background: #1ABB9C; /* Đổi viền/nền avatar thành Xanh Ngọc luôn cho tone-sur-tone */
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.admin-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.admin-content {
+    padding: 20px;
+    flex: 1;
+}

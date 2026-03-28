@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
-import Header from '../../components/Header';
+// import Header from '../../components/Header';
 import './QuanLySach.css';
 
 const KICH_THUOC_TRANG = 10;
@@ -315,7 +315,7 @@ export default function QuanLySach() {
 
   return (
     <div className="trang_quan_ly">
-      <Header />
+      {/* <Header /> */}
 
       <div className="noi_dung_chinh">
         <h1 className="tieu_de_trang">Quản lý sách</h1>
