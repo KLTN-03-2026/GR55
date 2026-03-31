@@ -1,0 +1,73 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: booknest_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: KLTN_BOOKNEST
+      MYSQL_USER: booknest
+      MYSQL_PASSWORD: booknest123
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "booknest",
+          "-pbooknest123",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  redis:
+    image: redis:7
+    container_name: booknest_redis
+    ports:
+      - "6381:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  backend:
+    build: ./backend
+    container_name: booknest_backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/KLTN_BOOKNEST?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: booknest
+      SPRING_DATASOURCE_PASSWORD: booknest123
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      JWT_SECRET: booknestSecretKey2026ForJWTTokenGeneration123456789
+      JWT_EXPIRATION: 86400000
+      CLOUD_AWS_CREDENTIALS_ACCESS_KEY: DUMMY_ACCESS_KEY
+      CLOUD_AWS_CREDENTIALS_SECRET_KEY: DUMMY_SECRET_KEY
+      CLOUD_AWS_REGION_STATIC: ap-southeast-2
+      CLOUD_AWS_S3_BUCKET: booknest-books
+      CLOUD_AWS_S3_COVERS_FOLDER: covers/
+      CLOUD_AWS_S3_BOOKS_FOLDER: books/
+      SPRING_MAIL_USERNAME: DUMMY_EMAIL@gmail.com
+      SPRING_MAIL_PASSWORD: DUMMY_PASSWORD
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+
+volumes:
+  mysql_data:
