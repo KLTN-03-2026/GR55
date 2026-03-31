@@ -1,0 +1,148 @@
+.home-wrapper {
+  background-color: #fff;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Categories Nav */
+.categories-nav {
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-label {
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.category-items {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-cat {
+  background-color: #e5e7eb;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.link-view-all {
+  margin-left: auto;
+  color: #333;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+/* Sections */
+.book-section {
+  padding: 40px 0;
+}
+
+.featured-bg {
+  background-color: #f3f4f6;
+  margin: 0 -20px;
+  padding: 40px 20px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 25px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.section-subtitle {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+}
+
+.link-more {
+  color: #333;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* Book Grid & Card */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 30px;
+}
+
+.book-card {
+  width: 180px;
+}
+
+.book-cover {
+  background-color: #8d7373;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.book-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.book-author {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 4px 0;
+}
+
+.book-price {
+  color: #ef4444;
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.badge-vip {
+  display: inline-block;
+  background-color: #d4e157;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  margin-top: 5px;
+}
+
+/* Footer */
+.home-footer {
+  background-color: #e5e7eb;
+  padding: 50px 0;
+  text-align: center;
+  margin-top: 40px;
+}

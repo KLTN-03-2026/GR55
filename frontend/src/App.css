@@ -1,38 +1,89 @@
-.App {
-  text-align: center;
+/* =========================================================
+   1. RESET CSS CƠ BẢN
+   Ép mọi thành phần tuân thủ kích thước chuẩn, tránh việc người sau 
+   thêm padding/border làm phần tử bị phình to ra gây vỡ layout.
+========================================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f4f7f6; /* Màu nền xám nhạt dịu mắt cho toàn web */
+  color: #333;
+  line-height: 1.6;
+  overflow-x: hidden; /* Ngăn lỗi xuất hiện thanh cuộn ngang rác */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* =========================================================
+   2. KHUNG LAYOUT TỔNG (Kỹ thuật Sticky Footer)
+   Bao bọc toàn bộ App. Đảm bảo web luôn cao tối thiểu bằng màn hình.
+========================================================= */
+.app-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  min-height: 100vh; /* Ép cao 100% chiều cao màn hình (Viewport Height) */
 }
 
-.App-link {
-  color: #61dafb;
+/* =========================================================
+   3. PHẦN MAIN BODY (Cái lõi linh hoạt nhất)
+========================================================= */
+.main-body-wrapper {
+  flex: 1; /* Lệnh "thần thánh": Tự động giãn nở để lấp đầy khoảng trống giữa Header và Footer */
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0; /* Khoảng cách an toàn trên/dưới cho nội dung */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* =========================================================
+   4. BỘ KHUNG GIỚI HẠN CHIỀU RỘNG (Container & Row)
+   Đảm bảo mở trên màn hình siêu to (TV, màn 2K, 4K) nội dung 
+   vẫn gom gọn ở giữa, không bị kéo dãn từ mép này sang mép kia.
+========================================================= */
+.container {
+  width: 100%;
+  max-width: 1200px; /* Giới hạn độ rộng chuẩn (có thể đổi thành 1440px tùy thiết kế) */
+  margin: 0 auto; /* Tự động căn giữa màn hình */
+  padding: 0 15px; /* Lề an toàn 2 bên để không dính sát mép điện thoại */
+}
+
+/* Xử lý khoảng bù trừ lề nếu bạn code lưới thủ công (nếu dùng Bootstrap thì class này sẽ trùng khớp) */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+}
+
+/* =========================================================
+   5. KHU VỰC ĐỔ NỘI DUNG (Của người thứ 2 làm)
+========================================================= */
+.main-content {
+  width: 100%;
+  padding: 0 15px;
+  /* Bạn có thể bật 3 dòng dưới lên nếu muốn mọi nội dung đều nằm trong một khối thẻ trắng bo góc */
+  /* background-color: #ffffff; */
+  /* border-radius: 8px; */
+  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); */
+}
+
+/* =========================================================
+   6. HEADER & FOOTER CƠ BẢN (Dành cho Layout)
+========================================================= */
+/* Cố định Header luôn bám trần khi cuộn chuột */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ phân cách với body */
+  width: 100%;
+}
+
+footer {
+  background-color: #2c3e50;
+  color: #ffffff;
+  margin-top: auto; /* Lệnh phụ trợ đẩy Footer bám sát đáy */
+  padding: 20px 0;
 }

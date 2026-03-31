@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
 import './QuanTri.css';
+import Header from '../components/Header';
 
 const MENU_QUAN_TRI = [
   {
@@ -20,7 +20,7 @@ export default function QuanTri() {
 
   return (
     <div className="trang_quan_tri">
-      <Header />
+      {/* <Header/> */}
       <div className="noi_dung_quan_tri">
         <h1 className="tieu_de_quan_tri">Trang quản trị</h1>
         <p className="mo_ta_quan_tri">Chọn chức năng cần quản lý</p>

@@ -1,0 +1,95 @@
+.admin-header {
+    height: 60px;
+    background-color: #d3dee9;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    flex-shrink: 0; /* Đảm bảo Header không bị ép lùn xuống */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.admin-header-left, .admin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.menu-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #555;
+    cursor: pointer;
+    display: none; /* Tạm ẩn trên máy tính */
+}
+
+.admin-search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f4f6f9;
+    padding: 8px 15px;
+    border-radius: 20px;
+    width:600px;
+    border: 1px solid #e0e0e0;
+}
+
+.admin-search-bar input {
+    border: none;
+    background: none;
+    outline: none;
+    margin-left: 10px;
+    width: 100%;
+    font-size: 14px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #555;
+    cursor: pointer;
+    position: relative;
+}
+
+.icon-btn:hover { color: #a73a3a; }
+
+.notification-btn .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #e74c3c;
+    color: white;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding-left: 15px;
+    border-left: 1px solid #eee;
+}
+
+.admin-avatar {
+    width: 35px;
+    height: 35px;
+    background-color: #a73a3a; /* Đỏ đô đồng bộ với thiết kế */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.admin-name {
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}

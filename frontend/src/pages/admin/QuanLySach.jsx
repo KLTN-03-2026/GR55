@@ -315,7 +315,7 @@ export default function QuanLySach() {
 
   return (
     <div className="trang_quan_ly">
-      <Header />
+
 
       <div className="noi_dung_chinh">
         <h1 className="tieu_de_trang">Quản lý sách</h1>
