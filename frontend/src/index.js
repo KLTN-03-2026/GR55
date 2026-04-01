@@ -21,6 +21,7 @@ import QuanLyDanhMuc from './pages/admin/QuanLyDanhMuc';
 import QuanLySach from './pages/admin/QuanLySach';
 
 import AdminLayout from './pages/admin/AdminLayout';
+import QuanLyNguoiDung from './pages/admin/QuanLyNguoiDung';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -47,31 +48,41 @@ root.render(
           <Route
             path="/quan_tri"
             element={
-              <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
+              // <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
                 <AdminLayout>
                   <QuanTri />
                 </AdminLayout>
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
           <Route
             path="/quan_tri/danh_muc"
             element={
-              <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
+              // <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
                 <AdminLayout>
                   <QuanLyDanhMuc />
                 </AdminLayout>
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
           <Route
             path="/quan_tri/sach"
             element={
-              <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
+              // <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
                 <AdminLayout>
                   <QuanLySach />
                 </AdminLayout>
-              </ProtectedRoute>
+              // </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quan_tri/nguoi_dung"
+            element={
+              // <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
+                <AdminLayout>
+                  <QuanLyNguoiDung/>
+                </AdminLayout>
+              // </ProtectedRoute>
             }
           />
         </Routes>

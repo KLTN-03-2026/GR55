@@ -51,14 +51,14 @@
 
 /* --- THÊM HIỆU ỨNG VẠCH XANH NGỌC KHI HOVER / ACTIVE --- */
 .nav-item:hover, .nav-item.active {
-    background-color: #213345; /* Sáng hơn màu nền một chút */
+    background-color: #213345; 
     color: #ffffff;
-    border-right: 4px solid #1ABB9C; /* Vạch Xanh Ngọc (Teal) đặc trưng */
+    border-right: 4px solid #1ABB9C; 
 }
 
 .group-title { 
     justify-content: space-between; 
-    border-right: none !important; /* Riêng tiêu đề nhóm thì không cần vạch */
+    border-right: none !important; 
 }
 .group-title .arrow { transition: transform 0.3s; }
 .group-title .arrow.open { transform: rotate(90deg); }
@@ -132,4 +132,123 @@
 .admin-content {
     padding: 20px;
     flex: 1;
+}
+/* MODAL XÁC NHẬN ĐĂNG XUẤT */
+
+/* Nền đen mờ bao phủ toàn màn hình */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 23, 42, 0.6); /* Màu xám đen mờ */
+  backdrop-filter: blur(4px); /* Hiệu ứng kính làm mờ nội dung phía sau */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; 
+  animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+/* Hộp Modal chính */
+.modal-box {
+  background-color: #ffffff;
+  width: 90%;
+  max-width: 400px; /* Kích thước nhỏ gọn, vừa phải */
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Tiêu đề Modal */
+.modal-title {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Nội dung/Câu hỏi */
+.modal-content {
+  margin: 0 0 28px 0;
+  font-size: 15px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+/* Vùng chứa các nút bấm */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end; /* Căn các nút sang góc phải */
+  gap: 12px;
+}
+
+/* Nút Hủy bỏ */
+.btn-cancel {
+  padding: 10px 20px;
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+
+.btn-cancel:active:not(:disabled) {
+  transform: scale(0.96); /* Lún nhẹ khi click */
+}
+
+/* Nút Đăng xuất (Màu đỏ cảnh báo) */
+.btn-confirm {
+  padding: 10px 20px;
+  background-color: #ef4444; 
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-confirm:hover:not(:disabled) {
+  background-color: #dc2626; /* Đỏ đậm hơn */
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); /* Bóng tỏa ra màu đỏ */
+}
+
+.btn-confirm:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+/* Trạng thái khi đang tải (disabled) */
+.btn-cancel:disabled,
+.btn-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* HIỆU ỨNG ANIMATION CHO MODAL */
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScaleUp {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95) translateY(15px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
 }

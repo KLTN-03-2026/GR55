@@ -73,7 +73,7 @@ export default function DangNhap() {
     <div className="trang_dang_nhap">
       <div className="hop_dang_nhap">
         <div className="logo_khu_vuc">
-          <div className="logo_ten">Book<span>Nest</span></div>
+          <div className="logo_ten">Book Nest</div>
         </div>
 
         <h1 className="tieu_de_dang_nhap">Đăng nhập</h1>

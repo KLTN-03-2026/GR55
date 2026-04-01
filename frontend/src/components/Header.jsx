@@ -1,191 +1,213 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Header.css';
-
-// Import Icons
-import { FiSearch, FiShoppingCart, FiUser, FiLogOut, FiMenu } from 'react-icons/fi';
-import { MdOutlineClose } from 'react-icons/md';
+import { FiSearch, FiShoppingCart, FiUser, FiLogOut } from 'react-icons/fi';
+import { BsStars } from 'react-icons/bs';
+import { FiBookOpen, FiDollarSign, FiAward } from 'react-icons/fi';
 
 export default function Header() {
   const { da_dang_nhap, nguoiDung, dang_xuat } = useAuth();
-  const dieu_huong = useNavigate();
+  const navigate = useNavigate();
 
-  const [mo_dropdown, dat_mo_dropdown] = useState(false);
-  const [hien_modal_xac_nhan, dat_hien_modal] = useState(false);
-  const [dang_xuat_loading, dat_dang_xuat_loading] = useState(false);
-  const [tu_khoa_tim_kiem, dat_tu_khoa_tim_kiem] = useState('');
-  const [mo_menu_mobile, dat_mo_menu_mobile] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const dropdownRef = useRef(null);
 
-  const ref_dropdown = useRef(null);
-
-  // Xử lý click ra ngoài để đóng dropdown user
+  // Close dropdown on outside click
   useEffect(() => {
-    function xu_ly_click_ngoai(su_kien) {
-      if (ref_dropdown.current && !ref_dropdown.current.contains(su_kien.target)) {
-        dat_mo_dropdown(false);
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
       }
-    }
-    document.addEventListener('mousedown', xu_ly_click_ngoai);
-    return () => document.removeEventListener('mousedown', xu_ly_click_ngoai);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  function lay_chu_viet_tat(ho_ten) {
-    const cac_tu = ho_ten?.trim().split(' ') || [];
-    if (cac_tu.length === 0) return 'U';
-    if (cac_tu.length === 1) return cac_tu[0][0].toUpperCase();
-    return (cac_tu[0][0] + cac_tu[cac_tu.length - 1][0]).toUpperCase();
-  }
+  const getInitials = (name) => {
+    const words = name?.trim().split(' ') || [];
+    if (words.length === 0) return 'U';
+    if (words.length === 1) return words[0][0].toUpperCase();
+    return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+  };
 
-  async function xac_nhan_dang_xuat() {
-    dat_dang_xuat_loading(true);
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
     try {
       await api.post('/auth/dang_xuat');
     } catch {
-      // Vẫn đăng xuất phía client dù API lỗi
+      // Client-side logout even if API fails
     } finally {
       dang_xuat();
-      dat_hien_modal(false);
-      dat_mo_dropdown(false);
-      dat_dang_xuat_loading(false);
+      setShowLogoutModal(false);
+      setIsDropdownOpen(false);
+      setIsLoggingOut(false);
       toast.success('Đăng xuất thành công!');
-      dieu_huong('/dang_nhap', { replace: true });
-    }
-  }
-
-  // Xử lý khi ấn Enter hoặc click nút Tìm kiếm
-  const xu_ly_tim_kiem = (e) => {
-    e.preventDefault();
-    if (tu_khoa_tim_kiem.trim()) {
-      // Điều hướng sang trang tìm kiếm (bạn cần tạo trang này sau)
-      dieu_huong(`/tim_kiem?q=${tu_khoa_tim_kiem}`);
+      navigate('/trang_chu');
     }
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/tim_kiem?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const toggleDropdown = useCallback(() => {
+    setIsDropdownOpen(prev => !prev);
+  }, []);
+
+  // Mock cart count - replace with real context later
+  const cartCount = 3;
+
   return (
     <>
-      <header className="header-container">
-        <div className="header-main">
+      <header className="header">
+        <div className="header-container">
           {/* Logo */}
-          <Link to="/trang_chu" className="header-logo">
-            Book<span>Nest</span>
+          <Link to="/trang_chu" className="logo">
+            <span className="logo-icon">📚</span>
+            <span className="logo-text">
+              BookNest
+            </span>
           </Link>
 
-          {/* Nút Toggle Menu Mobile */}
-          <button className="mobile-menu-btn" onClick={() => dat_mo_menu_mobile(!mo_menu_mobile)}>
-            {mo_menu_mobile ? <MdOutlineClose /> : <FiMenu />}
-          </button>
-
-          {/* Thanh tìm kiếm */}
-          <div className="header-search">
-            <form onSubmit={xu_ly_tim_kiem}>
+          {/* Search Bar */}
+          <form className="search-form" onSubmit={handleSearch}>
+            <div className="search-input-wrapper">
+              <FiSearch className="search-icon" />
               <input
+                className="search-input"
                 type="text"
-                placeholder="Tìm kiếm tên sách, tác giả..."
-                value={tu_khoa_tim_kiem}
-                onChange={(e) => dat_tu_khoa_tim_kiem(e.target.value)}
+                placeholder="Tìm kiếm sách, tác giả..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button type="submit" className="search-btn">
-                <FiSearch />
-              </button>
-            </form>
-          </div>
+            </div>
+          </form>
 
-          {/* Các công cụ bên phải (Giỏ hàng, User) */}
+          {/* Right Actions */}
           <div className="header-actions">
-            {/* Giỏ hàng */}
-            <Link to="/gio_hang" className="action-item cart-item">
-              <FiShoppingCart className="action-icon" />
-              <span className="cart-badge">3</span> {/* Số 3 là mô phỏng, bạn thay bằng state giỏ hàng sau */}
+            <Link to="/gio_hang" className="cart-btn" title="Giỏ hàng">
+              <FiShoppingCart className="cart-icon" />
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>
 
-            {/* Tài khoản Người dùng */}
-            <div className="action-item user-dropdown-container" ref={ref_dropdown}>
+            {/* User Menu */}
+            <div className="user-menu" ref={dropdownRef}>
               {da_dang_nhap ? (
                 <>
-                  <div
-                    className="user-trigger"
-                    onClick={() => dat_mo_dropdown(truoc => !truoc)}
-                  >
+                  <button className="user-btn" onClick={toggleDropdown} aria-expanded={isDropdownOpen}>
                     <div className="user-avatar">
-                      {lay_chu_viet_tat(nguoiDung?.ho_ten)}
+                      {getInitials(nguoiDung?.ho_ten)}
                     </div>
                     <span className="user-name">{nguoiDung?.ho_ten?.split(' ').pop()}</span>
-                  </div>
+                  </button>
 
-                  {mo_dropdown && (
-                    <div className="dropdown-menu">
+                  {isDropdownOpen && (
+                    <div className="dropdown">
                       <div className="dropdown-header">
-                        <div className="dropdown-name">{nguoiDung?.ho_ten}</div>
-                        <div className="dropdown-role">{nguoiDung?.vai_tro === 'quan_tri' ? 'Quản trị viên' : 'Thành viên'}</div>
+                        <div className="dropdown-avatar">
+                          {getInitials(nguoiDung?.ho_ten)}
+                        </div>
+                        <div>
+                          <div className="dropdown-name">{nguoiDung?.ho_ten}</div>
+                          <div className="dropdown-role">
+                            {nguoiDung?.vai_tro === 'quan_tri' ? '👑 Quản trị viên' : '👤 Thành viên'}
+                          </div>
+                        </div>
                       </div>
                       
-                      {/* Nếu là Admin thì hiện nút vào trang Quản trị */}
                       {nguoiDung?.vai_tro === 'quan_tri' && (
-                        <Link to="/quan_tri" className="dropdown-item" onClick={() => dat_mo_dropdown(false)}>
-                          Bảng điều khiển (Admin)
+                        <Link to="/quan_tri" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                          <span className="item-icon">⚙️</span>
+                          Bảng điều khiển Admin
                         </Link>
                       )}
 
-                      <Link to="/tai_khoan" className="dropdown-item" onClick={() => dat_mo_dropdown(false)}>
-                        <FiUser className="dropdown-icon" /> Thông tin tài khoản
+                      <Link to="/tai_khoan" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                        <FiUser className="item-icon" />
+                        Tài khoản cá nhân
                       </Link>
-                      
-                      <button
-                        className="dropdown-item text-danger"
-                        onClick={() => {
-                          dat_mo_dropdown(false);
-                          dat_hien_modal(true);
-                        }}
+
+                      <button 
+                        className="dropdown-item logout-item"
+                        onClick={() => setShowLogoutModal(true)}
                       >
-                        <FiLogOut className="dropdown-icon" /> Đăng xuất
+                        <FiLogOut className="item-icon" />
+                        Đăng xuất
                       </button>
                     </div>
                   )}
                 </>
               ) : (
-                <Link to="/dang_nhap" className="login-btn">
-                  Đăng nhập
-                </Link>
+                <div className="auth-buttons">
+                  <Link to="/dang_nhap" className="btn-login">Đăng nhập</Link>
+                  <Link to="/dang_ky" className="btn-signup">Đăng ký</Link>
+                </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Thanh Điều hướng (Navigation) */}
-        <nav className={`header-nav ${mo_menu_mobile ? 'open' : ''}`}>
+        {/* Navigation */}
+        <nav className="nav">
           <ul className="nav-list">
-            <li><Link to="/trang_chu" onClick={() => dat_mo_menu_mobile(false)}>Trang chủ</Link></li>
-            <li><Link to="/danh_muc" onClick={() => dat_mo_menu_mobile(false)}>Danh mục sách</Link></li>
-            <li><Link to="/khuyen_mai" onClick={() => dat_mo_menu_mobile(false)}>Khuyến mãi</Link></li>
-            <li><Link to="/gioi_thieu" onClick={() => dat_mo_menu_mobile(false)}>Giới thiệu</Link></li>
-            <li><Link to="/lien_he" onClick={() => dat_mo_menu_mobile(false)}>Liên hệ</Link></li>
+            <li><Link to="/trang_chu" className="nav-link">Trang chủ</Link></li>
+            
+            <li className="mega-nav-item">
+              <Link to="/danh_muc" className="nav-link mega-trigger">Danh mục sách</Link>
+              <div className="mega-menu">
+                <div className="mega-grid">
+                  <div className="mega-column">
+                    <h4>📖 Thể loại phổ biến</h4>
+                    <Link to="/the-loai/phat-trien" className="mega-link">Phát triển bản thân</Link>
+                    <Link to="/the-loai/tai-chinh" className="mega-link">Tài chính cá nhân</Link>
+                    <Link to="/the-loai/quan-tri" className="mega-link">Quản trị kinh doanh</Link>
+                  </div>
+                  <div className="mega-column">
+                    <h4>🌟 Khuyến nghị</h4>
+                    <Link to="/kham-pha/moi-nhat" className="mega-link highlight">Sách mới nhất ✨</Link>
+                    <Link to="/kham-pha/doc-nhieu" className="mega-link highlight">Đọc nhiều nhất</Link>
+                    <Link to="/kham-pha/mien-phi" className="mega-link highlight">Miễn phí</Link>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <li><Link to="/khuyen_mai" className="nav-link">Khuyến mãi</Link></li>
+            <li><Link to="/gioi_thieu" className="nav-link">Giới thiệu</Link></li>
           </ul>
         </nav>
       </header>
 
-      {/* Modal Xác nhận Đăng xuất */}
-      {hien_modal_xac_nhan && (
-        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && dat_hien_modal(false)}>
-          <div className="modal-box">
-            <h2 className="modal-title">Xác nhận đăng xuất</h2>
-            <p className="modal-content">Bạn có chắc chắn muốn đăng xuất không?</p>
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowLogoutModal(false)}>
+          <div className="modal">
+            <div className="modal-icon">🚪</div>
+            <h3 className="modal-title">Xác nhận đăng xuất</h3>
+            <p className="modal-text">Bạn có chắc muốn rời khỏi BookNest?</p>
             <div className="modal-actions">
-              <button
-                className="btn-cancel"
-                onClick={() => dat_hien_modal(false)}
-                disabled={dang_xuat_loading}
+              <button 
+                className="btn-secondary" 
+                onClick={() => setShowLogoutModal(false)}
+                disabled={isLoggingOut}
               >
-                Hủy bỏ
+                Hủy
               </button>
-              <button
-                className="btn-confirm"
-                onClick={xac_nhan_dang_xuat}
-                disabled={dang_xuat_loading}
+              <button 
+                className="btn-primary" 
+                onClick={handleLogout}
+                disabled={isLoggingOut}
               >
-                {dang_xuat_loading ? 'Đang xử lý...' : 'Đăng xuất'}
+                {isLoggingOut ? 'Đang đăng xuất...' : 'Đăng xuất'}
               </button>
             </div>
           </div>
