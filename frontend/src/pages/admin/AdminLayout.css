@@ -95,11 +95,31 @@
 
 .user-avatar {
     width: 35px; height: 35px;
-    background: #1ABB9C; /* Đổi viền/nền avatar thành Xanh Ngọc luôn cho tone-sur-tone */
+    background: #1ABB9C;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     color: white;
     font-weight: bold;
+    flex-shrink: 0;
+}
+
+.logout-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #cccccc;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.logout-btn:hover {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
 }
 
 .admin-main {

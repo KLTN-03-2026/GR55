@@ -13,4 +13,6 @@ public interface TienDoDocSachRepository extends JpaRepository<TienDoDocSach, Lo
 
     @Query("SELECT DISTINCT td.maSach FROM TienDoDocSach td WHERE td.maNd = :maNd")
     List<Long> findSachDaDocByUserId(@Param("maNd") Long maNd);
+
+    boolean existsByMaSach(Long maSach);
 }

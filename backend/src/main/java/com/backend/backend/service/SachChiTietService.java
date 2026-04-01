@@ -1,11 +1,11 @@
 package com.backend.backend.service;
 
 import com.backend.backend.dto.*;
+import com.backend.backend.entity.DanhGia;
 import com.backend.backend.entity.Sach;
 import com.backend.backend.entity.SachDanhMuc;
 import com.backend.backend.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +30,7 @@ public class SachChiTietService {
     private final GoiHoiVienSachRepository goiHoiVienSachRepository;
     private final SachDanhMucRepository sachDanhMucRepository;
     private final DanhMucSachRepository danhMucSachRepository;
+    private final NguoiDungRepository nguoiDungRepository;
 
     @Cacheable(value = "chi_tiet_sach", key = "#maSach + '_' + #maNd")
     public ChiTietSachResponse layChiTietSach(Long maSach, Long maNd) {
@@ -115,7 +116,32 @@ public class SachChiTietService {
                 page.getTotalElements());
     }
 
-    @CacheEvict(value = {"chi_tiet_sach", "sach_lien_quan"}, allEntries = true)
+    public DanhSachDanhGiaResponse layDanhSachDanhGia(Long maSach, int trang, int kichThuoc) {
+        Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
+        Page<DanhGia> page = danhGiaRepository.findDanhGiaBySach(maSach, pageable);
+
+        List<DanhSachDanhGiaResponse.DanhGiaData> danhSach = page.getContent().stream()
+                .map(dg -> {
+                    String tenNguoiDung = nguoiDungRepository.findById(dg.getMaNd())
+                            .map(nd -> nd.getHoTen())
+                            .orElse("Ẩn danh");
+                    return new DanhSachDanhGiaResponse.DanhGiaData(
+                            dg.getMaDg(),
+                            dg.getMaNd(),
+                            tenNguoiDung,
+                            dg.getSoSao(),
+                            dg.getNoiDung(),
+                            dg.getNgayTao());
+                })
+                .collect(Collectors.toList());
+
+        return new DanhSachDanhGiaResponse(
+                danhSach,
+                page.getNumber() + 1,
+                page.getTotalPages(),
+                page.getTotalElements());
+    }
+
     @Transactional
     public void tangLuotXem(Long maSach) {
         sachRepository.tangLuotXem(maSach);

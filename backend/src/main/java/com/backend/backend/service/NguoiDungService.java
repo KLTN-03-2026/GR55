@@ -212,8 +212,7 @@ public class NguoiDungService {
         nguoiDung.setTrangThai(NguoiDung.TrangThai.hoat_dong);
         nguoiDungRepository.save(nguoiDung);
 
-        maOtp.setDaDung(true);
-        maOtpRepository.save(maOtp);
+        maOtpRepository.delete(maOtp);
 
         return new QuenMatKhauResponse(true, "Đặt lại mật khẩu thành công");
     }

@@ -26,9 +26,12 @@ public class SachController {
     public ResponseEntity<DanhSachSachResponse> layDanhSachSach(
             @RequestParam(required = false) String tu_khoa,
             @RequestParam(required = false) Long ma_danh_muc,
+            @RequestParam(required = false) String trang_thai,
             @RequestParam(defaultValue = "1") int trang,
             @RequestParam(defaultValue = "10") int kich_thuoc) {
-        return ResponseEntity.ok(sachService.layDanhSachSach(tu_khoa, ma_danh_muc, trang, kich_thuoc));
+        Boolean mienPhi = "mien_phi".equals(trang_thai) ? Boolean.TRUE
+                        : "tra_phi".equals(trang_thai) ? Boolean.FALSE : null;
+        return ResponseEntity.ok(sachService.layDanhSachSach(tu_khoa, ma_danh_muc, mienPhi, trang, kich_thuoc));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

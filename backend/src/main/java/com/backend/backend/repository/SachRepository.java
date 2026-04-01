@@ -24,8 +24,11 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
     @Query("SELECT s FROM Sach s WHERE s.daXoa = false ORDER BY s.ngayTao DESC")
     Page<Sach> findSachMoiNhat(Pageable pageable);
 
-    @Query("SELECT s FROM Sach s WHERE s.daXoa = false AND s.maSach IN " +
-           "(SELECT g.maSach FROM GoiHoiVienSach g)")
+    @Query(value = "SELECT s.* FROM sach s WHERE s.da_xoa = false AND s.ma_sach IN " +
+                   "(SELECT g.ma_sach FROM goi_hoi_vien_sach g) ORDER BY RAND()",
+           countQuery = "SELECT COUNT(*) FROM sach s WHERE s.da_xoa = false AND s.ma_sach IN " +
+                        "(SELECT g.ma_sach FROM goi_hoi_vien_sach g)",
+           nativeQuery = true)
     Page<Sach> findSachHoiVien(Pageable pageable);
 
     @Query("SELECT DISTINCT s FROM Sach s " +
@@ -54,8 +57,10 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
            "WHERE s.daXoa = false " +
            "AND (:tuKhoa IS NULL OR LOWER(s.tenSach) LIKE LOWER(CONCAT('%', :tuKhoa, '%')) " +
            "     OR LOWER(s.tacGia) LIKE LOWER(CONCAT('%', :tuKhoa, '%'))) " +
-           "AND (:maDanhMuc IS NULL OR sd.maDm = :maDanhMuc)")
+           "AND (:maDanhMuc IS NULL OR sd.maDm = :maDanhMuc) " +
+           "AND (:mienPhi IS NULL OR (:mienPhi = true AND s.gia = 0) OR (:mienPhi = false AND s.gia > 0))")
     Page<Sach> timKiemVaLocSach(@Param("tuKhoa") String tuKhoa,
                                  @Param("maDanhMuc") Long maDanhMuc,
+                                 @Param("mienPhi") Boolean mienPhi,
                                  Pageable pageable);
 }

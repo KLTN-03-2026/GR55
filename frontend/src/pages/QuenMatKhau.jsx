@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 import api from '../services/api';
 import './QuenMatKhau.css';
 
@@ -29,6 +30,10 @@ export default function QuenMatKhau() {
 
   const [thoi_gian_con, dat_thoi_gian_con] = useState(THOI_GIAN_OTP);
   const [co_the_gui_lai, dat_co_the_gui_lai] = useState(false);
+  const [hien_mat_khau, dat_hien_mat_khau] = useState({
+    mat_khau_moi: false,
+    xac_nhan_mat_khau_moi: false,
+  });
 
   useEffect(() => {
     if (buoc_hien_tai !== 2) return;
@@ -256,31 +261,51 @@ export default function QuenMatKhau() {
 
               <div className="nhom_truong">
                 <label className="nhan_truong" htmlFor="mat_khau_moi">Mật khẩu mới</label>
-                <input
-                  id="mat_khau_moi"
-                  name="mat_khau_moi"
-                  type="password"
-                  value={du_lieu_buoc2.mat_khau_moi}
-                  onChange={xu_ly_thay_doi_buoc2}
-                  placeholder="Tối thiểu 8 ký tự"
-                  className={`o_nhap${loi_buoc2.mat_khau_moi ? ' loi' : ''}`}
-                  autoComplete="new-password"
-                />
+                <div className="khung_mat_khau">
+                  <input
+                    id="mat_khau_moi"
+                    name="mat_khau_moi"
+                    type={hien_mat_khau.mat_khau_moi ? 'text' : 'password'}
+                    value={du_lieu_buoc2.mat_khau_moi}
+                    onChange={xu_ly_thay_doi_buoc2}
+                    placeholder="Tối thiểu 8 ký tự"
+                    className={`o_nhap${loi_buoc2.mat_khau_moi ? ' loi' : ''}`}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    className="nut_hien_mat_khau"
+                    onClick={() => dat_hien_mat_khau(p => ({ ...p, mat_khau_moi: !p.mat_khau_moi }))}
+                    tabIndex={-1}
+                  >
+                    {hien_mat_khau.mat_khau_moi ? <FiEyeOff /> : <FiEye />}
+                  </button>
+                </div>
                 <span className="thong_bao_loi">{loi_buoc2.mat_khau_moi || ''}</span>
               </div>
 
               <div className="nhom_truong">
                 <label className="nhan_truong" htmlFor="xac_nhan_mat_khau_moi">Xác nhận mật khẩu mới</label>
-                <input
-                  id="xac_nhan_mat_khau_moi"
-                  name="xac_nhan_mat_khau_moi"
-                  type="password"
-                  value={du_lieu_buoc2.xac_nhan_mat_khau_moi}
-                  onChange={xu_ly_thay_doi_buoc2}
-                  placeholder="Nhập lại mật khẩu mới"
-                  className={`o_nhap${loi_buoc2.xac_nhan_mat_khau_moi ? ' loi' : ''}`}
-                  autoComplete="new-password"
-                />
+                <div className="khung_mat_khau">
+                  <input
+                    id="xac_nhan_mat_khau_moi"
+                    name="xac_nhan_mat_khau_moi"
+                    type={hien_mat_khau.xac_nhan_mat_khau_moi ? 'text' : 'password'}
+                    value={du_lieu_buoc2.xac_nhan_mat_khau_moi}
+                    onChange={xu_ly_thay_doi_buoc2}
+                    placeholder="Nhập lại mật khẩu mới"
+                    className={`o_nhap${loi_buoc2.xac_nhan_mat_khau_moi ? ' loi' : ''}`}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    className="nut_hien_mat_khau"
+                    onClick={() => dat_hien_mat_khau(p => ({ ...p, xac_nhan_mat_khau_moi: !p.xac_nhan_mat_khau_moi }))}
+                    tabIndex={-1}
+                  >
+                    {hien_mat_khau.xac_nhan_mat_khau_moi ? <FiEyeOff /> : <FiEye />}
+                  </button>
+                </div>
                 <span className="thong_bao_loi">{loi_buoc2.xac_nhan_mat_khau_moi || ''}</span>
               </div>
 

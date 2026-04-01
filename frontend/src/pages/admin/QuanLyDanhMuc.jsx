@@ -189,7 +189,7 @@ export default function QuanLyDanhMuc() {
             <table className="bang_du_lieu">
               <thead>
                 <tr>
-                  <th style={{ width: '60px' }}>STT</th>
+                  <th style={{ width: '60px' }}>ID</th>
                   <th>Tên danh mục</th>
                   <th style={{ width: '140px' }}>Số lượng sách</th>
                   <th style={{ width: '140px' }}>Ngày tạo</th>
@@ -210,7 +210,7 @@ export default function QuanLyDanhMuc() {
                 ) : (
                   danh_sach.map((dm, idx) => (
                     <tr key={dm.ma_dm}>
-                      <td>{chi_so_bat_dau + idx}</td>
+                      <td>{dm.ma_dm}</td>
                       <td style={{ fontWeight: 500 }}>{dm.ten_danh_muc}</td>
                       <td>
                         <span className="nhan_so_luong">{dm.so_luong_sach}</span>

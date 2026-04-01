@@ -701,3 +701,21 @@
     grid-template-columns: 1fr;
   }
 }
+
+.nhan_trang_thai {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nhan_trang_thai.mien_phi {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.nhan_trang_thai.tra_phi {
+  background: #dbeafe;
+  color: #1e40af;
+}

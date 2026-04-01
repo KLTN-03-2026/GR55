@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
-import Header from '../../components/Header';
 import './QuanLySach.css';
 
 const KICH_THUOC_TRANG = 10;
@@ -37,6 +36,7 @@ export default function QuanLySach() {
   const [tong_ban_ghi, dat_tong_ban_ghi] = useState(0);
   const [tu_khoa_tim, dat_tu_khoa] = useState('');
   const [ma_danh_muc_loc, dat_ma_dm_loc] = useState('');
+  const [trang_thai_loc, dat_trang_thai_loc] = useState('');
   const [dang_tai, dat_dang_tai] = useState(false);
 
   const [tat_ca_danh_muc, dat_tat_ca_danh_muc] = useState([]);
@@ -73,13 +73,14 @@ export default function QuanLySach() {
     }
   }, []);
 
-  const tai_danh_sach = useCallback(async (trang, tu_khoa, ma_dm) => {
+  const tai_danh_sach = useCallback(async (trang, tu_khoa, ma_dm, trang_thai) => {
     dat_dang_tai(true);
     try {
       const phan_hoi = await api.get('/admin/sach', {
         params: {
           tu_khoa: tu_khoa || undefined,
           ma_danh_muc: ma_dm || undefined,
+          trang_thai: trang_thai || undefined,
           trang,
           kich_thuoc: KICH_THUOC_TRANG,
         },
@@ -98,15 +99,15 @@ export default function QuanLySach() {
 
   useEffect(() => {
     tai_danh_muc();
-    tai_danh_sach(1, '', '');
+    tai_danh_sach(1, '', '', '');
   }, [tai_danh_muc, tai_danh_sach]);
 
   useEffect(() => {
     const id_dem = setTimeout(() => {
-      tai_danh_sach(1, tu_khoa_tim, ma_danh_muc_loc);
+      tai_danh_sach(1, tu_khoa_tim, ma_danh_muc_loc, trang_thai_loc);
     }, 400);
     return () => clearTimeout(id_dem);
-  }, [tu_khoa_tim, ma_danh_muc_loc, tai_danh_sach]);
+  }, [tu_khoa_tim, ma_danh_muc_loc, trang_thai_loc, tai_danh_sach]);
 
   // ── Helpers form ──────────────────────────────────────────────
   function cap_nhat_truong(ten, gia_tri) {
@@ -139,6 +140,10 @@ export default function QuanLySach() {
       dat_loi_form(prev => ({ ...prev, anh_bia: 'Vui lòng chọn file ảnh (JPG, PNG, ...)' }));
       return;
     }
+    if (tap_tin.size > 4 * 1024 * 1024) {
+      dat_loi_form(prev => ({ ...prev, anh_bia: 'Ảnh bìa không được vượt quá 4MB' }));
+      return;
+    }
     dat_tap_tin_anh_bia(tap_tin);
     dat_loi_form(prev => ({ ...prev, anh_bia: '' }));
     const doc = new FileReader();
@@ -151,6 +156,10 @@ export default function QuanLySach() {
     if (!tap_tin) return;
     if (tap_tin.type !== 'application/pdf') {
       dat_loi_form(prev => ({ ...prev, file_pdf: 'Vui lòng chọn file PDF' }));
+      return;
+    }
+    if (tap_tin.size > 100 * 1024 * 1024) {
+      dat_loi_form(prev => ({ ...prev, file_pdf: 'File PDF không được vượt quá 100MB' }));
       return;
     }
     dat_tap_tin_pdf(tap_tin);
@@ -259,7 +268,7 @@ export default function QuanLySach() {
       }
 
       dong_modal_form();
-      tai_danh_sach(trang_hien_tai, tu_khoa_tim, ma_danh_muc_loc);
+      tai_danh_sach(trang_hien_tai, tu_khoa_tim, ma_danh_muc_loc, trang_thai_loc);
     } catch (loi_api) {
       const thong_bao = loi_api.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
       dat_loi_server_form(thong_bao);
@@ -288,7 +297,7 @@ export default function QuanLySach() {
       const trang_moi = danh_sach.length === 1 && trang_hien_tai > 1
         ? trang_hien_tai - 1
         : trang_hien_tai;
-      tai_danh_sach(trang_moi, tu_khoa_tim, ma_danh_muc_loc);
+      tai_danh_sach(trang_moi, tu_khoa_tim, ma_danh_muc_loc, trang_thai_loc);
     } catch (loi_api) {
       const thong_bao = loi_api.response?.data?.message || 'Không thể xóa sách. Vui lòng thử lại.';
       dat_loi_server_xoa(thong_bao);
@@ -341,6 +350,15 @@ export default function QuanLySach() {
                   <option key={dm.ma_dm} value={dm.ma_dm}>{dm.ten_danh_muc}</option>
                 ))}
               </select>
+              <select
+                className="o_loc_danh_muc"
+                value={trang_thai_loc}
+                onChange={e => dat_trang_thai_loc(e.target.value)}
+              >
+                <option value="">Tất cả trạng thái</option>
+                <option value="mien_phi">Miễn phí</option>
+                <option value="tra_phi">Trả phí</option>
+              </select>
             </div>
             <button className="nut_them_moi" onClick={mo_modal_them}>
               + Thêm sách mới
@@ -352,12 +370,13 @@ export default function QuanLySach() {
             <table className="bang_du_lieu">
               <thead>
                 <tr>
-                  <th style={{ width: '50px' }}>STT</th>
+                  <th style={{ width: '50px' }}>ID</th>
                   <th style={{ width: '70px' }}>Bìa</th>
                   <th>Tên sách</th>
                   <th style={{ width: '140px' }}>Tác giả</th>
                   <th style={{ width: '160px' }}>Danh mục</th>
                   <th style={{ width: '110px' }}>Giá</th>
+                  <th style={{ width: '110px' }}>Trạng thái</th>
                   <th style={{ width: '120px' }}>Thao tác</th>
                 </tr>
               </thead>
@@ -373,9 +392,9 @@ export default function QuanLySach() {
                     </td>
                   </tr>
                 ) : (
-                  danh_sach.map((sach, idx) => (
+                  danh_sach.map((sach) => (
                     <tr key={sach.ma_sach}>
-                      <td>{chi_so_bat_dau + idx}</td>
+                      <td>{sach.ma_sach}</td>
                       <td>
                         {sach.anh_bia_url
                           ? <img src={sach.anh_bia_url} alt={sach.ten_sach} className="anh_bia_thu_nho" />
@@ -398,6 +417,12 @@ export default function QuanLySach() {
                       </td>
                       <td>{dinh_dang_gia(sach.gia)}</td>
                       <td>
+                        {Number(sach.gia) === 0
+                          ? <span className="nhan_trang_thai mien_phi">Miễn phí</span>
+                          : <span className="nhan_trang_thai tra_phi">Trả phí</span>
+                        }
+                      </td>
+                      <td>
                         <div className="nhom_nut_thao_tac">
                           <button className="nut_sua" onClick={() => mo_modal_sua(sach)}>Sửa</button>
                           <button className="nut_xoa" onClick={() => mo_modal_xoa(sach)}>Xóa</button>
@@ -419,7 +444,7 @@ export default function QuanLySach() {
               <div className="nhom_nut_trang">
                 <button
                   className="nut_trang"
-                  onClick={() => tai_danh_sach(trang_hien_tai - 1, tu_khoa_tim, ma_danh_muc_loc)}
+                  onClick={() => tai_danh_sach(trang_hien_tai - 1, tu_khoa_tim, ma_danh_muc_loc, trang_thai_loc)}
                   disabled={trang_hien_tai <= 1}
                 >‹</button>
                 {cac_so_trang.map((so, idx) => {
@@ -431,14 +456,14 @@ export default function QuanLySach() {
                       )}
                       <button
                         className={`nut_trang${so === trang_hien_tai ? ' hien_tai' : ''}`}
-                        onClick={() => tai_danh_sach(so, tu_khoa_tim, ma_danh_muc_loc)}
+                        onClick={() => tai_danh_sach(so, tu_khoa_tim, ma_danh_muc_loc, trang_thai_loc)}
                       >{so}</button>
                     </span>
                   );
                 })}
                 <button
                   className="nut_trang"
-                  onClick={() => tai_danh_sach(trang_hien_tai + 1, tu_khoa_tim, ma_danh_muc_loc)}
+                  onClick={() => tai_danh_sach(trang_hien_tai + 1, tu_khoa_tim, ma_danh_muc_loc, trang_thai_loc)}
                   disabled={trang_hien_tai >= tong_so_trang}
                 >›</button>
               </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 import api from '../services/api';
 import './DangKy.css';
 
@@ -37,6 +38,14 @@ export default function DangKy() {
   const [loi, dat_loi] = useState({});
   const [loi_server, dat_loi_server] = useState('');
   const [dang_gui, dat_dang_gui] = useState(false);
+  const [hien_mat_khau, dat_hien_mat_khau] = useState({
+    mat_khau: false,
+    xac_nhan_mat_khau: false,
+  });
+
+  function bat_tat_hien(ten) {
+    dat_hien_mat_khau(prev => ({ ...prev, [ten]: !prev[ten] }));
+  }
 
   function kiem_tra_truong(ten_truong, gia_tri) {
     if (!gia_tri.trim()) {
@@ -128,16 +137,39 @@ export default function DangKy() {
           {cac_truong.map(({ ten, nhan, loai, placeholder }) => (
             <div className="nhom_truong" key={ten}>
               <label className="nhan_truong" htmlFor={ten}>{nhan}</label>
-              <input
-                id={ten}
-                name={ten}
-                type={loai}
-                value={du_lieu[ten]}
-                onChange={xu_ly_thay_doi}
-                placeholder={placeholder}
-                className={`o_nhap${loi[ten] ? ' loi' : ''}`}
-                autoComplete={loai === 'password' ? 'new-password' : 'off'}
-              />
+              {loai === 'password' ? (
+                <div className="khung_mat_khau">
+                  <input
+                    id={ten}
+                    name={ten}
+                    type={hien_mat_khau[ten] ? 'text' : 'password'}
+                    value={du_lieu[ten]}
+                    onChange={xu_ly_thay_doi}
+                    placeholder={placeholder}
+                    className={`o_nhap${loi[ten] ? ' loi' : ''}`}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    className="nut_hien_mat_khau"
+                    onClick={() => bat_tat_hien(ten)}
+                    tabIndex={-1}
+                  >
+                    {hien_mat_khau[ten] ? <FiEyeOff /> : <FiEye />}
+                  </button>
+                </div>
+              ) : (
+                <input
+                  id={ten}
+                  name={ten}
+                  type={loai}
+                  value={du_lieu[ten]}
+                  onChange={xu_ly_thay_doi}
+                  placeholder={placeholder}
+                  className={`o_nhap${loi[ten] ? ' loi' : ''}`}
+                  autoComplete="off"
+                />
+              )}
               <span className="thong_bao_loi">{loi[ten] || ''}</span>
             </div>
           ))}

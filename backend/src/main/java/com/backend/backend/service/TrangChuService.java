@@ -21,6 +21,7 @@ public class TrangChuService {
     private final SachRepository sachRepository;
     private final DanhMucSachRepository danhMucSachRepository;
     private final TienDoDocSachRepository tienDoDocSachRepository;
+    private final SachDanhMucRepository sachDanhMucRepository;
 
     private SachHomeResponse chuyenDoiSachSangDto(Sach sach) {
         return new SachHomeResponse(
@@ -72,6 +73,7 @@ public class TrangChuService {
         return taoKetQuaPhanTrang(sachRepository.findSachHoiVien(pageable));
     }
 
+    @Cacheable(value = "sach_goi_y", key = "#trang + '_' + #kichThuoc", condition = "#maNd == null")
     public DanhSachSachHomeResponse laySachGoiY(Long maNd, int trang, int kichThuoc) {
         Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
         Page<Sach> page;
@@ -83,8 +85,12 @@ public class TrangChuService {
             if (sachDaDoc.isEmpty()) {
                 page = sachRepository.findSachNoiBat(pageable);
             } else {
-                // Lấy danh mục yêu thích từ sách đã đọc để gợi ý chính xác hơn
-                page = sachRepository.findSachNoiBat(pageable);
+                List<Long> danhMucIds = sachDanhMucRepository.findDanhMucIdsBySachIds(sachDaDoc);
+                if (danhMucIds.isEmpty()) {
+                    page = sachRepository.findSachNoiBat(pageable);
+                } else {
+                    page = sachRepository.findSachGoiYThanhVien(maNd, danhMucIds, pageable);
+                }
             }
         }
 

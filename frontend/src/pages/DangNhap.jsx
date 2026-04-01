@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import './DangNhap.css';
@@ -13,6 +14,7 @@ export default function DangNhap() {
   const [loi, dat_loi] = useState({});
   const [loi_server, dat_loi_server] = useState('');
   const [dang_gui, dat_dang_gui] = useState(false);
+  const [hien_mat_khau, dat_hien_mat_khau] = useState(false);
 
   function kiem_tra_truong(ten_truong, gia_tri) {
     if (!gia_tri.trim()) {
@@ -98,16 +100,26 @@ export default function DangNhap() {
 
           <div className="nhom_truong">
             <label className="nhan_truong" htmlFor="mat_khau">Mật khẩu</label>
-            <input
-              id="mat_khau"
-              name="mat_khau"
-              type="password"
-              value={du_lieu.mat_khau}
-              onChange={xu_ly_thay_doi}
-              placeholder="Nhập mật khẩu"
-              className={`o_nhap${loi.mat_khau ? ' loi' : ''}`}
-              autoComplete="current-password"
-            />
+            <div className="khung_mat_khau">
+              <input
+                id="mat_khau"
+                name="mat_khau"
+                type={hien_mat_khau ? 'text' : 'password'}
+                value={du_lieu.mat_khau}
+                onChange={xu_ly_thay_doi}
+                placeholder="Nhập mật khẩu"
+                className={`o_nhap${loi.mat_khau ? ' loi' : ''}`}
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                className="nut_hien_mat_khau"
+                onClick={() => dat_hien_mat_khau(v => !v)}
+                tabIndex={-1}
+              >
+                {hien_mat_khau ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
             <span className="thong_bao_loi">{loi.mat_khau || ''}</span>
           </div>
 

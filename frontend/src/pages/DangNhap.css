@@ -197,3 +197,32 @@
     border: none;
   }
 }
+
+.khung_mat_khau {
+  position: relative;
+}
+
+.khung_mat_khau .o_nhap {
+  padding-right: 44px;
+}
+
+.nut_hien_mat_khau {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.nut_hien_mat_khau:hover {
+  color: #2563eb;
+}
+

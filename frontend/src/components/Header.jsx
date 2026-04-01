@@ -51,7 +51,7 @@ export default function Header() {
       dat_mo_dropdown(false);
       dat_dang_xuat_loading(false);
       toast.success('Đăng xuất thành công!');
-      dieu_huong('/trang_chu');
+      dieu_huong('/dang_nhap', { replace: true });
     }
   }
 
@@ -171,7 +171,7 @@ export default function Header() {
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && dat_hien_modal(false)}>
           <div className="modal-box">
             <h2 className="modal-title">Xác nhận đăng xuất</h2>
-            <p className="modal-content">Bạn có chắc chắn muốn rời khỏi tài khoản không?</p>
+            <p className="modal-content">Bạn có chắc chắn muốn đăng xuất không?</p>
             <div className="modal-actions">
               <button
                 className="btn-cancel"

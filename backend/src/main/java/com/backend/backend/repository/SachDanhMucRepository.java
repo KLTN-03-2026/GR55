@@ -2,6 +2,8 @@ package com.backend.backend.repository;
 
 import com.backend.backend.entity.SachDanhMuc;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,9 @@ public interface SachDanhMucRepository extends JpaRepository<SachDanhMuc, Long> 
     int countByMaDm(Long maDm);
 
     List<SachDanhMuc> findByMaSach(Long maSach);
+
+    @Query("SELECT DISTINCT sd.maDm FROM SachDanhMuc sd WHERE sd.maSach IN :sachIds")
+    List<Long> findDanhMucIdsBySachIds(@Param("sachIds") List<Long> sachIds);
 
     @Transactional
     void deleteByMaSach(Long maSach);

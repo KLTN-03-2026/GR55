@@ -9,6 +9,8 @@ import com.backend.backend.repository.DanhMucSachRepository;
 import com.backend.backend.repository.GoiHoiVienSachRepository;
 import com.backend.backend.repository.SachDanhMucRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,7 @@ public class DanhMucSachService {
     private final ChuongTrinhGiamGiaSachRepository chuongTrinhGiamGiaSachRepository;
     private final GoiHoiVienSachRepository goiHoiVienSachRepository;
 
+    @Cacheable(value = "danh_muc", key = "(#tenTimKiem != null ? #tenTimKiem : '') + '_' + #trang + '_' + #kichThuoc")
     public DanhSachDanhMucResponse layDanhSachDanhMuc(String tenTimKiem, int trang, int kichThuoc) {
         Pageable phanTrang = PageRequest.of(trang - 1, kichThuoc, Sort.by("ngayTao").descending());
         Page<DanhMucSach> trangKetQua;
@@ -55,6 +58,7 @@ public class DanhMucSachService {
         );
     }
 
+    @CacheEvict(value = "danh_muc", allEntries = true)
     public DanhMucResponse themDanhMuc(DanhMucRequest yeuCau) {
         if (danhMucSachRepository.existsByTenDanhMuc(yeuCau.getTen_danh_muc().trim())) {
             return new DanhMucResponse(false, "Tên danh mục đã tồn tại", null);
@@ -71,6 +75,7 @@ public class DanhMucSachService {
         );
     }
 
+    @CacheEvict(value = "danh_muc", allEntries = true)
     public DanhMucResponse suaDanhMuc(Long maDm, DanhMucRequest yeuCau) {
         DanhMucSach danhMuc = danhMucSachRepository.findById(maDm)
                 .orElse(null);
@@ -94,6 +99,7 @@ public class DanhMucSachService {
         );
     }
 
+    @CacheEvict(value = "danh_muc", allEntries = true)
     @Transactional
     public DanhMucResponse xoaDanhMuc(Long maDm) {
         DanhMucSach danhMuc = danhMucSachRepository.findById(maDm)

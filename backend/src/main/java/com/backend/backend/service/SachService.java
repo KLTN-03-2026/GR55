@@ -8,6 +8,8 @@ import com.backend.backend.entity.Sach;
 import com.backend.backend.entity.SachDanhMuc;
 import com.backend.backend.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,17 +31,19 @@ public class SachService {
     private final SachDanhMucRepository sachDanhMucRepository;
     private final DanhMucSachRepository danhMucSachRepository;
     private final DonHangRepository donHangRepository;
+    private final TienDoDocSachRepository tienDoDocSachRepository;
     private final ChuongTrinhGiamGiaSachRepository chuongTrinhGiamGiaSachRepository;
     private final GoiHoiVienSachRepository goiHoiVienSachRepository;
     private final S3Service s3Service;
 
-    public DanhSachSachResponse layDanhSachSach(String tuKhoa, Long maDanhMuc, int trang, int kichThuoc) {
+    @Cacheable(value = "sach", key = "(#tuKhoa != null ? #tuKhoa : '') + '_' + (#maDanhMuc != null ? #maDanhMuc : '') + '_' + (#mienPhi != null ? #mienPhi : '') + '_' + #trang + '_' + #kichThuoc")
+    public DanhSachSachResponse layDanhSachSach(String tuKhoa, Long maDanhMuc, Boolean mienPhi, int trang, int kichThuoc) {
         Pageable phanTrang = PageRequest.of(trang - 1, kichThuoc, Sort.by("ngayTao").descending());
 
         String tuKhoaLoc = (tuKhoa != null && !tuKhoa.trim().isEmpty()) ? tuKhoa.trim() : null;
         Long maDmLoc = (maDanhMuc != null && maDanhMuc > 0) ? maDanhMuc : null;
 
-        Page<Sach> trangKetQua = sachRepository.timKiemVaLocSach(tuKhoaLoc, maDmLoc, phanTrang);
+        Page<Sach> trangKetQua = sachRepository.timKiemVaLocSach(tuKhoaLoc, maDmLoc, mienPhi, phanTrang);
 
         List<SachResponse.DuLieuSach> danhSach = trangKetQua.getContent().stream()
                 .map(this::chuyenSangDuLieuSach)
@@ -53,6 +57,7 @@ public class SachService {
         );
     }
 
+    @CacheEvict(value = "sach", allEntries = true)
     @Transactional
     public SachResponse themSachMoi(SachRequest yeuCau, MultipartFile anhBia, MultipartFile filePdf) throws IOException {
         if (sachRepository.existsByTenSachAndDaXoaFalse(yeuCau.getTen_sach().trim())) {
@@ -91,6 +96,7 @@ public class SachService {
         return new SachResponse(true, "Thêm sách thành công", chuyenSangDuLieuSach(daLuu));
     }
 
+    @CacheEvict(value = "sach", allEntries = true)
     @Transactional
     public SachResponse suaSach(Long maSach, SachRequest yeuCau, MultipartFile anhBia, MultipartFile filePdf) throws IOException {
         Sach sach = sachRepository.findById(maSach).orElse(null);
@@ -126,6 +132,7 @@ public class SachService {
         return new SachResponse(true, "Cập nhật sách thành công", chuyenSangDuLieuSach(daCapNhat));
     }
 
+    @CacheEvict(value = "sach", allEntries = true)
     @Transactional
     public SachResponse xoaSach(Long maSach) {
         Sach sach = sachRepository.findById(maSach).orElse(null);
@@ -135,6 +142,9 @@ public class SachService {
 
         if (donHangRepository.kiemTraSachDaBan(maSach)) {
             return new SachResponse(false, "Không thể xóa sách đã có người mua", null);
+        }
+        if (tienDoDocSachRepository.existsByMaSach(maSach)) {
+            return new SachResponse(false, "Không thể xóa sách đã có trong thư viện người dùng", null);
         }
         if (chuongTrinhGiamGiaSachRepository.existsByMaSach(maSach)) {
             return new SachResponse(false, "Vui lòng xóa sách khỏi chương trình giảm giá trước", null);
