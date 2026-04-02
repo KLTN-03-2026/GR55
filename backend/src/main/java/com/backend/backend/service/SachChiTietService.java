@@ -1,7 +1,6 @@
 package com.backend.backend.service;
 
 import com.backend.backend.dto.*;
-import com.backend.backend.entity.DanhGia;
 import com.backend.backend.entity.Sach;
 import com.backend.backend.entity.SachDanhMuc;
 import com.backend.backend.repository.*;
@@ -30,7 +29,6 @@ public class SachChiTietService {
     private final GoiHoiVienSachRepository goiHoiVienSachRepository;
     private final SachDanhMucRepository sachDanhMucRepository;
     private final DanhMucSachRepository danhMucSachRepository;
-    private final NguoiDungRepository nguoiDungRepository;
 
     @Cacheable(value = "chi_tiet_sach", key = "#maSach + '_' + #maNd")
     public ChiTietSachResponse layChiTietSach(Long maSach, Long maNd) {
@@ -68,7 +66,7 @@ public class SachChiTietService {
                 sach.getTacGia(),
                 sach.getMoTa(),
                 sach.getGia(),
-                null, // TODO: tính giá giảm từ bảng chuong_trinh_giam_gia
+                null,
                 diemTrungBinh != null ? diemTrungBinh : 0.0,
                 soLuotDanhGia != null ? soLuotDanhGia : 0,
                 sach.getAnhBiaUrl(),
@@ -110,32 +108,6 @@ public class SachChiTietService {
                 .collect(Collectors.toList());
 
         return new SachLienQuanResponse(
-                danhSach,
-                page.getNumber() + 1,
-                page.getTotalPages(),
-                page.getTotalElements());
-    }
-
-    public DanhSachDanhGiaResponse layDanhSachDanhGia(Long maSach, int trang, int kichThuoc) {
-        Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
-        Page<DanhGia> page = danhGiaRepository.findDanhGiaBySach(maSach, pageable);
-
-        List<DanhSachDanhGiaResponse.DanhGiaData> danhSach = page.getContent().stream()
-                .map(dg -> {
-                    String tenNguoiDung = nguoiDungRepository.findById(dg.getMaNd())
-                            .map(nd -> nd.getHoTen())
-                            .orElse("Ẩn danh");
-                    return new DanhSachDanhGiaResponse.DanhGiaData(
-                            dg.getMaDg(),
-                            dg.getMaNd(),
-                            tenNguoiDung,
-                            dg.getSoSao(),
-                            dg.getNoiDung(),
-                            dg.getNgayTao());
-                })
-                .collect(Collectors.toList());
-
-        return new DanhSachDanhGiaResponse(
                 danhSach,
                 page.getNumber() + 1,
                 page.getTotalPages(),
