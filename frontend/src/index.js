@@ -30,6 +30,7 @@ import DanhSachMoiNhat from './pages/booklist/DanhSachMoiNhat';
 import DanhSachHoiVien from './pages/booklist/DanhSachHoiVien';
 import DanhSachGoiY from './pages/booklist/DanhSachGoiY';
 import TheCardSach from './components/TheCardSach';
+import SachChiTiet from './pages/SachChiTiet';
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -40,16 +41,14 @@ root.render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            {/* =========================================================
-              NHÓM 1: GIAO DIỆN KHÁCH HÀNG 
-              (Các trang này sẽ có Header và Footer cố định từ App.js)
-          ========================================================= */}
+            {/* NHÓM 1: GIAO DIỆN KHÁCH HÀNG (Các trang này sẽ có Header và Footer cố định từ App.js) */}
             <Route path="/" element={<Navigate to="/trang_chu" replace />} />
 
             <Route path="/trang_chu" element={<App><TrangChu /></App>} />
             <Route path="/dang_ky" element={<App><DangKy /></App>} />
             <Route path="/dang_nhap" element={<App><DangNhap /></App>} />
             <Route path="/quen_mat_khau" element={<App><QuenMatKhau /></App>} />
+            <Route path="/sach/:ma_sach" element={<App><SachChiTiet/></App>}/>
 
 
 
@@ -59,10 +58,7 @@ root.render(
             <Route path="/sach_goi_y" element={<App><DanhSachGoiY /></App>} />
             <Route path="/sach_noi_bat" element={<App><DanhSachNoiBat /></App>} />
 
-            {/* =========================================================
-              NHÓM 2: GIAO DIỆN QUẢN TRỊ 
-              (Các trang này KHÔNG bọc <App> để tự thiết kế layout riêng)
-          ========================================================= */}
+            {/* NHÓM 2: GIAO DIỆN QUẢN TRỊ (Các trang này KHÔNG bọc <App> để tự thiết kế layout riêng)*/}
             <Route
               path="/quan_tri"
               element={
