@@ -128,7 +128,7 @@ public class NguoiDungService {
         nguoiDungRepository.save(nguoiDung);
 
         String tenVaiTro = nguoiDung.getVaiTro().getTenVaiTro();
-        String token = jwtUtil.taoToken(nguoiDung.getEmail(), tenVaiTro);
+        String token = jwtUtil.taoToken(nguoiDung.getMaNguoiDung(), nguoiDung.getEmail(), tenVaiTro);
 
         DangNhapResponse.ThongTinNguoiDung thongTin = new DangNhapResponse.ThongTinNguoiDung(
                 nguoiDung.getMaNguoiDung(),

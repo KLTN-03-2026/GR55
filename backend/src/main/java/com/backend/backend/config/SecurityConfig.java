@@ -44,6 +44,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(phanQuyen ->
                 phanQuyen
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers("/error").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/home/**").permitAll()
                     .requestMatchers("/api/sach/**").permitAll()

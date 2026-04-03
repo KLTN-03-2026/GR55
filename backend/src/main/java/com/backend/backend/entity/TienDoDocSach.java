@@ -19,7 +19,7 @@ public class TienDoDocSach {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_td")
+    @Column(name = "ma_td")
     private Long idTd;
 
     @Column(name = "ma_nd", nullable = false)

@@ -55,7 +55,7 @@ public class SachChiTietService {
         boolean laHoiVien = false;
 
         if (maNd != null) {
-            daMua = donHangRepository.daMuaSach(maNd, maSach);
+            daMua = donHangRepository.countDaMuaSach(maNd, maSach) > 0;
             daYeuThich = sachYeuThichRepository.daYeuThich(maNd, maSach);
             laHoiVien = lichSuHoiVienRepository.isHoiVien(maNd, LocalDateTime.now());
         }

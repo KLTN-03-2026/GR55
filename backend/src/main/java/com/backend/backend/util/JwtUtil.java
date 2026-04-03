@@ -35,17 +35,22 @@ public class JwtUtil {
         this.tokenBlacklistService = tokenBlacklistService;
     }
 
-    public String taoToken(String email, String vaiTro) {
+    public String taoToken(Long maNd, String email, String vaiTro) {
         Date bayGio = new Date();
         Date hetHan = new Date(bayGio.getTime() + thoiGianHetHan);
 
         return Jwts.builder()
                 .setSubject(email)
+                .claim("ma_nd", maNd)
                 .claim("vai_tro", vaiTro)
                 .setIssuedAt(bayGio)
                 .setExpiration(hetHan)
                 .signWith(khoaBiMat, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public Long layMaNdTuToken(String token) {
+        return layThongTinToken(token).get("ma_nd", Long.class);
     }
 
     public boolean xacThucToken(String token) {

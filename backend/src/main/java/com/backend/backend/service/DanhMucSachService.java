@@ -115,12 +115,12 @@ public class DanhMucSachService {
                     "Không thể xóa danh mục đang có " + soLuongSach + " sách", null);
         }
 
-        if (chuongTrinhGiamGiaSachRepository.kiemTraSachTrongDanhMucCoGiamGia(maDm)) {
+        if (chuongTrinhGiamGiaSachRepository.countSachTrongDanhMucCoGiamGia(maDm) > 0) {
             return new DanhMucResponse(false,
                     "Vui lòng xóa sách khỏi chương trình giảm giá trước khi xóa danh mục", null);
         }
 
-        if (goiHoiVienSachRepository.kiemTraSachTrongDanhMucCoTrongGoiHoiVien(maDm)) {
+        if (goiHoiVienSachRepository.countSachTrongDanhMucCoTrongGoiHoiVien(maDm) > 0) {
             return new DanhMucResponse(false,
                     "Vui lòng xóa sách khỏi gói hội viên trước khi xóa danh mục", null);
         }

@@ -140,7 +140,7 @@ public class SachService {
             return new SachResponse(false, "Sách không tồn tại", null);
         }
 
-        if (donHangRepository.kiemTraSachDaBan(maSach)) {
+        if (donHangRepository.countSachDaBan(maSach) > 0) {
             return new SachResponse(false, "Không thể xóa sách đã có người mua", null);
         }
         if (tienDoDocSachRepository.existsByMaSach(maSach)) {

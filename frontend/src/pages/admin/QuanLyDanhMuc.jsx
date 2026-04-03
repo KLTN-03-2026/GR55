@@ -322,22 +322,30 @@ export default function QuanLyDanhMuc() {
           <div className="hop_modal">
             <h2 className="tieu_de_modal">Xác nhận xóa</h2>
 
-            <p className="noi_dung_modal_xoa">
-              Bạn có chắc chắn muốn xóa danh mục{' '}
-              <span className="ten_xoa_noi_bat">"{danh_muc_xoa.ten_danh_muc}"</span> không?
-            </p>
-
-            {loi_server_xoa && (
+            {loi_server_xoa ? (
               <p className="canh_bao_xoa">{loi_server_xoa}</p>
+            ) : (
+              <p className="noi_dung_modal_xoa">
+                Bạn có chắc chắn muốn xóa danh mục{' '}
+                <span className="ten_xoa_noi_bat">"{danh_muc_xoa.ten_danh_muc}"</span> không?
+              </p>
             )}
 
             <div className="nhom_nut_modal">
-              <button className="nut_huy" onClick={dong_modal_xoa} disabled={dang_xoa}>
-                Không
-              </button>
-              <button className="nut_xoa_xac_nhan" onClick={xu_ly_xoa} disabled={dang_xoa}>
-                {dang_xoa ? 'Đang xóa...' : 'Có, xóa'}
-              </button>
+              {loi_server_xoa ? (
+                <button className="nut_luu" onClick={dong_modal_xoa}>
+                  Đóng
+                </button>
+              ) : (
+                <>
+                  <button className="nut_huy" onClick={dong_modal_xoa} disabled={dang_xoa}>
+                    Không
+                  </button>
+                  <button className="nut_xoa_xac_nhan" onClick={xu_ly_xoa} disabled={dang_xoa}>
+                    {dang_xoa ? 'Đang xóa...' : 'Có, xóa'}
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
