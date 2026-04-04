@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -31,8 +32,15 @@ public class TienDoDocSach {
     @Column(name = "trang_hien_tai")
     private Integer trangHienTai = 1;
 
-    @Column(name = "phan_tram_hoan_thanh")
-    private Double phanTramHoanThanh = 0.0;
+    @Column(name = "phan_tram", precision = 5, scale = 2)
+    private Double phanTram = 0.0;
+
+    @Column(name = "lan_doc_cuoi")
+    private LocalDateTime lanDocCuoi;
+
+    @CreationTimestamp
+    @Column(name = "ngay_tao", updatable = false)
+    private LocalDateTime ngayTao;
 
     @UpdateTimestamp
     @Column(name = "ngay_cap_nhat")
