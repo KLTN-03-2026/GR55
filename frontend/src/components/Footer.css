@@ -1,17 +1,16 @@
-/* =========================================
-   FOOTER CHÍNH CỦA HỆ THỐNG BOOKNEST
-========================================= */
 .bn-footer {
-    background-color: #1e293b; /* Màu xanh đen sang trọng, đỡ mỏi mắt */
-    color: #f8fafc;
-    padding: 20px 0 20px; /* Padding trên lớn để tách biệt với nội dung trang */
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin-top: auto; /* Bổ trợ cho layout khung xương để luôn nằm ở đáy */
+    /* Đổ màu nền Gradient giống hệt Header */
+    background: linear-gradient(to right, #e0eafc, #cfdef3);
+    /* Chuyển toàn bộ text mặc định sang màu tối */
+    color: #1e293b; 
+    padding: 20px 0 20px;
+    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin-top: auto;
+    /* Thêm viền mờ ở trên và đổ bóng nhẹ để tạo khối */
+    border-top: 1px solid rgba(148, 163, 184, 0.25);
+    box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.03);
 }
 
-/* =========================================
-   GIỚI HẠN CHIỀU RỘNG (Đồng bộ với Header)
-========================================= */
 .bn-container {
     width: 100%;
     max-width: 1200px;
@@ -19,21 +18,15 @@
     padding: 0 20px;
 }
 
-/* =========================================
-   LƯỚI CHIA CỘT (TỰ ĐỘNG RESPONSIVE)
-========================================= */
+/* LƯỚI CHIA CỘT (TỰ ĐỘNG RESPONSIVE) */
 .bn-footer-row {
     display: grid;
-    /* Lệnh Grid thần thánh: Cột rộng tối thiểu 250px, tối đa 1 phần đều nhau. 
-       Nếu màn hình nhỏ, nó tự rớt xuống thành 2 cột hoặc 1 cột. */
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 40px; /* Khoảng cách giữa các cột */
+    gap: 40px;
     margin-bottom: 50px;
 }
 
-/* =========================================
-   CỘT 1: THÔNG TIN & LOGO
-========================================= */
+/* CỘT 1: THÔNG TIN & LOGO */
 .bn-footer-logo {
     font-size: 28px;
     font-weight: 800;
@@ -43,21 +36,24 @@
     letter-spacing: 1px;
 }
 
+/* Ghi đè style inline trong JSX để chữ "Book" màu đen thay vì màu trắng */
+.bn-logo-book {
+    color: #1e293b !important;
+}
+
 .bn-footer-desc {
-    color: #94a3b8; /* Màu xám nhạt cho text phụ */
+    color: #475569; /* Xám đậm để dễ đọc trên nền sáng */
     line-height: 1.7;
     font-size: 15px;
     margin-top: 10px;
 }
 
-/* =========================================
-   CỘT 2 & 3: TIÊU ĐỀ & DANH SÁCH LINK
-========================================= */
+/* CỘT 2 & 3: TIÊU ĐỀ & DANH SÁCH LINK */
 .bn-footer-col h4 {
     font-size: 18px;
-    color: #ffffff;
+    color: #0f172a; /* Đen đậm nhất cho tiêu đề */
     margin-bottom: 25px;
-    font-weight: 600;
+    font-weight: 700;
     position: relative;
     padding-bottom: 10px;
     text-transform: uppercase;
@@ -72,7 +68,8 @@
     bottom: 0;
     width: 40px;
     height: 3px;
-    background-color: rgb(37, 99, 235); /* Màu xanh lá đồng bộ với chữ Nest */
+    /* Dùng màu gradient xanh - tím giống logo Header cho đồng bộ */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 2px;
 }
 
@@ -86,29 +83,28 @@
     margin-bottom: 12px;
 }
 
-/* Hiệu ứng hover cho link: Sáng màu và nhích nhẹ sang phải */
+/* Link màu xám đậm */
 .bn-footer-col ul li a {
-    color: #94a3b8;
+    color: #475569;
     text-decoration: none;
     font-size: 15px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-block;
 }
 
+/* Hover đổi màu xanh giống Header */
 .bn-footer-col ul li a:hover {
-    color: rgb(37, 99, 235);
-    transform: translateX(5px); /* Hiệu ứng trượt text đẹp mắt */
+    color: #667eea;
+    transform: translateX(5px);
 }
 
-/* =========================================
-   CỘT 4: LIÊN HỆ & ICONS
-========================================= */
+/* CỘT 4: LIÊN HỆ & ICONS */
 .bn-contact-item {
     display: flex;
-    align-items: flex-start; /* Căn trên để icon không bị lệch nếu text dài 2 dòng */
+    align-items: flex-start;
     gap: 15px;
     margin-bottom: 18px;
-    color: #94a3b8;
+    color: #475569;
     font-size: 15px;
     line-height: 1.5;
 }
@@ -116,17 +112,16 @@
 .bn-contact-item svg {
     width: 22px;
     height: 22px;
-    flex-shrink: 0; /* Tránh icon bị méo nếu màn hình nhỏ */
-    color: rgb(37, 99, 235);
+    flex-shrink: 0;
+    color: #667eea; /* Đổi icon sang tone xanh của Header */
     margin-top: 2px;
 }
 
-/* =========================================
-   DÒNG BẢN QUYỀN CUỐI TRANG
-========================================= */
+/* DÒNG BẢN QUYỀN CUỐI TRANG */
 .bn-footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Đường kẻ mờ phân cách */
-    padding-top: 10px;
+    /* Đổi viền sang màu xám nhạt */
+    border-top: 1px solid rgba(148, 163, 184, 0.3);
+    padding-top: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -135,26 +130,11 @@
 }
 
 .bn-footer-bottom span {
-    color: rgb(37, 99, 235);
-    font-weight: 600;
+    /* Tên team đổi sang gradient cho nổi bật */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
 }
 
-/* =========================================
-   RESPONSIVE CHO ĐIỆN THOẠI
-========================================= */
-@media (max-width: 768px) {
-    .bn-footer {
-        padding-top: 50px;
-    }
-    
-    .bn-footer-row {
-        gap: 30px;
-    }
-
-    /* Đưa dòng bản quyền thành một cột dọc nằm giữa ở mobile */
-    .bn-footer-bottom {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
-}

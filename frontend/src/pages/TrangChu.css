@@ -9,140 +9,144 @@
   padding: 0 20px;
 }
 
-/* Categories Nav */
-.categories-nav {
-  padding: 15px 0;
-  border-bottom: 1px solid #f0f0f0;
+/* Các Section trang chủ [cite: 224-228] */
+.section_trang_chu {
+  margin-bottom: 48px;
 }
 
-.nav-content {
+.tieu_de_section,
+.tieu_de_trang_danh_sach {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
-
-.nav-label {
-  color: #2563eb;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.category-items {
-  display: flex;
-  gap: 8px;
-}
-
-.btn-cat {
-  background-color: #e5e7eb;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.link-view-all {
-  margin-left: auto;
-  color: #333;
-  font-weight: 700;
-  text-decoration: none;
-  font-size: 13px;
-}
-
-/* Sections */
-.book-section {
-  padding: 40px 0;
-}
-
-.featured-bg {
-  background-color: #f3f4f6;
-  margin: 0 -20px;
-  padding: 40px 20px;
-}
-
-.section-header {
-  display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
-.section-title {
-  font-size: 20px;
-  font-weight: 800;
-  margin: 0;
-  text-transform: uppercase;
-}
-
-.section-subtitle {
-  font-size: 12px;
-  color: #6b7280;
-  margin: 4px 0 0 0;
-}
-
-.link-more {
-  color: #333;
+.tieu_de_section h2,
+.tieu_de_trang_danh_sach h1 {
+  font-size: 22px;
   font-weight: 700;
+  color: #1e3a5f;
+}
+
+.nut_xem_them {
+  font-size: 14px;
+  color: #2563eb;
   text-decoration: none;
+  font-weight: 500;
+}
+
+.nut_xem_them:hover {
+  text-decoration: underline;
+}
+
+/* Grid sách - Responsive [cite: 230-237] */
+.luoi_sach {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .luoi_sach {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .luoi_sach {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .luoi_sach {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Section Danh mục [cite: 239-253] */
+.luoi_danh_muc {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.the_danh_muc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 8px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  text-decoration: none;
+  color: #374151;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.the_danh_muc:hover {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.ten_danh_muc_card {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.so_sach_danh_muc {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+/* Nút quay lại trang danh sách [cite: 299-302] */
+.nut_quay_lai {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #374151;
   font-size: 14px;
 }
 
-/* Book Grid & Card */
-.book-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 30px;
+.nut_quay_lai:hover {
+  background: #f3f4f6;
 }
 
-.book-card {
-  width: 180px;
-}
-
-.book-cover {
-  background-color: #8d7373;
-  height: 250px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: bold;
-  border-radius: 4px;
-  margin-bottom: 12px;
-}
-
-.book-title {
-  font-size: 15px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.book-author {
-  font-size: 13px;
-  color: #6b7280;
-  margin: 4px 0;
-}
-
-.book-price {
-  color: #ef4444;
-  font-weight: 700;
-  margin: 4px 0;
-}
-
-.badge-vip {
-  display: inline-block;
-  background-color: #d4e157;
-  padding: 2px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 800;
-  margin-top: 5px;
-}
-
-/* Footer */
-.home-footer {
-  background-color: #e5e7eb;
-  padding: 50px 0;
+/* Thông báo trống [cite: 256] */
+.chua_co_du_lieu {
+  color: #9ca3af;
+  font-style: italic;
   text-align: center;
+  padding: 24px 0;
+  grid-column: 1 / -1;
+}
+
+/* Phân trang (Tái sử dụng style QuanLySach) [cite: 305] */
+.phan_trang {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
   margin-top: 40px;
+}
+
+.nut_trang {
+  padding: 8px 16px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.nut_trang.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
 }

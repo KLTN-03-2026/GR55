@@ -1,68 +1,70 @@
-/* =========================================
-   BỐ CỤC TỔNG THỂ TRANG ĐĂNG NHẬP
-========================================= */
+* {
+  box-sizing: border-box;
+}
+
 .trang_dang_nhap {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Nếu nội dung ngắn, form sẽ nằm giữa khoảng trống của Header và Footer */
-  min-height: calc(100vh - 300px); 
-  padding: 20px;
+  min-height: calc(100vh - 200px); 
+  padding: 40px 20px;
+  /* Thêm một chút màu nền thật nhạt để làm nổi bật form trắng */
+  background-color: #fafafa;
 }
 
-/* =========================================
-   HỘP FORM ĐĂNG NHẬP (CARD)
-========================================= */
+/* HỘP FORM ĐĂNG NHẬP (CARD) */
 .hop_dang_nhap {
-  background-color: #ffffff;
+  background: linear-gradient(to right, #e0eafc, #cfdef3);
   width: 100%;
-  max-width: 420px; /* Độ rộng vừa phải để form không bị bè ra */
-  padding: 40px 30px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Đổ bóng tạo chiều sâu */
-  border: 1px solid #f1f5f9;
+  max-width: 440px; 
+  padding: 40px 36px;
+  border-radius: 20px;
+  /* Đổ bóng mềm mại, pha chút màu tím/xanh nhạt */
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1); 
+  border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
-/* =========================================
-   LOGO VÀ TIÊU ĐỀ
-========================================= */
+/* LOGO VÀ TIÊU ĐỀ */
 .logo_khu_vuc {
   text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 8px;
 }
 
 .logo_ten {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 800;
-  color: #1e293b;
-  letter-spacing: 1px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
 }
 
 .tieu_de_dang_nhap {
   text-align: center;
-  font-size: 20px;
+  font-size: 22px;
   color: #475569;
   font-weight: 600;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
-/* =========================================
-   THÔNG BÁO LỖI TỪ SERVER
-========================================= */
+/* THÔNG BÁO LỖI TỪ SERVER */
 .thong_bao_server_loi {
   background-color: #fef2f2;
   color: #ef4444;
   padding: 12px 15px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   text-align: center;
   border: 1px solid #fca5a5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-/* =========================================
-   CÁC TRƯỜNG NHẬP LIỆU (INPUT)
-========================================= */
+/* CÁC TRƯỜNG NHẬP LIỆU (INPUT) */
 .nhom_truong {
   margin-bottom: 20px;
   position: relative;
@@ -78,137 +80,52 @@
 
 .o_nhap {
   width: 100%;
-  padding: 12px 15px;
+  padding: 14px 16px;
   font-size: 15px;
   color: #1e293b;
   background-color: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
 }
 
-/* Hiệu ứng khi click vào ô nhập */
+/* Hiệu ứng focus áp dụng tone Tím/Xanh */
 .o_nhap:focus {
   background-color: #ffffff;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
 }
 
-/* Trạng thái lỗi của ô nhập */
 .o_nhap.loi {
   border-color: #ef4444;
   background-color: #fef2f2;
 }
 
 .o_nhap.loi:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
 }
 
 .thong_bao_loi {
   display: block;
   color: #ef4444;
   font-size: 13px;
-  margin-top: 5px;
-  min-height: 18px; /* Giữ khoảng trống để form không bị giật cụng khi hiện lỗi */
+  margin-top: 6px;
+  min-height: 18px; 
 }
 
-/* =========================================
-   NÚT BẤM VÀ LIÊN KẾT
-========================================= */
-.nut_dang_nhap {
-  width: 100%;
-  padding: 14px;
-  background-color: #2563eb;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.1s;
-  margin-top: 5px;
-}
-
-.nut_dang_nhap:hover:not(:disabled) {
-  background-color: #2563eb; /* Đậm hơn khi hover */
-}
-
-.nut_dang_nhap:active:not(:disabled) {
-  transform: scale(0.98); /* Hiệu ứng lún nút khi click */
-}
-
-.nut_dang_nhap:disabled {
-  background-color: #94a3b8;
-  cursor: not-allowed;
-  opacity: 0.8;
-}
-
-.lien_ket_quen_mat_khau {
-  display: block;
-  text-align: right;
-  margin-top: 15px;
-  font-size: 14px;
-  color: #3b82f6;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.lien_ket_quen_mat_khau:hover {
-  color: #2563eb;
-  text-decoration: underline;
-}
-
-/* =========================================
-   PHẦN ĐĂNG KÝ BÊN DƯỚI
-========================================= */
-.phan_cach {
-  border: none;
-  border-top: 1px solid #e2e8f0;
-  margin: 25px 0;
-}
-
-.khu_vuc_dang_ky {
-  text-align: center;
-  font-size: 15px;
-  color: #64748b;
-}
-
-.lien_ket_dang_ky {
-  color: #2563eb;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s;
-  margin-left: 5px;
-}
-
-.lien_ket_dang_ky:hover {
-  color: #2563eb;
-  text-decoration: underline;
-}
-
-/* =========================================
-   RESPONSIVE CHO ĐIỆN THOẠI
-========================================= */
-@media (max-width: 480px) {
-  .hop_dang_nhap {
-    padding: 30px 20px;
-    box-shadow: none; /* Bỏ bóng trên mobile cho phẳng */
-    border: none;
-  }
-}
-
+/* KHUNG MẬT KHẨU CÓ NÚT ẨN/HIỆN */
 .khung_mat_khau {
   position: relative;
 }
 
 .khung_mat_khau .o_nhap {
-  padding-right: 44px;
+  padding-right: 48px;
 }
 
 .nut_hien_mat_khau {
   position: absolute;
-  right: 12px;
+  right: 14px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -220,9 +137,89 @@
   font-size: 18px;
   padding: 4px;
   transition: color 0.2s;
+  outline: none;
 }
 
-.nut_hien_mat_khau:hover {
-  color: #2563eb;
+.nut_hien_mat_khau:hover, .nut_hien_mat_khau:focus {
+  color: #667eea;
+}
+
+/* NÚT ĐĂNG NHẬP CHÍNH */
+.nut_dang_nhap {
+  width: 100%;
+  padding: 15px;
+  /* Áp dụng dải gradient Tím/Xanh cho nút bấm */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+  box-shadow: 0 4px 15px rgba(118, 75, 162, 0.3);
+}
+
+.nut_dang_nhap:hover:not(:disabled) {
+  /* Làm nút sáng lên và nổi lên một chút khi hover */
+  box-shadow: 0 8px 25px rgba(118, 75, 162, 0.4);
+  transform: translateY(-2px);
+}
+
+.nut_dang_nhap:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 10px rgba(118, 75, 162, 0.3);
+}
+
+.nut_dang_nhap:disabled {
+  background: #cbd5e1;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* LIÊN KẾT QUÊN MẬT KHẨU */
+.lien_ket_quen_mat_khau {
+  display: block;
+  text-align: right;
+  margin-top: 16px;
+  font-size: 14px;
+  color: #764ba2;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.lien_ket_quen_mat_khau:hover {
+  color: #f5576c; /* Hiệu ứng đổi màu sang dải hồng khi hover */
+  text-decoration: underline;
+}
+
+/* PHẦN NGĂN CÁCH VÀ ĐĂNG KÝ BÊN DƯỚI */
+.phan_cach {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 28px 0;
+}
+
+.khu_vuc_dang_ky {
+  text-align: center;
+  font-size: 15px;
+  color: #64748b;
+}
+
+.lien_ket_dang_ky {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  margin-left: 6px;
+}
+
+.lien_ket_dang_ky:hover {
+  color: #764ba2;
+  text-decoration: underline;
 }
 
