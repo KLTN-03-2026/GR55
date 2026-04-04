@@ -57,6 +57,7 @@ CREATE TABLE sach (
     cho_phep_doc_thu BOOLEAN DEFAULT FALSE,
     so_trang_doc_thu INT DEFAULT 5,
     luot_xem INT DEFAULT 0,
+    so_luong_da_ban INT DEFAULT 0,
     danh_gia_trung_binh DECIMAL(3,2) DEFAULT 0,
     da_xoa BOOLEAN DEFAULT FALSE,
     ngay_xoa DATETIME DEFAULT NULL,

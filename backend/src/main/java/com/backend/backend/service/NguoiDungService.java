@@ -9,8 +9,6 @@ import com.backend.backend.repository.NguoiDungRepository;
 import com.backend.backend.repository.VaiTroRepository;
 import com.backend.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -79,25 +77,26 @@ public class NguoiDungService {
                     .build();
         }
 
-        if (nguoiDung.getTrangThai() == NguoiDung.TrangThai.khoa
-                && (nguoiDung.getKhoaDen() == null || nguoiDung.getKhoaDen().isBefore(LocalDateTime.now()))) {
-            nguoiDung.setTrangThai(NguoiDung.TrangThai.hoat_dong);
-            nguoiDung.setKhoaDen(null);
-            nguoiDung.setSoLanDangNhapSai(0);
-            nguoiDungRepository.save(nguoiDung);
+        // 1. Kiểm tra admin khóa vĩnh viễn (trang_thai = khoa, không có khoa_den)
+        if (nguoiDung.getTrangThai() == NguoiDung.TrangThai.khoa) {
+            return DangNhapResponse.builder()
+                    .success(false)
+                    .message("Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên")
+                    .build();
         }
 
-        if (nguoiDung.getTrangThai() == NguoiDung.TrangThai.khoa) {
-            if (nguoiDung.getKhoaDen() != null && nguoiDung.getKhoaDen().isAfter(LocalDateTime.now())) {
+        // 2. Kiểm tra tạm khóa 15 phút do đăng nhập sai (chỉ dựa vào khoa_den, không liên quan trang_thai)
+        if (nguoiDung.getKhoaDen() != null) {
+            if (nguoiDung.getKhoaDen().isAfter(LocalDateTime.now())) {
                 return DangNhapResponse.builder()
                         .success(false)
                         .message("Tài khoản tạm thời bị khóa. Vui lòng thử lại sau 15 phút")
                         .build();
             }
-            return DangNhapResponse.builder()
-                    .success(false)
-                    .message("Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên")
-                    .build();
+            // Hết 15 phút — reset tự động, không đụng trang_thai
+            nguoiDung.setKhoaDen(null);
+            nguoiDung.setSoLanDangNhapSai(0);
+            nguoiDungRepository.save(nguoiDung);
         }
 
         if (!passwordEncoder.matches(yeuCauDangNhap.getMat_khau(), nguoiDung.getMatKhau())) {
@@ -105,8 +104,8 @@ public class NguoiDungService {
             nguoiDung.setSoLanDangNhapSai(soLanSai);
 
             if (soLanSai >= 5) {
+                // Chỉ set khoa_den, KHÔNG thay đổi trang_thai
                 nguoiDung.setKhoaDen(LocalDateTime.now().plusMinutes(15));
-                nguoiDung.setTrangThai(NguoiDung.TrangThai.khoa);
                 nguoiDungRepository.save(nguoiDung);
                 return DangNhapResponse.builder()
                         .success(false)
@@ -124,7 +123,6 @@ public class NguoiDungService {
         nguoiDung.setSoLanDangNhapSai(0);
         nguoiDung.setKhoaDen(null);
         nguoiDung.setLanDangNhapCuoi(LocalDateTime.now());
-        nguoiDung.setTrangThai(NguoiDung.TrangThai.hoat_dong);
         nguoiDungRepository.save(nguoiDung);
 
         String tenVaiTro = nguoiDung.getVaiTro().getTenVaiTro();
@@ -219,7 +217,6 @@ public class NguoiDungService {
 
     // ===================== ADMIN - QUẢN LÝ NGƯỜI DÙNG =====================
 
-    @Cacheable(value = "nguoi_dung", key = "#tuKhoa + '_' + #vaiTro + '_' + #trangThai + '_' + #trang + '_' + #kichThuoc")
     public DanhSachNguoiDungResponse layDanhSachNguoiDung(
             String tuKhoa, String vaiTro, String trangThai, int trang, int kichThuoc) {
 
@@ -262,7 +259,6 @@ public class NguoiDungService {
                 Collections.emptyList()); // TODO: bổ sung lịch sử đơn hàng khi hoàn thiện entity DonHang
     }
 
-    @CacheEvict(value = "nguoi_dung", allEntries = true)
     @Transactional
     public NguoiDungResponse khoaMoKhoaTaiKhoan(Long maNd) {
         NguoiDung nguoiDung = nguoiDungRepository.findById(maNd)

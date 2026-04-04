@@ -19,7 +19,7 @@ public class LichSuHoiVien {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_lshv")
+    @Column(name = "ma_lshv")
     private Long idLsHv;
 
     @Column(name = "ma_nd", nullable = false)

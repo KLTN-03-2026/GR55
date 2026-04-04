@@ -1,0 +1,109 @@
+.trang_danh_sach {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+.dau_trang_danh_sach {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.tieu_de_danh_sach {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e3a5f;
+  flex: 1;
+  margin: 0;
+}
+
+.so_luong_sach {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Grid sách */
+.luoi_sach_ds {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .luoi_sach_ds { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .luoi_sach_ds { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .luoi_sach_ds { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Phân trang */
+.phan_trang_ds {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.nut_trang_ds {
+  padding: 8px 16px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 18px;
+  color: #374151;
+  transition: background 0.15s;
+}
+
+.nut_trang_ds:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.nut_trang_ds:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.vi_tri_trang_ds {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Nut quay lai */
+.nut_quay_lai_ds {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #374151;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.nut_quay_lai_ds:hover {
+  background: #f3f4f6;
+}
+
+/* Thông báo trống */
+.chua_co_du_lieu_ds {
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  padding: 48px 0;
+  grid-column: 1 / -1;
+}

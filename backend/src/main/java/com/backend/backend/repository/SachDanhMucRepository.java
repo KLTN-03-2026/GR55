@@ -13,7 +13,8 @@ import java.util.List;
 @Repository
 public interface SachDanhMucRepository extends JpaRepository<SachDanhMuc, Long> {
 
-    int countByMaDm(Long maDm);
+    @Query("SELECT COUNT(sd) FROM SachDanhMuc sd WHERE sd.maDm = :maDm AND sd.maSach IN (SELECT s.maSach FROM Sach s WHERE s.daXoa = false)")
+    int countByMaDm(@Param("maDm") Long maDm);
 
     List<SachDanhMuc> findByMaSach(Long maSach);
 

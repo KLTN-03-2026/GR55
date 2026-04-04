@@ -35,16 +35,13 @@ public class SachChiTietService {
         Sach sach = sachRepository.findById(maSach)
                 .orElseThrow(() -> new RuntimeException("Sách không tồn tại"));
 
-        List<Long> danhSachMaDm = sachDanhMucRepository.findByMaSach(maSach).stream()
-                .map(SachDanhMuc::getMaDm)
-                .collect(Collectors.toList());
-
-        List<String> tenDanhMuc = danhSachMaDm.stream()
-                .map(maDm -> danhMucSachRepository.findById(maDm)
-                        .map(dm -> dm.getTenDanhMuc())
-                        .orElse(""))
-                .filter(ten -> !ten.isEmpty())
-                .collect(Collectors.toList());
+        List<ChiTietSachResponse.SachChiTietData.DanhMucData> danhSachDanhMuc =
+                sachDanhMucRepository.findByMaSach(maSach).stream()
+                        .map(sdm -> danhMucSachRepository.findById(sdm.getMaDm())
+                                .map(dm -> new ChiTietSachResponse.SachChiTietData.DanhMucData(sdm.getMaDm(), dm.getTenDanhMuc()))
+                                .orElse(null))
+                        .filter(dm -> dm != null)
+                        .collect(Collectors.toList());
 
         Double diemTrungBinh = danhGiaRepository.tinhDiemTrungBinh(maSach);
         Integer soLuotDanhGia = danhGiaRepository.demSoLuotDanhGia(maSach);
@@ -74,7 +71,8 @@ public class SachChiTietService {
                 sach.getChoPhepDocThu(),
                 sach.getSoTrangDocThu(),
                 sach.getLuotXem(),
-                tenDanhMuc,
+                sach.getSoLuongDaBan() != null ? sach.getSoLuongDaBan() : 0,
+                danhSachDanhMuc,
                 daMua,
                 daYeuThich,
                 laHoiVien,
@@ -104,7 +102,9 @@ public class SachChiTietService {
                         s.getTacGia(),
                         s.getGia(),
                         s.getAnhBiaUrl(),
-                        s.getDanhGiaTrungBinh() != null ? s.getDanhGiaTrungBinh().doubleValue() : 0.0))
+                        s.getDanhGiaTrungBinh() != null ? s.getDanhGiaTrungBinh().doubleValue() : 0.0,
+                        s.getLuotXem(),
+                        s.getSoLuongDaBan() != null ? s.getSoLuongDaBan() : 0))
                 .collect(Collectors.toList());
 
         return new SachLienQuanResponse(

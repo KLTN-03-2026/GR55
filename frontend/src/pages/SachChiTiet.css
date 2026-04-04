@@ -312,6 +312,60 @@
   margin: 0;
 }
 
+/* Danh sách đánh giá */
+.danh_sach_danh_gia {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.the_danh_gia {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.dau_danh_gia {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.ten_nguoi_danh_gia {
+  font-weight: 600;
+  font-size: 14px;
+  color: #111827;
+}
+
+.sao_danh_gia_item {
+  color: #f59e0b;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.ngay_danh_gia {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-left: auto;
+}
+
+.noi_dung_danh_gia {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.skeleton_danh_gia {
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
 /* Skeleton inline */
 .o_skeleton {
   display: block;

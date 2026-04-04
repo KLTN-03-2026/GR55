@@ -19,7 +19,7 @@ public class SachYeuThich {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_yt")
+    @Column(name = "ma_sachyt")
     private Long idYt;
 
     @Column(name = "ma_nd", nullable = false)

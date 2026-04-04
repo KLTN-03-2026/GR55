@@ -33,7 +33,16 @@ public class ChiTietSachResponse {
         private Boolean cho_phep_doc_thu;
         private Integer so_trang_doc_thu;
         private Integer luot_xem;
-        private List<String> danh_sach_danh_muc;
+        private Integer so_luong_da_ban;
+        private List<DanhMucData> danh_sach_danh_muc;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DanhMucData {
+        private Long ma_dm;
+        private String ten_danh_muc;
+    }
         private Boolean da_mua;
         private Boolean da_yeu_thich;
         private Boolean la_hoi_vien;

@@ -23,7 +23,7 @@ public class DangNhapResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ThongTinNguoiDung {
-        private Long ma_nd;
+        private Long ma_nguoi_dung;
         private String ho_ten;
         private String email;
         private String vai_tro;

@@ -51,6 +51,9 @@ public class Sach {
     @Column(name = "luot_xem")
     private Integer luotXem = 0;
 
+    @Column(name = "so_luong_da_ban")
+    private Integer soLuongDaBan = 0;
+
     @Column(name = "danh_gia_trung_binh", precision = 3, scale = 2)
     private BigDecimal danhGiaTrungBinh = BigDecimal.ZERO;
 

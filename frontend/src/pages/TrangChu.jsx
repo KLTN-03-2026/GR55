@@ -8,48 +8,92 @@ import './TrangChu.css';
 
 const SO_SACH_TRANG_CHU = 10;
 
-// 1. Section Danh mục
-function SectionDanhMuc() {
+// 1. Section Khám phá sách (ngẫu nhiên — sau này sẽ thêm filter theo thể loại)
+function SectionKhamPha() {
+  const [ma_dm_chon, dat_ma_dm_chon] = useState(null);
+
   const { data: danh_muc = [], isLoading: dang_tai_dm } = useQuery({
     queryKey: ['danh_muc_trang_chu'],
     queryFn: async () => {
       const phan_hoi = await api.get('/home/danh_muc');
       return phan_hoi.data;
     },
-    staleTime: 60 * 60 * 1000, // 1 giờ [cite: 167]
+    staleTime: 60 * 60 * 1000,
   });
+
+  const { data: ket_qua, isLoading: dang_tai } = useQuery({
+    queryKey: ['sach_kham_pha', ma_dm_chon, SO_SACH_TRANG_CHU],
+    queryFn: async () => {
+      const phan_hoi = await api.get('/home/sach_noi_bat', {
+        params: { trang: 1, kich_thuoc: SO_SACH_TRANG_CHU },
+      });
+      return phan_hoi.data;
+    },
+    staleTime: 30 * 60 * 1000,
+  });
+
+  const danh_sach = ket_qua?.danh_sach || [];
+  const co_them = (ket_qua?.tong_so_ban_ghi || 0) > SO_SACH_TRANG_CHU;
 
   return (
     <section className="section_trang_chu">
       <div className="tieu_de_section">
-        <h2>Danh mục sách</h2>
+        <h2>Khám phá sách</h2>
+        {co_them && (
+          <Link to="/sach_noi_bat" className="nut_xem_them">
+            Xem thêm →
+          </Link>
+        )}
       </div>
-      <div className="luoi_danh_muc">
-        {dang_tai_dm
-          ? Array.from({ length: 8 }).map((_, i) => <div key={i} className="the_danh_muc_skeleton" />)
-          : danh_muc.map(dm => (
-            <Link key={dm.ma_dm} to={`/tim_kiem?danh_muc=${dm.ma_dm}`} className="the_danh_muc">
-              <span className="ten_danh_muc_card">{dm.ten_danh_muc}</span>
-              <span className="so_sach_danh_muc">{dm.so_luong_sach} cuốn</span>
-            </Link>
-          ))
-        }
+
+      {/* Filter thể loại — TODO: wire API lọc sách khi làm chức năng lọc */}
+      <div className="thanh_loc_the_loai">
+        <button
+          className={`nut_the_loai ${ma_dm_chon === null ? 'dang_chon' : ''}`}
+          onClick={() => dat_ma_dm_chon(null)}
+        >
+          Tất cả
+        </button>
+        {!dang_tai_dm &&
+          danh_muc
+            .filter((dm) => dm.so_luong_sach > 0)
+            .map((dm) => (
+              <button
+                key={dm.ma_dm}
+                className={`nut_the_loai ${ma_dm_chon === dm.ma_dm ? 'dang_chon' : ''}`}
+                onClick={() => dat_ma_dm_chon(dm.ma_dm)}
+              >
+                {dm.ten_danh_muc}
+              </button>
+            ))}
+      </div>
+
+      <div className="luoi_sach">
+        {dang_tai
+          ? Array.from({ length: SO_SACH_TRANG_CHU }).map((_, i) => (
+              <TheCardSach key={i} skeleton />
+            ))
+          : danh_sach.length === 0
+            ? <p className="chua_co_du_lieu">Chưa có sách nào.</p>
+            : danh_sach.map((sach) => (
+                <TheCardSach key={sach.ma_sach} sach={sach} />
+              ))}
       </div>
     </section>
   );
 }
 
-// 2. Section Sách chung (Nổi bật, Mới, Hội viên)
+// 2. Section Sách chung (Mới nhất, Hội viên)
 function SectionSach({ tieu_de, query_key, endpoint, duong_dan_xem_them }) {
   const { data: ket_qua, isLoading: dang_tai } = useQuery({
     queryKey: [query_key, 1, SO_SACH_TRANG_CHU],
     queryFn: async () => {
       const phan_hoi = await api.get(endpoint, {
-        params: { trang: 1, kich_thuoc: SO_SACH_TRANG_CHU }
+        params: { trang: 1, kich_thuoc: SO_SACH_TRANG_CHU },
       });
       return phan_hoi.data;
     },
-    staleTime: 30 * 60 * 1000, // 30 phút [cite: 182]
+    staleTime: 30 * 60 * 1000,
   });
 
   const danh_sach = ket_qua?.danh_sach || [];
@@ -59,15 +103,22 @@ function SectionSach({ tieu_de, query_key, endpoint, duong_dan_xem_them }) {
     <section className="section_trang_chu">
       <div className="tieu_de_section">
         <h2>{tieu_de}</h2>
-        {co_them && <Link to={duong_dan_xem_them} className="nut_xem_them">Xem thêm →</Link>}
+        {co_them && (
+          <Link to={duong_dan_xem_them} className="nut_xem_them">
+            Xem thêm →
+          </Link>
+        )}
       </div>
       <div className="luoi_sach">
         {dang_tai
-          ? Array.from({ length: SO_SACH_TRANG_CHU }).map((_, i) => <TheCardSach key={i} skeleton />)
+          ? Array.from({ length: SO_SACH_TRANG_CHU }).map((_, i) => (
+              <TheCardSach key={i} skeleton />
+            ))
           : danh_sach.length === 0
             ? <p className="chua_co_du_lieu">Chưa có sách nào.</p>
-            : danh_sach.map(sach => <TheCardSach key={sach.ma_sach} sach={sach} />)
-        }
+            : danh_sach.map((sach) => (
+                <TheCardSach key={sach.ma_sach} sach={sach} />
+              ))}
       </div>
     </section>
   );
@@ -82,11 +133,11 @@ function SectionGoiY() {
     queryKey: ['sach_goi_y', ma_nd, 1, SO_SACH_TRANG_CHU],
     queryFn: async () => {
       const phan_hoi = await api.get('/home/sach_goi_y', {
-        params: { ma_nd: ma_nd || undefined, trang: 1, kich_thuoc: SO_SACH_TRANG_CHU }
+        params: { ma_nd: ma_nd || undefined, trang: 1, kich_thuoc: SO_SACH_TRANG_CHU },
       });
       return phan_hoi.data;
     },
-    staleTime: da_dang_nhap ? 5 * 60 * 1000 : 30 * 60 * 1000, // [cite: 216]
+    staleTime: da_dang_nhap ? 5 * 60 * 1000 : 30 * 60 * 1000,
   });
 
   const danh_sach = ket_qua?.danh_sach || [];
@@ -95,13 +146,18 @@ function SectionGoiY() {
     <section className="section_trang_chu">
       <div className="tieu_de_section">
         <h2>Gợi ý cho bạn</h2>
-        <Link to="/sach_goi_y" className="nut_xem_them">Xem thêm →</Link>
+        <Link to="/sach_goi_y" className="nut_xem_them">
+          Xem thêm →
+        </Link>
       </div>
       <div className="luoi_sach">
         {dang_tai
-          ? Array.from({ length: SO_SACH_TRANG_CHU }).map((_, i) => <TheCardSach key={i} skeleton />)
-          : danh_sach.map(sach => <TheCardSach key={sach.ma_sach} sach={sach} />)
-        }
+          ? Array.from({ length: SO_SACH_TRANG_CHU }).map((_, i) => (
+              <TheCardSach key={i} skeleton />
+            ))
+          : danh_sach.map((sach) => (
+              <TheCardSach key={sach.ma_sach} sach={sach} />
+            ))}
       </div>
     </section>
   );
@@ -110,11 +166,20 @@ function SectionGoiY() {
 export default function TrangChu() {
   return (
     <div className="trang_chu">
-      <SectionDanhMuc />
-      <SectionSach tieu_de="Sách nổi bật" query_key="sach_noi_bat" endpoint="/home/sach_noi_bat" duong_dan_xem_them="/sach_noi_bat" />
-      <SectionSach tieu_de="Sách mới nhất" query_key="sach_moi_nhat" endpoint="/home/sach_moi_nhat" duong_dan_xem_them="/sach_moi_nhat" />
-      <SectionSach tieu_de="Sách hội viên" query_key="sach_hoi_vien" endpoint="/home/sach_hoi_vien" duong_dan_xem_them="/sach_hoi_vien" />
+      <SectionKhamPha />
       <SectionGoiY />
+      <SectionSach
+        tieu_de="Sách mới nhất"
+        query_key="sach_moi_nhat"
+        endpoint="/home/sach_moi_nhat"
+        duong_dan_xem_them="/sach_moi_nhat"
+      />
+      <SectionSach
+        tieu_de="Sách hội viên"
+        query_key="sach_hoi_vien"
+        endpoint="/home/sach_hoi_vien"
+        duong_dan_xem_them="/sach_hoi_vien"
+      />
     </div>
   );
 }

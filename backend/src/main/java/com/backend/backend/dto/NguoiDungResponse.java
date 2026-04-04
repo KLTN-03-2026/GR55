@@ -17,7 +17,7 @@ public class NguoiDungResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class NguoiDungData {
-        private Long ma_nd;
+        private Long ma_nguoi_dung;
         private String ho_ten;
         private String email;
         private String so_dien_thoai;

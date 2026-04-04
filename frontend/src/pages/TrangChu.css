@@ -40,26 +40,63 @@
   text-decoration: underline;
 }
 
+/* Thanh lọc thể loại */
+.thanh_loc_the_loai {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.nut_the_loai {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.nut_the_loai:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.nut_the_loai.dang_chon {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
 /* Grid sách - Responsive [cite: 230-237] */
 .luoi_sach {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
+  .luoi_sach {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
   .luoi_sach {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .luoi_sach {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 400px) {
   .luoi_sach {
     grid-template-columns: repeat(2, 1fr);
   }

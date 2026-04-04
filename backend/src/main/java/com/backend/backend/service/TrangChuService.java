@@ -31,7 +31,8 @@ public class TrangChuService {
                 sach.getGia(),
                 sach.getAnhBiaUrl(),
                 sach.getDanhGiaTrungBinh() != null ? sach.getDanhGiaTrungBinh().doubleValue() : 0.0,
-                sach.getLuotXem() != null ? sach.getLuotXem() : 0);
+                sach.getLuotXem() != null ? sach.getLuotXem() : 0,
+                sach.getSoLuongDaBan() != null ? sach.getSoLuongDaBan() : 0);
     }
 
     private DanhSachSachHomeResponse taoKetQuaPhanTrang(Page<Sach> page) {
