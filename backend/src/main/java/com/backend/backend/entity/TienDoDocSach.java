@@ -32,7 +32,7 @@ public class TienDoDocSach {
     @Column(name = "trang_hien_tai")
     private Integer trangHienTai = 1;
 
-    @Column(name = "phan_tram", precision = 5, scale = 2)
+    @Column(name = "phan_tram")
     private Double phanTram = 0.0;
 
     @Column(name = "lan_doc_cuoi")
