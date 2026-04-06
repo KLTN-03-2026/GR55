@@ -43,6 +43,7 @@ services:
   backend:
     build: ./backend
     container_name: booknest_backend
+    restart: on-failure
     ports:
       - "8081:8080"
     depends_on:
