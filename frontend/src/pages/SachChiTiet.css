@@ -1,376 +1,284 @@
-/* Layout chính */
-.trang_chi_tiet_sach {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 32px 16px;
+/* ============================================================
+   SECTION: ĐÁNH GIÁ SÁCH (PB10)
+   Quy tắc: snake_case tiếng Việt
+   ============================================================ */
+
+.section_danh_gia_sach {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Inter', sans-serif;
 }
 
-.khung_chi_tiet_chinh {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 40px;
-  margin-bottom: 48px;
-}
-@media (max-width: 768px) {
-  .khung_chi_tiet_chinh {
-    grid-template-columns: 1fr;
-  }
+.tieu_de_lon {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #111827;
 }
 
-/* Cột ảnh bìa */
-.cot_anh_bia {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.khung_anh_bia_lon {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-.anh_bia_lon {
-  width: 100%;
-  display: block;
-  object-fit: cover;
-}
-.skeleton_anh_bia_lon {
-  width: 280px;
-  height: 400px;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200%;
-  animation: shimmer 1.5s infinite;
-}
-@keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
+/* 1. KHỐI TỔNG QUAN (OVERVIEW) */
+.khung_tong_quan_danh_gia {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    padding: 32px;
+    background-color: #f9fafb;
+    /* Xám cực nhẹ */
+    border-radius: 16px;
+    border: 1px solid #f3f4f6;
+    margin-bottom: 32px;
+    align-items: center;
 }
 
-/* Nút yêu thích */
-.nut_yeu_thich {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  cursor: pointer;
-  font-size: 14px;
-  color: #6b7280;
-  transition: all 0.2s;
-}
-.nut_yeu_thich:hover {
-  border-color: #ef4444;
-  color: #ef4444;
-}
-.nut_yeu_thich.da_yeu_thich {
-  background: #fef2f2;
-  border-color: #ef4444;
-  color: #ef4444;
+.cot_diem_so {
+    text-align: center;
+    border-right: 1px solid #e5e7eb;
+    padding-right: 32px;
 }
 
-/* Cột thông tin */
-.cot_thong_tin {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.con_so_trung_binh {
+    font-size: 4rem;
+    font-weight: 800;
+    color: #2563eb;
+    /* Blue primary */
+    line-height: 1;
 }
 
-.nhom_badge_danh_muc {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.badge_danh_muc {
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  background: #eff6ff;
-  color: #2563eb;
-  border: 1px solid #bfdbfe;
+.sao_vang_lon {
+    color: #f59e0b;
+    /* Orange Star */
+    font-size: 1.4rem;
+    margin: 12px 0 4px;
+    letter-spacing: 2px;
 }
 
-.ten_sach_chi_tiet {
-  font-size: 26px;
-  font-weight: 700;
-  color: #111827;
-  line-height: 1.3;
-  margin: 0;
-}
-.tac_gia_chi_tiet {
-  font-size: 15px;
-  color: #6b7280;
-  margin: 0;
+.chu_phu {
+    color: #6b7280;
+    font-size: 0.9rem;
+    font-weight: 500;
 }
 
-/* Đánh giá */
-.khung_danh_gia_ngan {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.sao_danh_gia {
-  color: #f59e0b;
-  font-size: 16px;
-}
-.diem_so {
-  font-weight: 700;
-  color: #111827;
-}
-.so_luot_ngan {
-  font-size: 13px;
-  color: #9ca3af;
-}
-.luot_xem_ngan {
-  font-size: 13px;
-  color: #9ca3af;
+/* 2. BIỂU ĐỒ CỘT SAO */
+.cot_bieu_do_sao {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* Giá */
-.khung_gia {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin: 4px 0;
-}
-.gia_mien_phi {
-  font-size: 28px;
-  font-weight: 700;
-  color: #16a34a;
-}
-.gia_chinh {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1e3a5f;
-}
-.gia_sau_giam {
-  font-size: 28px;
-  font-weight: 700;
-  color: #dc2626;
-}
-.gia_goc_gach_chan {
-  font-size: 16px;
-  color: #9ca3af;
-  text-decoration: line-through;
+.hang_sao {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-/* Mô tả */
-.mo_ta_rut_gon {
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.mo_ta_sach {
-  font-size: 14px;
-  color: #374151;
-  line-height: 1.7;
-  margin: 0;
-}
-.nut_xem_mo_ta {
-  background: none;
-  border: none;
-  color: #2563eb;
-  width: fit-content;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 4px 0;
-  font-weight: 500;
+.nhan_sao {
+    min-width: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4b5563;
 }
 
-/* Nút hành động */
-.nhom_nut_hanh_dong {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 400px;
-  margin-top: 8px;
-}
-.nut_chinh {
-  padding: 14px 24px;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.nut_chinh:hover {
-  opacity: 0.88;
-}
-.nut_doc_sach {
-  background: #2563eb;
-  color: #fff;
-}
-.nut_mua {
-  background: #1e3a5f;
-  color: #fff;
-}
-.nut_hoi_vien {
-  background: #7c3aed;
-  color: #fff;
-}
-.nut_phu {
-  padding: 11px 24px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.nut_doc_thu {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
-}
-.nut_doc_thu:hover {
-  background: #e5e7eb;
+.thanh_phan_bo_nen {
+    flex: 1;
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-/* Section chung */
-.section_danh_gia,
-.section_sach_lien_quan {
-  margin-bottom: 48px;
-}
-.tieu_de_section_chi_tiet {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1e3a5f;
-  margin-bottom: 20px;
-}
-.tieu_de_section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-.nut_xem_them {
-  color: #2563eb;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
+.thanh_phan_bo_day {
+    height: 100%;
+    background-color: #f59e0b;
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Đánh giá tổng quan */
-.tong_quan_danh_gia {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 20px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #fafafa;
-  width: fit-content;
-}
-.diem_trung_binh_lon {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-.so_diem {
-  font-size: 48px;
-  font-weight: 700;
-  color: #111827;
-}
-.sao_lon {
-  font-size: 28px;
-  color: #f59e0b;
-}
-.sao_hien_thi {
-  font-size: 20px;
-  color: #f59e0b;
-  letter-spacing: 2px;
-}
-.so_luot_danh_gia {
-  font-size: 13px;
-  color: #9ca3af;
+.so_luong_phu {
+    min-width: 30px;
+    font-size: 0.85rem;
+    color: #9ca3af;
+    text-align: right;
 }
 
-/* Sách liên quan - Grid */
-.luoi_sach {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 24px;
+/* 3. BỘ LỌC (FILTER) */
+.thanh_dieu_khien_dg {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
 }
 
-/* Lỗi & trống */
-.trang_loi {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 60px 0;
-}
-.chua_co_du_lieu {
-  color: #9ca3af;
-  font-style: italic;
-  padding: 16px 0;
-  margin: 0;
+.chu_label {
+    font-weight: 600;
+    color: #4b5563;
+    font-size: 0.9rem;
 }
 
-/* Danh sách đánh giá */
-.danh_sach_danh_gia {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 16px;
+.nhom_nut_loc {
+    display: flex;
+    gap: 8px;
 }
 
-.the_danh_gia {
-  padding: 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #fafafa;
+.nut_loc_dg {
+    padding: 6px 16px;
+    border-radius: 99px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.dau_danh_gia {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
+.nut_loc_dg:hover {
+    border-color: #2563eb;
+    color: #2563eb;
 }
 
-.ten_nguoi_danh_gia {
-  font-weight: 600;
-  font-size: 14px;
-  color: #111827;
+.nut_loc_dg.dang_chon {
+    background-color: #111827;
+    /* Dark Mode Style */
+    color: white;
+    border-color: #111827;
 }
 
-.sao_danh_gia_item {
-  color: #f59e0b;
-  font-size: 14px;
-  letter-spacing: 1px;
+/* 4. DANH SÁCH NHẬN XÉT */
+.the_nhan_xet {
+    padding: 24px;
+    border-bottom: 1px solid #f3f4f6;
+    background: white;
 }
 
-.ngay_danh_gia {
-  font-size: 12px;
-  color: #9ca3af;
-  margin-left: auto;
+/* Style đặc biệt cho đánh giá của chính mình */
+.nhan_xet_cua_toi {
+    background-color: #eff6ff;
+    /* Nền xanh dương nhạt */
+    border-radius: 12px;
+    border: 1px solid #dbeafe;
+    margin-bottom: 12px;
 }
 
-.noi_dung_danh_gia {
-  font-size: 14px;
-  color: #374151;
-  line-height: 1.6;
-  margin: 0;
+.dong_dau_the {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
 }
 
-.skeleton_danh_gia {
-  padding: 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+.thong_tin_nguoi_dung {
+    display: flex;
+    gap: 16px;
 }
 
-/* Skeleton inline */
-.o_skeleton {
-  display: block;
-  border-radius: 4px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200%;
-  animation: shimmer 1.5s infinite;
+.avatar_chu_cai {
+    width: 44px;
+    height: 44px;
+    background-color: #2563eb;
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.ten_hien_thi {
+    font-weight: 700;
+    color: #111827;
+}
+
+.nhan_so_huu {
+    background: #2563eb;
+    color: white;
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.sao_va_ngay {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.sao_nho {
+    color: #f59e0b;
+    font-size: 0.9rem;
+}
+
+.ngay_dang {
+    color: #9ca3af;
+    font-size: 0.8rem;
+}
+
+.noi_dung_text {
+    margin-top: 12px;
+    padding-left: 60px;
+    /* Căn lề thẳng với tên sau avatar */
+    line-height: 1.6;
+    color: #374151;
+}
+
+/* Nút tác vụ Sửa/Xóa */
+.nhom_nut_tac_vu {
+    display: flex;
+    gap: 12px;
+}
+
+.nut_sua_dg,
+.nut_xoa_dg {
+    font-size: 0.85rem;
+    padding: 4px 8px;
+}
+
+/* 5. PHÂN TRANG */
+.thanh_phan_trang_dg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+}
+
+.nut_trang_dg {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nut_trang_dg:hover:not(:disabled) {
+    border-color: #2563eb;
+    color: #2563eb;
+}
+
+.nut_trang_dg:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.so_trang_hien_tai {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 0 10px;
+}
+
+/* Shimmer/Loading state */
+.khung_loading_danh_gia {
+    text-align: center;
+    padding: 40px;
+    color: #9ca3af;
+    font-style: italic;
 }

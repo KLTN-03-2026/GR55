@@ -30,10 +30,16 @@ export function AuthProvider({ children }) {
     dat_nguoi_dung(null);
   }, []);
 
+  const cap_nhat_nguoi_dung = useCallback((thong_tin_moi) => {
+    const nguoi_dung_moi = { ...nguoiDung, ...thong_tin_moi };
+    localStorage.setItem('booknest_user', JSON.stringify(nguoi_dung_moi));
+    dat_nguoi_dung(nguoi_dung_moi);
+  }, [nguoiDung]);
+
   const da_dang_nhap = Boolean(token && nguoiDung);
 
   return (
-    <NguCanhXacThuc.Provider value={{ da_dang_nhap, nguoiDung, token, dang_nhap, dang_xuat }}>
+    <NguCanhXacThuc.Provider value={{ da_dang_nhap, nguoiDung, token, dang_nhap, dang_xuat, cap_nhat_nguoi_dung }}>
       {children}
     </NguCanhXacThuc.Provider>
   );

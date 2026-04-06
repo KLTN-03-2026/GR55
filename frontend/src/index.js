@@ -31,7 +31,13 @@ import DanhSachHoiVien from './pages/booklist/DanhSachHoiVien';
 import DanhSachGoiY from './pages/booklist/DanhSachGoiY';
 import TheCardSach from './components/TheCardSach';
 import SachChiTiet from './pages/SachChiTiet';
+<<<<<<< HEAD
+import DocSach from './pages/DocSach';
+import DocThu from './pages/DocThu';
+=======
+import TaiKhoan from './pages/TaiKhoan';
 
+>>>>>>> a19b3e4b9c20df2c8aeee43e9a3a8f1ed6b84caa
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -48,9 +54,9 @@ root.render(
             <Route path="/dang_ky" element={<App><DangKy /></App>} />
             <Route path="/dang_nhap" element={<App><DangNhap /></App>} />
             <Route path="/quen_mat_khau" element={<App><QuenMatKhau /></App>} />
-            <Route path="/sach/:ma_sach" element={<App><SachChiTiet/></App>}/>
-
-
+            <Route path="/sach_chi_tiet/:ma_sach" element={<App><SachChiTiet /></App>} />
+            <Route path='/doc_sach/:ma_sach' element={<App><DocSach /></App>} />
+            <Route path="/doc_thu/:ma_sach" element={<DocThu />} />
 
             <Route path='/sach/:masach' element={<App><TheCardSach /> </App>} />
             <Route path="/sach_moi_nhat" element={<App><DanhSachMoiNhat /></App>} />
@@ -97,6 +103,16 @@ root.render(
                   <QuanLyNguoiDung />
                 </AdminLayout>
                 // </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tai_khoan"
+              element={
+                <ProtectedRoute vai_tro_duoc_phep={['thanh_vien', 'quan_tri']}>
+                  <App>
+                    <TaiKhoan/>
+                  </App>
+                </ProtectedRoute>
               }
             />
           </Routes>
