@@ -31,8 +31,13 @@ import DanhSachHoiVien from './pages/booklist/DanhSachHoiVien';
 import DanhSachGoiY from './pages/booklist/DanhSachGoiY';
 import TheCardSach from './components/TheCardSach';
 import SachChiTiet from './pages/SachChiTiet';
+<<<<<<< HEAD
 import DocSach from './pages/DocSach';
 import DocThu from './pages/DocThu';
+=======
+import TaiKhoan from './pages/TaiKhoan';
+
+>>>>>>> a19b3e4b9c20df2c8aeee43e9a3a8f1ed6b84caa
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -98,6 +103,16 @@ root.render(
                   <QuanLyNguoiDung />
                 </AdminLayout>
                 // </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tai_khoan"
+              element={
+                <ProtectedRoute vai_tro_duoc_phep={['thanh_vien', 'quan_tri']}>
+                  <App>
+                    <TaiKhoan/>
+                  </App>
+                </ProtectedRoute>
               }
             />
           </Routes>
