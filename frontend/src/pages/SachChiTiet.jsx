@@ -1,159 +1,298 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
-import './SachChiTiet.css';
-// Hằng số theo quy tắc UPPER_CASE
-const KICH_THUOC_DANH_GIA = 5;
-const DIEM_TOI_DA = 5;
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
+import api from "../services/api";
+import { dinh_dang_gia } from "../utils/dinh_dang";
+import TheCardSach from "../components/TheCardSach";
+import DanhGiaSach from "./DanhGiaSach";
+import "./SachChiTiet.css";
 
-export default function DanhGiaSach({ ma_sach }) {
+const MO_TA_NGAN = 300;
+
+export default function SachChiTiet() {
+  const { ma_sach } = useParams();
+  const dieu_huong = useNavigate();
   const { da_dang_nhap, nguoiDung } = useAuth();
+  const queryClient = useQueryClient();
 
-  // State theo quy tắc [ten_state, dat_ten_state]
-  const [sap_xep, dat_sap_xep] = useState('moi_nhat');
-  const [trang_hien_tai, dat_trang_hien_tai] = useState(1);
+  const [dang_xu_ly_yeu_thich, dat_dang_xu_ly_yeu_thich] = useState(false);
+  const [hien_mo_ta_day_du, dat_hien_mo_ta_day_du] = useState(false);
 
-  // Lấy dữ liệu đánh giá bằng React Query
-  const { data: du_lieu_dg, isLoading: dang_tai_dg } = useQuery({
-    queryKey: ['danh_gia_sach', ma_sach, sap_xep, trang_hien_tai],
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [ma_sach]);
+
+  const {
+    data: chi_tiet,
+    isLoading: dang_tai,
+    isError: co_loi,
+  } = useQuery({
+    queryKey: ["chi_tiet_sach", ma_sach, nguoiDung?.ma_nguoi_dung ?? null],
     queryFn: async () => {
-      const phan_hoi = await api.get(`/sach/${ma_sach}/danh_gia`, {
-        params: {
-          sort: sap_xep,
-          trang: trang_hien_tai,
-          kich_thuoc: KICH_THUOC_DANH_GIA,
-        },
-        // Gửi User-Id nếu đã đăng nhập để nhận diện "la_cua_toi"
-        headers: da_dang_nhap ? { 'X-User-Id': nguoiDung?.ma_nguoi_dung } : {},
+      const phan_hoi = await api.get(`/sach/${ma_sach}`, {
+        headers: da_dang_nhap ? { "X-User-Id": nguoiDung?.ma_nguoi_dung } : {},
+      });
+      return phan_hoi.data.du_lieu;
+    },
+    staleTime: 10 * 60 * 1000,
+    enabled: !!ma_sach,
+  });
+
+  const { data: sach_lien_quan, isLoading: dang_tai_lien_quan } = useQuery({
+    queryKey: ["sach_lien_quan", ma_sach, 1, 8],
+    queryFn: async () => {
+      const phan_hoi = await api.get(`/sach/${ma_sach}/lien_quan`, {
+        params: { trang: 1, kich_thuoc: 8 },
       });
       return phan_hoi.data;
     },
+    staleTime: 30 * 60 * 1000,
     enabled: !!ma_sach,
-    keepPreviousData: true,
   });
 
-  // Hàm snake_case tiếng Việt
-  function hien_thi_sao(diem) {
-    const diem_so = Math.round(diem || 0);
-    return '★'.repeat(diem_so) + '☆'.repeat(DIEM_TOI_DA - diem_so);
+  async function xu_ly_yeu_thich() {
+    if (!da_dang_nhap) {
+      toast.info("Vui lòng đăng nhập để thêm vào yêu thích");
+      dieu_huong("/dang_nhap");
+      return;
+    }
+    dat_dang_xu_ly_yeu_thich(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      toast.success(
+        chi_tiet.da_yeu_thich ? "Đã bỏ yêu thích" : "Đã thêm vào yêu thích",
+      );
+      queryClient.invalidateQueries({ queryKey: ["chi_tiet_sach", ma_sach] });
+    } catch {
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại.");
+    } finally {
+      dat_dang_xu_ly_yeu_thich(false);
+    }
   }
 
-  function xu_ly_doi_sap_xep(loai_moi) {
-    dat_sap_xep(loai_moi);
-    dat_trang_hien_tai(1);
+  function xac_dinh_nut_hanh_dong(sach) {
+    const mien_phi = Number(sach.gia) === 0;
+    const { da_mua, la_hoi_vien, sach_thuoc_goi_hoi_vien } = sach;
+
+    if (mien_phi) return "doc_ngay";
+    if (da_mua || (la_hoi_vien && sach_thuoc_goi_hoi_vien)) return "doc_sach";
+    if (sach_thuoc_goi_hoi_vien && !la_hoi_vien) return "nang_cap_hoi_vien";
+    return "mua_ngay";
   }
 
-  if (dang_tai_dg) {
-    return <div className="khung_loading_danh_gia">Đang tải đánh giá...</div>;
+  if (dang_tai) {
+    return (
+      <div className="trang_chi_tiet_sach">
+        <div className="khung_chi_tiet_chinh">
+          <div className="cot_anh_bia">
+            <div className="skeleton_anh_bia_lon" />
+          </div>
+          <div className="cot_thong_tin">
+            {[80, 50, 120, 60, 200, 100].map((w, i) => (
+              <div
+                key={i}
+                className="o_skeleton"
+                style={{ width: `${w}%`, height: i === 4 ? 80 : 20, marginBottom: 12 }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  const { diem_trung_binh, tong_so_danh_gia, phan_bo_sao, danh_sach, tong_so_trang } = du_lieu_dg || {};
+  if (co_loi || !chi_tiet) {
+    return (
+      <div className="trang_loi">
+        <p>Không thể tải thông tin sách. Sách có thể không tồn tại.</p>
+        <button
+          className="nut_chinh nut_doc_sach"
+          onClick={() => dieu_huong(-1)}
+        >
+          Quay lại
+        </button>
+      </div>
+    );
+  }
+
+  const loai_nut = xac_dinh_nut_hanh_dong(chi_tiet);
 
   return (
-    <div className="section_danh_gia_sach">
-      <h2 className="tieu_de_lon">Đánh giá từ độc giả</h2>
-
-      {/* Khối tổng quan */}
-      <div className="khung_tong_quan_danh_gia">
-        <div className="cot_diem_so">
-          <span className="con_so_trung_binh">{diem_trung_binh?.toFixed(1) || 0}</span>
-          <div className="sao_vang_lon">{hien_thi_sao(diem_trung_binh)}</div>
-          <p className="chu_phu">{tong_so_danh_gia || 0} đánh giá</p>
-        </div>
-
-        <div className="cot_bieu_do_sao">
-          {(phan_bo_sao || []).map((hang) => (
-            <div key={hang.so_sao} className="hang_sao">
-              <span className="nhan_sao">{hang.so_sao} sao</span>
-              <div className="thanh_phan_bo_nen">
-                <div
-                  className="thanh_phan_bo_day"
-                  style={{ width: `${hang.phan_tram}%` }}
-                ></div>
-              </div>
-              <span className="so_luong_phu">{hang.so_luong}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Bộ lọc sắp xếp */}
-      <div className="thanh_dieu_khien_dg">
-        <span className="chu_label">Sắp xếp:</span>
-        <div className="nhom_nut_loc">
-          {[
-            { ma: 'moi_nhat', ten: 'Mới nhất' },
-            { ma: 'cao_nhat', ten: 'Điểm cao' },
-            { ma: 'cu_nhat', ten: 'Cũ nhất' }
-          ].map((item) => (
+    <div className="trang_chi_tiet_sach">
+      {/* === Khu vực chi tiết chính === */}
+      <div className="khung_chi_tiet_chinh">
+        {/* Cột trái: ảnh bìa */}
+        <div className="cot_anh_bia">
+          <div className="khung_anh_bia_lon">
+            <img
+              src={chi_tiet.anh_bia_url}
+              alt={chi_tiet.ten_sach}
+              className="anh_bia_lon"
+            />
+          </div>
+          {da_dang_nhap && (
             <button
-              key={item.ma}
-              className={`nut_loc_dg ${sap_xep === item.ma ? 'dang_chon' : ''}`}
-              onClick={() => xu_ly_doi_sap_xep(item.ma)}
+              className={`nut_yeu_thich ${chi_tiet.da_yeu_thich ? "da_yeu_thich" : ""}`}
+              onClick={xu_ly_yeu_thich}
+              disabled={dang_xu_ly_yeu_thich}
             >
-              {item.ten}
+              {chi_tiet.da_yeu_thich ? "♥ Đã yêu thích" : "♡ Yêu thích"}
             </button>
-          ))}
+          )}
         </div>
-      </div>
 
-      {/* Danh sách đánh giá */}
-      <div className="danh_sach_nhan_xet">
-        {(!danh_sach || danh_sach.length === 0) ? (
-          <p className="thong_bao_trong">Sách này chưa có đánh giá nào.</p>
-        ) : (
-          danh_sach.map((dg) => (
-            <div key={dg.ma_dg} className={`the_nhan_xet ${dg.la_cua_toi ? 'nhan_xet_cua_toi' : ''}`}>
-              <div className="dong_dau_the">
-                <div className="thong_tin_nguoi_dung">
-                  <div className="avatar_chu_cai">
-                    {dg.ten_nguoi_dung?.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <span className="ten_hien_thi">{dg.ten_nguoi_dung}</span>
-                    {dg.la_cua_toi && <span className="nhan_so_huu">Của bạn</span>}
-                    <div className="sao_va_ngay">
-                      <span className="sao_nho">{hien_thi_sao(dg.so_sao)}</span>
-                      <span className="ngay_dang">
-                        {new Date(dg.ngay_tao).toLocaleDateString('vi-VN')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {dg.la_cua_toi && (
-                  <div className="nhom_nut_tac_vu">
-                    <button className="nut_sua_dg">Sửa</button>
-                    <button className="nut_xoa_dg">Xóa</button>
-                  </div>
+        {/* Cột phải: thông tin + nút hành động */}
+        <div className="cot_thong_tin">
+          <div className="nhom_badge_danh_muc">
+            {chi_tiet.danh_sach_danh_muc?.map((dm) => (
+              <span key={dm.ma_dm} className="badge_danh_muc">
+                {dm.ten_danh_muc}
+              </span>
+            ))}
+          </div>
+
+          <h1 className="ten_sach_chi_tiet">{chi_tiet.ten_sach}</h1>
+          <p className="tac_gia_chi_tiet">Tác giả: {chi_tiet.tac_gia}</p>
+
+          <div className="khung_danh_gia_ngan">
+            <span className="sao_danh_gia">★</span>
+            <span className="diem_so">
+              {chi_tiet.danh_gia_trung_binh?.toFixed(1) || "0.0"}
+            </span>
+            <span className="so_luot_ngan">
+              ({chi_tiet.so_luot_danh_gia || 0} đánh giá)
+            </span>
+            {Number(chi_tiet.gia) > 0 && (
+              <>
+                <span>•</span>
+                <span className="luot_xem_ngan">
+                  {chi_tiet.so_luong_da_ban || 0} đã bán
+                </span>
+              </>
+            )}
+          </div>
+
+          <div className="khung_gia">
+            {Number(chi_tiet.gia) === 0 ? (
+              <span className="gia_mien_phi">Miễn phí</span>
+            ) : chi_tiet.gia_giam ? (
+              <>
+                <span className="gia_goc_gach_chan">
+                  {dinh_dang_gia(chi_tiet.gia)}
+                </span>
+                <span className="gia_sau_giam">
+                  {dinh_dang_gia(chi_tiet.gia_giam)}
+                </span>
+              </>
+            ) : (
+              <span className="gia_chinh">{dinh_dang_gia(chi_tiet.gia)}</span>
+            )}
+          </div>
+
+          <div className="khung_mo_ta">
+            <p
+              className={`mo_ta_sach ${!hien_mo_ta_day_du ? "mo_ta_rut_gon" : ""}`}
+            >
+              {chi_tiet.mo_ta}
+            </p>
+            {(chi_tiet.mo_ta?.length || 0) > MO_TA_NGAN && (
+              <button
+                className="nut_xem_mo_ta"
+                onClick={() => dat_hien_mo_ta_day_du((v) => !v)}
+              >
+                {hien_mo_ta_day_du ? "Thu gọn" : "Xem thêm"}
+              </button>
+            )}
+          </div>
+
+          <div className="nhom_nut_hanh_dong">
+            {loai_nut === "doc_ngay" && (
+              <button
+                className="nut_chinh nut_doc_sach"
+                onClick={() => dieu_huong(`/doc_sach/${chi_tiet.ma_sach}`)}
+              >
+                Đọc ngay
+              </button>
+            )}
+
+            {loai_nut === "doc_sach" && (
+              <button
+                className="nut_chinh nut_doc_sach"
+                onClick={() => dieu_huong(`/doc_sach/${chi_tiet.ma_sach}`)}
+              >
+                Đọc sách
+              </button>
+            )}
+
+            {loai_nut === "nang_cap_hoi_vien" && (
+              <button
+                className="nut_chinh nut_hoi_vien"
+                onClick={() => dieu_huong("/hoi_vien")}
+              >
+                Nâng cấp hội viên
+              </button>
+            )}
+
+            {loai_nut === "mua_ngay" && (
+              <>
+                <button
+                  className="nut_chinh nut_mua"
+                  onClick={() => {
+                    if (!da_dang_nhap) {
+                      dieu_huong("/dang_nhap");
+                      return;
+                    }
+                  }}
+                >
+                  Mua ngay — {dinh_dang_gia(chi_tiet.gia_giam ?? chi_tiet.gia)}
+                </button>
+                {chi_tiet.cho_phep_doc_thu && (
+                  <button
+                    className="nut_phu nut_doc_thu"
+                    onClick={() => dieu_huong(`/doc_thu/${chi_tiet.ma_sach}`)}
+                  >
+                    Đọc thử ({chi_tiet.so_trang_doc_thu} trang)
+                  </button>
                 )}
-              </div>
-              <p className="noi_dung_text">{dg.noi_dung}</p>
-            </div>
-          ))
-        )}
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Phân trang */}
-      {tong_so_trang > 1 && (
-        <div className="thanh_phan_trang_dg">
-          <button
-            className="nut_trang_dg"
-            disabled={trang_hien_tai === 1}
-            onClick={() => dat_trang_hien_tai(t => t - 1)}
-          >
-            ‹
-          </button>
-          <span className="so_trang_hien_tai">Trang {trang_hien_tai} / {tong_so_trang}</span>
-          <button
-            className="nut_trang_dg"
-            disabled={trang_hien_tai === tong_so_trang}
-            onClick={() => dat_trang_hien_tai(t => t + 1)}
-          >
-            ›
-          </button>
+      {/* === Phần đánh giá === */}
+      <DanhGiaSach ma_sach={ma_sach} />
+
+      {/* === Sách liên quan === */}
+      <section className="section_sach_lien_quan">
+        <div className="tieu_de_section">
+          <h2 className="tieu_de_section_chi_tiet">Sách liên quan</h2>
+          {(sach_lien_quan?.tong_so_ban_ghi || 0) > 8 && (
+            <Link
+              to={`/tim_kiem?danh_muc=${chi_tiet?.danh_sach_danh_muc?.[0]?.ma_dm || ""}`}
+              className="nut_xem_them"
+            >
+              Xem thêm →
+            </Link>
+          )}
         </div>
-      )}
+
+        <div className="luoi_sach">
+          {dang_tai_lien_quan ? (
+            Array.from({ length: 8 }).map((_, i) => (
+              <TheCardSach key={i} skeleton={true} />
+            ))
+          ) : (sach_lien_quan?.danh_sach || []).length === 0 ? (
+            <p className="chua_co_du_lieu">Không có sách liên quan.</p>
+          ) : (
+            (sach_lien_quan?.danh_sach || []).map((s) => (
+              <TheCardSach key={s.ma_sach} sach={s} />
+            ))
+          )}
+        </div>
+      </section>
     </div>
   );
 }
