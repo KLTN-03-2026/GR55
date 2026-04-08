@@ -1,6 +1,8 @@
 package com.backend.backend.repository;
 
 import com.backend.backend.entity.SachYeuThich;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,4 +17,7 @@ public interface SachYeuThichRepository extends JpaRepository<SachYeuThich, Long
     boolean daYeuThich(@Param("maNd") Long maNd, @Param("maSach") Long maSach);
 
     Optional<SachYeuThich> findByMaNdAndMaSach(Long maNd, Long maSach);
+
+    @Query("SELECT s FROM SachYeuThich s WHERE s.maNd = :maNd ORDER BY s.ngayTao DESC")
+    Page<SachYeuThich> findByMaNd(@Param("maNd") Long maNd, Pageable pageable);
 }
