@@ -31,13 +31,11 @@ import DanhSachHoiVien from './pages/booklist/DanhSachHoiVien';
 import DanhSachGoiY from './pages/booklist/DanhSachGoiY';
 import TheCardSach from './components/TheCardSach';
 import SachChiTiet from './pages/SachChiTiet';
-<<<<<<< HEAD
 import DocSach from './pages/DocSach';
 import DocThu from './pages/DocThu';
-=======
 import TaiKhoan from './pages/TaiKhoan';
+import ThuVien from './pages/ThuVien';
 
->>>>>>> a19b3e4b9c20df2c8aeee43e9a3a8f1ed6b84caa
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -63,7 +61,7 @@ root.render(
             <Route path="/sach_hoi_vien" element={<App><DanhSachHoiVien /></App>} />
             <Route path="/sach_goi_y" element={<App><DanhSachGoiY /></App>} />
             <Route path="/sach_noi_bat" element={<App><DanhSachNoiBat /></App>} />
-
+            <Route path="/thu_vien" element={<App><ThuVien /></App>} />
             {/* NHÓM 2: GIAO DIỆN QUẢN TRỊ (Các trang này KHÔNG bọc <App> để tự thiết kế layout riêng)*/}
             <Route
               path="/quan_tri"
@@ -110,7 +108,7 @@ root.render(
               element={
                 <ProtectedRoute vai_tro_duoc_phep={['thanh_vien', 'quan_tri']}>
                   <App>
-                    <TaiKhoan/>
+                    <TaiKhoan />
                   </App>
                 </ProtectedRoute>
               }
