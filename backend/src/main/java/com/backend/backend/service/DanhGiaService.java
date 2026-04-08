@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,20 +48,24 @@ public class DanhGiaService {
         Pageable pageable = PageRequest.of(trang - 1, kichThuoc, sortOrder);
         Page<DanhGia> page = danhGiaRepository.findDanhGiaBySach(maSach, pageable);
 
+        // Batch load tên người dùng — 1 query thay vì N queries
+        List<Long> danhSachMaNd = page.getContent().stream()
+                .map(DanhGia::getMaNd).distinct().collect(Collectors.toList());
+        Map<Long, String> tenNguoiDungMap = nguoiDungRepository.findAllById(danhSachMaNd)
+                .stream()
+                .collect(Collectors.toMap(
+                        nd -> nd.getMaNguoiDung(),
+                        nd -> nd.getHoTen()));
+
         List<DanhSachDanhGiaResponse.DanhGiaData> danhSach = page.getContent().stream()
-                .map(dg -> {
-                    String tenNguoiDung = nguoiDungRepository.findById(dg.getMaNd())
-                            .map(nd -> nd.getHoTen())
-                            .orElse("Ẩn danh");
-                    return new DanhSachDanhGiaResponse.DanhGiaData(
-                            dg.getMaDg(),
-                            dg.getMaNd(),
-                            tenNguoiDung,
-                            dg.getSoSao(),
-                            dg.getNoiDung(),
-                            dg.getNgayTao(),
-                            false); // la_cua_toi gán lại ở layDanhSachDanhGia()
-                })
+                .map(dg -> new DanhSachDanhGiaResponse.DanhGiaData(
+                        dg.getMaDg(),
+                        dg.getMaNd(),
+                        tenNguoiDungMap.getOrDefault(dg.getMaNd(), "Ẩn danh"),
+                        dg.getSoSao(),
+                        dg.getNoiDung(),
+                        dg.getNgayTao(),
+                        false)) // la_cua_toi gán lại ở layDanhSachDanhGia()
                 .collect(Collectors.toList());
 
         Double diemTrungBinh = danhGiaRepository.tinhDiemTrungBinh(maSach);
@@ -93,7 +98,7 @@ public class DanhGiaService {
 
     public DanhSachDanhGiaResponse layDanhSachDanhGia(
             Long maSach, String sort, int trang, int kichThuoc, Long maNd) {
-        DanhSachDanhGiaResponse ketQua = layDanhSachDanhGiaCached(maSach, sort, trang, kichThuoc);
+        DanhSachDanhGiaResponse ketQua = self.layDanhSachDanhGiaCached(maSach, sort, trang, kichThuoc);
         if (maNd == null) return ketQua;
 
         // Gán lại la_cua_toi dựa theo maNd sau khi lấy từ cache

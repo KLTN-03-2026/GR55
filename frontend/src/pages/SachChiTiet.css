@@ -42,12 +42,8 @@
   animation: shimmer 1.5s infinite;
 }
 @keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* Nút yêu thích */
@@ -78,7 +74,6 @@
   flex-direction: column;
   gap: 16px;
 }
-
 .nhom_badge_danh_muc {
   display: flex;
   flex-wrap: wrap;
@@ -92,7 +87,6 @@
   color: #2563eb;
   border: 1px solid #bfdbfe;
 }
-
 .ten_sach_chi_tiet {
   font-size: 26px;
   font-weight: 700;
@@ -112,22 +106,10 @@
   align-items: center;
   gap: 8px;
 }
-.sao_danh_gia {
-  color: #f59e0b;
-  font-size: 16px;
-}
-.diem_so {
-  font-weight: 700;
-  color: #111827;
-}
-.so_luot_ngan {
-  font-size: 13px;
-  color: #9ca3af;
-}
-.luot_xem_ngan {
-  font-size: 13px;
-  color: #9ca3af;
-}
+.sao_danh_gia { color: #f59e0b; font-size: 16px; }
+.diem_so { font-weight: 700; color: #111827; }
+.so_luot_ngan { font-size: 13px; color: #9ca3af; }
+.luot_xem_ngan { font-size: 13px; color: #9ca3af; }
 
 /* Giá */
 .khung_gia {
@@ -136,41 +118,21 @@
   gap: 12px;
   margin: 4px 0;
 }
-.gia_mien_phi {
-  font-size: 28px;
-  font-weight: 700;
-  color: #16a34a;
-}
-.gia_chinh {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1e3a5f;
-}
-.gia_sau_giam {
-  font-size: 28px;
-  font-weight: 700;
-  color: #dc2626;
-}
-.gia_goc_gach_chan {
-  font-size: 16px;
-  color: #9ca3af;
-  text-decoration: line-through;
-}
+.gia_mien_phi { font-size: 28px; font-weight: 700; color: #16a34a; }
+.gia_chinh { font-size: 28px; font-weight: 700; color: #1e3a5f; }
+.gia_sau_giam { font-size: 28px; font-weight: 700; color: #dc2626; }
+.gia_goc_gach_chan { font-size: 16px; color: #9ca3af; text-decoration: line-through; }
 
 /* Mô tả */
 .mo_ta_rut_gon {
   display: -webkit-box;
   -webkit-line-clamp: 5;
   line-clamp: 5;
+  line-break: auto;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.mo_ta_sach {
-  font-size: 14px;
-  color: #374151;
-  line-height: 1.7;
-  margin: 0;
-}
+.mo_ta_sach { font-size: 14px; color: #374151; line-height: 1.7; margin: 0; }
 .nut_xem_mo_ta {
   background: none;
   border: none;
@@ -182,7 +144,9 @@
   font-weight: 500;
 }
 
-/* Nút hành động */
+/* =========================================
+   NÚT HÀNH ĐỘNG (ĐÃ CẬP NHẬT LAYOUT)
+   ========================================= */
 .nhom_nut_hanh_dong {
   display: flex;
   flex-direction: column;
@@ -190,6 +154,14 @@
   max-width: 400px;
   margin-top: 8px;
 }
+
+/* Flexbox để nút Mua và Giỏ hàng nằm cạnh nhau */
+.nhom_mua_gio {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
 .nut_chinh {
   padding: 14px 24px;
   border-radius: 8px;
@@ -198,22 +170,21 @@
   border: none;
   cursor: pointer;
   transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.nut_chinh:hover {
-  opacity: 0.88;
+.nut_chinh:hover { opacity: 0.88; }
+.nut_doc_sach { background: #2563eb; color: #fff; width: 100%; }
+.nut_hoi_vien { background: #7c3aed; color: #fff; width: 100%; }
+
+/* Nút mua chiếm 50% không gian */
+.nut_mua { 
+  background: #1e3a5f; 
+  color: #fff; 
+  flex: 1; 
 }
-.nut_doc_sach {
-  background: #2563eb;
-  color: #fff;
-}
-.nut_mua {
-  background: #1e3a5f;
-  color: #fff;
-}
-.nut_hoi_vien {
-  background: #7c3aed;
-  color: #fff;
-}
+
 .nut_phu {
   padding: 11px 24px;
   border-radius: 8px;
@@ -222,20 +193,76 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-.nut_doc_thu {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+
+.nut_gio_hang {
+  background: #ffffff;
+  color: #2563eb; /* Chữ màu xanh chủ đạo */
+  border: 2px solid #2563eb; /* Viền xanh đồng bộ */
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease; /* Chuyển động mượt */
 }
-.nut_doc_thu:hover {
-  background: #e5e7eb;
+
+/* Hiệu ứng khi trỏ chuột: Đổi nền, chữ trắng, nảy lên và đổ bóng */
+.nut_gio_hang:hover { 
+  background: #2563eb; 
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  transform: translateY(-2px);
 }
+
+/* Hiệu ứng rung lắc nhẹ icon giỏ hàng khi trỏ chuột */
+.nut_gio_hang:hover svg {
+  animation: rung_gio_hang 0.4s ease-in-out;
+}
+
+@keyframes rung_gio_hang {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-15deg) scale(1.15); }
+  50% { transform: rotate(10deg) scale(1.15); }
+  75% { transform: rotate(-5deg) scale(1.15); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+/* Trạng thái khi click xong (Đang thêm...) */
+.nut_gio_hang:disabled {
+  background: #f8f9fa;
+  color: #9ca3af;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Cập nhật nhẹ nút Mua ngay để nó cũng nảy lên đồng bộ với nút giỏ hàng */
+.nut_mua { 
+  background: #1e3a5f; 
+  color: #fff; 
+  flex: 1; 
+  transition: all 0.3s ease;
+}
+.nut_mua:hover {
+  box-shadow: 0 4px 15px rgba(30, 58, 95, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Nút đọc thử - Nằm ở cột trái nên trải dài 100% */
+.nut_doc_thu { 
+  background: #f3f4f6; 
+  color: #374151; 
+  border: 1px solid #d1d5db; 
+  width: 100%;
+}
+.nut_doc_thu:hover { background: #e5e7eb; }
+
 
 /* Section chung */
 .section_danh_gia,
-.section_sach_lien_quan {
-  margin-bottom: 48px;
-}
+.section_sach_lien_quan { margin-bottom: 48px; }
 .tieu_de_section_chi_tiet {
   font-size: 20px;
   font-weight: 700;
@@ -248,49 +275,9 @@
   align-items: center;
   margin-bottom: 20px;
 }
-.nut_xem_them {
-  color: #2563eb;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-}
+.nut_xem_them { color: #2563eb; text-decoration: none; font-size: 14px; font-weight: 500; }
 
-/* Đánh giá tổng quan */
-.tong_quan_danh_gia {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 20px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #fafafa;
-  width: fit-content;
-}
-.diem_trung_binh_lon {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-.so_diem {
-  font-size: 48px;
-  font-weight: 700;
-  color: #111827;
-}
-.sao_lon {
-  font-size: 28px;
-  color: #f59e0b;
-}
-.sao_hien_thi {
-  font-size: 20px;
-  color: #f59e0b;
-  letter-spacing: 2px;
-}
-.so_luot_danh_gia {
-  font-size: 13px;
-  color: #9ca3af;
-}
-
-/* Sách liên quan - Grid */
+/* Sách liên quan */
 .luoi_sach {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -305,66 +292,7 @@
   gap: 16px;
   padding: 60px 0;
 }
-.chua_co_du_lieu {
-  color: #9ca3af;
-  font-style: italic;
-  padding: 16px 0;
-  margin: 0;
-}
-
-/* Danh sách đánh giá */
-.danh_sach_danh_gia {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.the_danh_gia {
-  padding: 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #fafafa;
-}
-
-.dau_danh_gia {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-
-.ten_nguoi_danh_gia {
-  font-weight: 600;
-  font-size: 14px;
-  color: #111827;
-}
-
-.sao_danh_gia_item {
-  color: #f59e0b;
-  font-size: 14px;
-  letter-spacing: 1px;
-}
-
-.ngay_danh_gia {
-  font-size: 12px;
-  color: #9ca3af;
-  margin-left: auto;
-}
-
-.noi_dung_danh_gia {
-  font-size: 14px;
-  color: #374151;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.skeleton_danh_gia {
-  padding: 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-}
+.chua_co_du_lieu { color: #9ca3af; font-style: italic; padding: 16px 0; margin: 0; }
 
 /* Skeleton inline */
 .o_skeleton {

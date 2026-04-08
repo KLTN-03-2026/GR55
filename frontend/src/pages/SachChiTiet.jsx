@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 import { dinh_dang_gia } from "../utils/dinh_dang";
 import TheCardSach from "../components/TheCardSach";
+import DanhGiaSach from "./DanhGiaSach";
+import { FiShoppingCart } from "react-icons/fi";
 import "./SachChiTiet.css";
 
-const MO_TA_NGAN = 300; // Số ký tự tối đa trước khi cắt ngắn
+const MO_TA_NGAN = 300;
 
 export default function SachChiTiet() {
   const { ma_sach } = useParams();
@@ -19,12 +21,10 @@ export default function SachChiTiet() {
   const [dang_xu_ly_yeu_thich, dat_dang_xu_ly_yeu_thich] = useState(false);
   const [hien_mo_ta_day_du, dat_hien_mo_ta_day_du] = useState(false);
 
-  // Cuộn lên đầu khi chuyển sách
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [ma_sach]);
 
-  // React Query — Lấy chi tiết sách
   const {
     data: chi_tiet,
     isLoading: dang_tai,
@@ -37,25 +37,10 @@ export default function SachChiTiet() {
       });
       return phan_hoi.data.du_lieu;
     },
-    staleTime: 10 * 60 * 1000, // 10 phút
-    enabled: !!ma_sach,
-  });
-
-  // React Query — Lấy danh sách đánh giá
-  const { data: du_lieu_danh_gia, isLoading: dang_tai_danh_gia } = useQuery({
-    queryKey: ["danh_gia_sach", ma_sach, 1],
-    queryFn: async () => {
-      const phan_hoi = await api.get(`/sach/${ma_sach}/danh_gia`, {
-        params: { trang: 1, kich_thuoc: 5 },
-        headers: da_dang_nhap ? { "X-User-Id": nguoiDung?.ma_nguoi_dung } : {},
-      });
-      return phan_hoi.data;
-    },
     staleTime: 10 * 60 * 1000,
     enabled: !!ma_sach,
   });
 
-  // React Query — Lấy sách liên quan
   const { data: sach_lien_quan, isLoading: dang_tai_lien_quan } = useQuery({
     queryKey: ["sach_lien_quan", ma_sach, 1, 8],
     queryFn: async () => {
@@ -68,7 +53,21 @@ export default function SachChiTiet() {
     enabled: !!ma_sach,
   });
 
-  // Xử lý nút yêu thích
+  // MỚI: Mutation xử lý thêm vào giỏ hàng
+  const { mutate: them_vao_gio, isPending: dang_them } = useMutation({
+    mutationFn: () => api.post('/gio_hang', { ma_sach: chi_tiet.ma_sach }),
+    onSuccess: (phan_hoi) => {
+      if (phan_hoi.data.thanh_cong) {
+        toast.success('Đã thêm vào giỏ hàng');
+        queryClient.invalidateQueries({ queryKey: ['so_luong_gio_hang'] });
+        queryClient.invalidateQueries({ queryKey: ['gio_hang'] });
+      } else {
+        toast.info(phan_hoi.data.thong_bao); // Hiển thị "Sách đã có trong giỏ hàng"
+      }
+    },
+    onError: () => toast.error('Có lỗi xảy ra. Vui lòng thử lại.'),
+  });
+
   async function xu_ly_yeu_thich() {
     if (!da_dang_nhap) {
       toast.info("Vui lòng đăng nhập để thêm vào yêu thích");
@@ -77,12 +76,7 @@ export default function SachChiTiet() {
     }
     dat_dang_xu_ly_yeu_thich(true);
     try {
-      // TODO: gọi API yêu thích khi backend mở endpoint
-      // await api.post(`/sach/${ma_sach}/yeu_thich`);
-
-      // Giả lập delay
       await new Promise((resolve) => setTimeout(resolve, 500));
-
       toast.success(
         chi_tiet.da_yeu_thich ? "Đã bỏ yêu thích" : "Đã thêm vào yêu thích",
       );
@@ -94,7 +88,6 @@ export default function SachChiTiet() {
     }
   }
 
-  // Xác định nút hành động cần render
   function xac_dinh_nut_hanh_dong(sach) {
     const mien_phi = Number(sach.gia) === 0;
     const { da_mua, la_hoi_vien, sach_thuoc_goi_hoi_vien } = sach;
@@ -117,11 +110,7 @@ export default function SachChiTiet() {
               <div
                 key={i}
                 className="o_skeleton"
-                style={{
-                  width: `${w}%`,
-                  height: i === 4 ? 80 : 20,
-                  marginBottom: 12,
-                }}
+                style={{ width: `${w}%`, height: i === 4 ? 80 : 20, marginBottom: 12 }}
               />
             ))}
           </div>
@@ -150,7 +139,7 @@ export default function SachChiTiet() {
     <div className="trang_chi_tiet_sach">
       {/* === Khu vực chi tiết chính === */}
       <div className="khung_chi_tiet_chinh">
-        {/* Cột trái: ảnh bìa */}
+        {/* Cột trái: ảnh bìa, nút yêu thích, nút đọc thử */}
         <div className="cot_anh_bia">
           <div className="khung_anh_bia_lon">
             <img
@@ -166,6 +155,16 @@ export default function SachChiTiet() {
               disabled={dang_xu_ly_yeu_thich}
             >
               {chi_tiet.da_yeu_thich ? "♥ Đã yêu thích" : "♡ Yêu thích"}
+            </button>
+          )}
+
+          {/* ĐỌC THỬ ĐƯỢC CHUYỂN SANG ĐÂY */}
+          {chi_tiet.cho_phep_doc_thu && (
+            <button
+              className="nut_phu nut_doc_thu"
+              onClick={() => dieu_huong(`/doc_thu/${chi_tiet.ma_sach}`)}
+            >
+              Đọc thử ({chi_tiet.so_trang_doc_thu} trang)
             </button>
           )}
         </div>
@@ -263,7 +262,7 @@ export default function SachChiTiet() {
             )}
 
             {loai_nut === "mua_ngay" && (
-              <>
+              <div className="nhom_mua_gio">
                 <button
                   className="nut_chinh nut_mua"
                   onClick={() => {
@@ -271,74 +270,34 @@ export default function SachChiTiet() {
                       dieu_huong("/dang_nhap");
                       return;
                     }
-                    // TODO: chuyển đến trang thanh toán
+                    // Logic mở modal thanh toán (nếu có) sẽ nằm ở đây
                   }}
                 >
                   Mua ngay — {dinh_dang_gia(chi_tiet.gia_giam ?? chi_tiet.gia)}
                 </button>
-                {chi_tiet.cho_phep_doc_thu && (
-                  <button
-                    className="nut_phu nut_doc_thu"
-                    onClick={() => dieu_huong(`/doc_thu/${chi_tiet.ma_sach}`)}
-                  >
-                    Đọc thử ({chi_tiet.so_trang_doc_thu} trang)
-                  </button>
-                )}
-              </>
+                
+                <button
+                  className="nut_phu nut_gio_hang"
+                  onClick={() => {
+                    if (!da_dang_nhap) {
+                      dieu_huong('/dang_nhap');
+                      return;
+                    }
+                    them_vao_gio();
+                  }}
+                  disabled={dang_them}
+                >
+                  <FiShoppingCart />
+                  {dang_them ? 'Đang thêm...' : 'Thêm vào giỏ'}
+                </button>
+              </div>
             )}
           </div>
         </div>
       </div>
 
       {/* === Phần đánh giá === */}
-      <section className="section_danh_gia">
-        <h2 className="tieu_de_section_chi_tiet">Đánh giá</h2>
-        <div className="tong_quan_danh_gia">
-          <div className="diem_trung_binh_lon">
-            <span className="so_diem">
-              {chi_tiet.danh_gia_trung_binh?.toFixed(1) || "0.0"}
-            </span>
-            <span className="sao_lon">★</span>
-          </div>
-          <div className="thong_ke_danh_gia">
-            <div className="sao_hien_thi">
-              {"★".repeat(Math.round(chi_tiet.danh_gia_trung_binh || 0))}
-              {"☆".repeat(5 - Math.round(chi_tiet.danh_gia_trung_binh || 0))}
-            </div>
-            <span className="so_luot_danh_gia">
-              {chi_tiet.so_luot_danh_gia || 0} lượt đánh giá
-            </span>
-          </div>
-        </div>
-        <div className="danh_sach_danh_gia">
-          {dang_tai_danh_gia ? (
-            Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="skeleton_danh_gia">
-                <div className="o_skeleton" style={{ width: "30%", height: 14, marginBottom: 8 }} />
-                <div className="o_skeleton" style={{ width: "100%", height: 14, marginBottom: 6 }} />
-                <div className="o_skeleton" style={{ width: "70%", height: 14 }} />
-              </div>
-            ))
-          ) : (du_lieu_danh_gia?.danh_sach || []).length === 0 ? (
-            <p className="chua_co_du_lieu" style={{ marginTop: 16 }}>Chưa có đánh giá nào.</p>
-          ) : (
-            (du_lieu_danh_gia?.danh_sach || []).map((dg) => (
-              <div key={dg.ma_dg} className="the_danh_gia">
-                <div className="dau_danh_gia">
-                  <span className="ten_nguoi_danh_gia">{dg.ten_nguoi_dung}</span>
-                  <span className="sao_danh_gia_item">
-                    {"★".repeat(dg.so_sao)}{"☆".repeat(5 - dg.so_sao)}
-                  </span>
-                  <span className="ngay_danh_gia">
-                    {new Date(dg.ngay_tao).toLocaleDateString("vi-VN")}
-                  </span>
-                </div>
-                {dg.noi_dung && <p className="noi_dung_danh_gia">{dg.noi_dung}</p>}
-              </div>
-            ))
-          )}
-        </div>
-      </section>
+      <DanhGiaSach ma_sach={ma_sach} />
 
       {/* === Sách liên quan === */}
       <section className="section_sach_lien_quan">

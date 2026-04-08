@@ -1,12 +1,101 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
 import "./TaiKhoan.css";
 
 const TAB_THONG_TIN = "thong_tin";
 const TAB_MAT_KHAU = "mat_khau";
+
+function FormThongTin({ thong_tin, dang_tai, dang_luu_tt, loi_server_tt, loi_tt, gia_tri_tt, dat_gia_tri_tt, dat_loi_tt, kiem_tra_truong_tt, xu_ly_cap_nhat }) {
+  return (
+    <form onSubmit={xu_ly_cap_nhat} noValidate>
+      {loi_server_tt && (
+        <div className="thong_bao_server_loi">{loi_server_tt}</div>
+      )}
+      <div className="nhom_truong">
+        <label className="nhan_truong">Email <span className="nhan_chi_xem">(không thể thay đổi)</span></label>
+        {dang_tai ? <div className="o_skeleton skeleton_input" /> : (
+          <input type="email" className="o_nhap o_nhap_disabled" value={thong_tin?.email || ""} readOnly />
+        )}
+      </div>
+      <div className="nhom_truong">
+        <label className="nhan_truong">Họ tên <span className="dau_bat_buoc">*</span></label>
+        {dang_tai ? <div className="o_skeleton skeleton_input" /> : (
+          <input type="text" className={`o_nhap ${loi_tt.ho_ten ? "loi" : ""}`} value={gia_tri_tt.ho_ten}
+            onChange={(e) => {
+              dat_gia_tri_tt((prev) => ({ ...prev, ho_ten: e.target.value }));
+              dat_loi_tt((prev) => ({ ...prev, ho_ten: kiem_tra_truong_tt("ho_ten", e.target.value) }));
+            }}
+            placeholder="Nhập họ và tên đầy đủ" maxLength={50}
+          />
+        )}
+        <span className="thong_bao_loi">{loi_tt.ho_ten}</span>
+      </div>
+      <div className="nhom_truong">
+        <label className="nhan_truong">Số điện thoại <span className="dau_bat_buoc">*</span></label>
+        {dang_tai ? <div className="o_skeleton skeleton_input" /> : (
+          <input type="tel" className={`o_nhap ${loi_tt.so_dien_thoai ? "loi" : ""}`} value={gia_tri_tt.so_dien_thoai}
+            onChange={(e) => {
+              dat_gia_tri_tt((prev) => ({ ...prev, so_dien_thoai: e.target.value }));
+              dat_loi_tt((prev) => ({ ...prev, so_dien_thoai: kiem_tra_truong_tt("so_dien_thoai", e.target.value) }));
+            }}
+            placeholder="0xxxxxxxxx" maxLength={10}
+          />
+        )}
+        <span className="thong_bao_loi">{loi_tt.so_dien_thoai}</span>
+      </div>
+      <button type="submit" className="nut_luu_thong_tin" disabled={dang_luu_tt || dang_tai}>
+        {dang_luu_tt ? "Đang lưu..." : "Cập nhật thông tin"}
+      </button>
+    </form>
+  );
+}
+
+function FormMatKhau({ dang_luu_mk, loi_server_mk, loi_mk, gia_tri_mk, dat_gia_tri_mk, dat_loi_mk, hien_mat_khau, dat_hien_mat_khau, kiem_tra_truong_mk, xu_ly_doi_mat_khau }) {
+  const ds_truong = [
+    { ten: "mat_khau_cu", nhan: "Mật khẩu cũ", key: "cu" },
+    { ten: "mat_khau_moi", nhan: "Mật khẩu mới", key: "moi" },
+    { ten: "xac_nhan_mat_khau", nhan: "Xác nhận mật khẩu mới", key: "xac_nhan" },
+  ];
+  return (
+    <form onSubmit={xu_ly_doi_mat_khau} noValidate>
+      {loi_server_mk && (
+        <div className="thong_bao_server_loi">{loi_server_mk}</div>
+      )}
+      {ds_truong.map((truong) => (
+        <div key={truong.ten} className="nhom_truong">
+          <label className="nhan_truong">{truong.nhan} <span className="dau_bat_buoc">*</span></label>
+          <div className="khung_mat_khau">
+            <input
+              type={hien_mat_khau[truong.key] ? "text" : "password"}
+              className={`o_nhap ${loi_mk[truong.ten] ? "loi" : ""}`}
+              value={gia_tri_mk[truong.ten]}
+              onChange={(e) => {
+                dat_gia_tri_mk((prev) => ({ ...prev, [truong.ten]: e.target.value }));
+                dat_loi_mk((prev) => ({ ...prev, [truong.ten]: kiem_tra_truong_mk(truong.ten, e.target.value, gia_tri_mk) }));
+              }}
+              placeholder={`Nhập ${truong.nhan.toLowerCase()}`}
+              autoComplete="new-password"
+            />
+            <button type="button" className="nut_hien_mat_khau"
+              onClick={() => dat_hien_mat_khau((prev) => ({ ...prev, [truong.key]: !prev[truong.key] }))}
+              tabIndex={-1}
+            >
+              {hien_mat_khau[truong.key] ? <FiEyeOff /> : <FiEye />}
+            </button>
+          </div>
+          <span className="thong_bao_loi">{loi_mk[truong.ten]}</span>
+        </div>
+      ))}
+      <button type="submit" className="nut_luu_thong_tin" disabled={dang_luu_mk}>
+        {dang_luu_mk ? "Đang xử lý..." : "Đổi mật khẩu"}
+      </button>
+    </form>
+  );
+}
 
 const GIA_TRI_THONG_TIN_MAC_DINH = { ho_ten: "", so_dien_thoai: "" };
 const LOI_THONG_TIN_MAC_DINH = { ho_ten: "", so_dien_thoai: "" };
@@ -63,11 +152,8 @@ export default function TaiKhoan() {
     switch (ten) {
       case "ho_ten":
         if (!gia_tri.trim()) return "Họ tên không được để trống";
-        if (gia_tri.trim().length < 2) return "Họ tên phải từ 2 ký tự trở lên";
-        if (gia_tri.trim().length > 50)
-          return "Họ tên không được vượt quá 50 ký tự";
-        if (/[0-9!@#$%^&*(),.?":{}|<>]/.test(gia_tri))
-          return "Họ tên không được chứa số hoặc ký tự đặc biệt";
+        if (!/^[\p{L} ]{2,50}$/u.test(gia_tri.trim()))
+          return "Họ tên phải từ 2-50 ký tự và không chứa số hoặc ký tự đặc biệt";
         return "";
       case "so_dien_thoai":
         if (!gia_tri.trim()) return "Số điện thoại không được để trống";
@@ -86,9 +172,8 @@ export default function TaiKhoan() {
         return "";
       case "mat_khau_moi":
         if (!gia_tri.trim()) return "Mật khẩu mới không được để trống";
-        if (gia_tri.length < 8) return "Mật khẩu phải từ 8 ký tự trở lên";
-        if (!/(?=.*[A-Za-z])(?=.*\d)/.test(gia_tri))
-          return "Mật khẩu phải có ít nhất 1 chữ cái và 1 số";
+        if (!/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,64}$/.test(gia_tri))
+          return "Mật khẩu phải từ 8-64 ký tự, bao gồm ít nhất 1 chữ cái và 1 số";
         return "";
       case "xac_nhan_mat_khau":
         if (!gia_tri.trim()) return "Xác nhận mật khẩu không được để trống";
@@ -101,7 +186,7 @@ export default function TaiKhoan() {
   }
 
   /* ── Mutation: cập nhật thông tin ─────────────── */
-  const { mutate: cap_nhat_tt, isLoading: dang_luu_tt } = useMutation({
+  const { mutate: cap_nhat_tt, isPending: dang_luu_tt } = useMutation({
     mutationFn: (du_lieu) => api.put("/nguoi_dung/thong_tin", du_lieu),
     onSuccess: (phan_hoi) => {
       const du_lieu_moi = phan_hoi.data.data;
@@ -136,7 +221,7 @@ export default function TaiKhoan() {
   }
 
   /* ── Mutation: đổi mật khẩu ───────────────────── */
-  const { mutate: doi_mat_khau, isLoading: dang_luu_mk } = useMutation({
+  const { mutate: doi_mat_khau, isPending: dang_luu_mk } = useMutation({
     mutationFn: (du_lieu) => api.put("/nguoi_dung/doi_mat_khau", du_lieu),
     onSuccess: () => {
       toast.success("Đổi mật khẩu thành công");
@@ -146,7 +231,9 @@ export default function TaiKhoan() {
     },
     onError: (loi) => {
       const thong_bao =
-        loi.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại.";
+        loi.response?.data?.message ||
+        loi.response?.data?.thong_bao ||
+        "Có lỗi xảy ra. Vui lòng thử lại.";
       dat_loi_server_mk(thong_bao);
     },
   });
@@ -166,171 +253,6 @@ export default function TaiKhoan() {
     dat_loi_mk(loi_moi);
     if (Object.values(loi_moi).some((v) => v)) return;
     doi_mat_khau(gia_tri_mk);
-  }
-
-  /* ── Component con: Form thông tin ────────────── */
-  function FormThongTin() {
-    return (
-      <form onSubmit={xu_ly_cap_nhat} noValidate>
-        {loi_server_tt && (
-          <div className="thong_bao_server_loi">{loi_server_tt}</div>
-        )}
-
-        <div className="nhom_truong">
-          <label className="nhan_truong">
-            Email <span className="nhan_chi_xem">(không thể thay đổi)</span>
-          </label>
-          {dang_tai ? (
-            <div className="o_skeleton skeleton_input" />
-          ) : (
-            <input
-              type="email"
-              className="o_nhap o_nhap_disabled"
-              value={thong_tin?.email || ""}
-              readOnly
-            />
-          )}
-        </div>
-
-        <div className="nhom_truong">
-          <label className="nhan_truong">
-            Họ tên <span className="dau_bat_buoc">*</span>
-          </label>
-          {dang_tai ? (
-            <div className="o_skeleton skeleton_input" />
-          ) : (
-            <input
-              type="text"
-              className={`o_nhap ${loi_tt.ho_ten ? "loi" : ""}`}
-              value={gia_tri_tt.ho_ten}
-              onChange={(e) => {
-                dat_gia_tri_tt((prev) => ({ ...prev, ho_ten: e.target.value }));
-                dat_loi_tt((prev) => ({
-                  ...prev,
-                  ho_ten: kiem_tra_truong_tt("ho_ten", e.target.value),
-                }));
-              }}
-              placeholder="Nhập họ và tên đầy đủ"
-              maxLength={50}
-            />
-          )}
-          <span className="thong_bao_loi">{loi_tt.ho_ten}</span>
-        </div>
-
-        <div className="nhom_truong">
-          <label className="nhan_truong">
-            Số điện thoại <span className="dau_bat_buoc">*</span>
-          </label>
-          {dang_tai ? (
-            <div className="o_skeleton skeleton_input" />
-          ) : (
-            <input
-              type="tel"
-              className={`o_nhap ${loi_tt.so_dien_thoai ? "loi" : ""}`}
-              value={gia_tri_tt.so_dien_thoai}
-              onChange={(e) => {
-                dat_gia_tri_tt((prev) => ({
-                  ...prev,
-                  so_dien_thoai: e.target.value,
-                }));
-                dat_loi_tt((prev) => ({
-                  ...prev,
-                  so_dien_thoai: kiem_tra_truong_tt(
-                    "so_dien_thoai",
-                    e.target.value,
-                  ),
-                }));
-              }}
-              placeholder="0xxxxxxxxx"
-              maxLength={10}
-            />
-          )}
-          <span className="thong_bao_loi">{loi_tt.so_dien_thoai}</span>
-        </div>
-
-        <button
-          type="submit"
-          className="nut_luu_thong_tin"
-          disabled={dang_luu_tt || dang_tai}
-        >
-          {dang_luu_tt ? "Đang lưu..." : "Cập nhật thông tin"}
-        </button>
-      </form>
-    );
-  }
-
-  /* ── Component con: Form mật khẩu ─────────────── */
-  function FormMatKhau() {
-    const ds_truong = [
-      { ten: "mat_khau_cu", nhan: "Mật khẩu cũ", key: "cu" },
-      { ten: "mat_khau_moi", nhan: "Mật khẩu mới", key: "moi" },
-      {
-        ten: "xac_nhan_mat_khau",
-        nhan: "Xác nhận mật khẩu mới",
-        key: "xac_nhan",
-      },
-    ];
-
-    return (
-      <form onSubmit={xu_ly_doi_mat_khau} noValidate>
-        {loi_server_mk && (
-          <div className="thong_bao_server_loi">{loi_server_mk}</div>
-        )}
-
-        {ds_truong.map((truong) => (
-          <div key={truong.ten} className="nhom_truong">
-            <label className="nhan_truong">
-              {truong.nhan} <span className="dau_bat_buoc">*</span>
-            </label>
-            <div className="khung_mat_khau">
-              <input
-                type={hien_mat_khau[truong.key] ? "text" : "password"}
-                className={`o_nhap ${loi_mk[truong.ten] ? "loi" : ""}`}
-                value={gia_tri_mk[truong.ten]}
-                onChange={(e) => {
-                  dat_gia_tri_mk((prev) => ({
-                    ...prev,
-                    [truong.ten]: e.target.value,
-                  }));
-                  dat_loi_mk((prev) => ({
-                    ...prev,
-                    [truong.ten]: kiem_tra_truong_mk(
-                      truong.ten,
-                      e.target.value,
-                      gia_tri_mk,
-                    ),
-                  }));
-                }}
-                placeholder={`Nhập ${truong.nhan.toLowerCase()}`}
-                autoComplete="new-password"
-              />
-              <button
-                type="button"
-                className="nut_hien_mat_khau"
-                onClick={() =>
-                  dat_hien_mat_khau((prev) => ({
-                    ...prev,
-                    [truong.key]: !prev[truong.key],
-                  }))
-                }
-                tabIndex={-1}
-              >
-                {hien_mat_khau[truong.key] ? "Ẩn" : "Hiện"}
-              </button>
-            </div>
-            <span className="thong_bao_loi">{loi_mk[truong.ten]}</span>
-          </div>
-        ))}
-
-        <button
-          type="submit"
-          className="nut_luu_thong_tin"
-          disabled={dang_luu_mk}
-        >
-          {dang_luu_mk ? "Đang xử lý..." : "Đổi mật khẩu"}
-        </button>
-      </form>
-    );
   }
 
   /* ── Render ─────────────────────────────────────── */
@@ -367,8 +289,34 @@ export default function TaiKhoan() {
         </div>
 
         <div className="noi_dung_tab" key={tab_hien_tai}>
-          {tab_hien_tai === TAB_THONG_TIN && <FormThongTin />}
-          {tab_hien_tai === TAB_MAT_KHAU && <FormMatKhau />}
+          {tab_hien_tai === TAB_THONG_TIN && (
+            <FormThongTin
+              thong_tin={thong_tin}
+              dang_tai={dang_tai}
+              dang_luu_tt={dang_luu_tt}
+              loi_server_tt={loi_server_tt}
+              loi_tt={loi_tt}
+              gia_tri_tt={gia_tri_tt}
+              dat_gia_tri_tt={dat_gia_tri_tt}
+              dat_loi_tt={dat_loi_tt}
+              kiem_tra_truong_tt={kiem_tra_truong_tt}
+              xu_ly_cap_nhat={xu_ly_cap_nhat}
+            />
+          )}
+          {tab_hien_tai === TAB_MAT_KHAU && (
+            <FormMatKhau
+              dang_luu_mk={dang_luu_mk}
+              loi_server_mk={loi_server_mk}
+              loi_mk={loi_mk}
+              gia_tri_mk={gia_tri_mk}
+              dat_gia_tri_mk={dat_gia_tri_mk}
+              dat_loi_mk={dat_loi_mk}
+              hien_mat_khau={hien_mat_khau}
+              dat_hien_mat_khau={dat_hien_mat_khau}
+              kiem_tra_truong_mk={kiem_tra_truong_mk}
+              xu_ly_doi_mat_khau={xu_ly_doi_mat_khau}
+            />
+          )}
         </div>
       </div>
     </div>

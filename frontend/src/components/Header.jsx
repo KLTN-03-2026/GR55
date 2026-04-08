@@ -7,7 +7,7 @@ import './Header.css';
 import { FiSearch, FiShoppingCart, FiUser, FiLogOut } from 'react-icons/fi';
 import { BsStars } from 'react-icons/bs';
 import { FiBookOpen, FiDollarSign, FiAward } from 'react-icons/fi';
-
+import { useQuery } from '@tanstack/react-query';
 export default function Header() {
   const { da_dang_nhap, nguoiDung, dang_xuat } = useAuth();
   const navigate = useNavigate();
@@ -64,8 +64,15 @@ export default function Header() {
   }, []);
 
   // Mock cart count - replace with real context later
-  const cartCount = 3;
-
+  const { data: cartCount = 0 } = useQuery({
+    queryKey: ['so_luong_gio_hang', nguoiDung?.ma_nguoi_dung],
+    queryFn: async () => {
+      const phan_hoi = await api.get('/gio_hang/so_luong');
+      return phan_hoi.data;
+    },
+    staleTime: 0,
+    enabled: da_dang_nhap,
+  });
   return (
     <>
       <header className="header">

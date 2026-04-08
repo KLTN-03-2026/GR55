@@ -8,9 +8,11 @@ import com.backend.backend.repository.NguoiDungRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -47,11 +49,11 @@ public class TaiKhoanCaNhanService {
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
 
         if (!passwordEncoder.matches(yeuCau.getMat_khau_cu(), nguoiDung.getMatKhau())) {
-            return new ThongTinNguoiDungResponse(false, "Mật khẩu cũ không chính xác", null);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Mật khẩu cũ không chính xác");
         }
 
         if (!yeuCau.getMat_khau_moi().equals(yeuCau.getXac_nhan_mat_khau())) {
-            return new ThongTinNguoiDungResponse(false, "Mật khẩu mới và xác nhận mật khẩu không khớp", null);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Mật khẩu mới và xác nhận mật khẩu không khớp");
         }
 
         nguoiDung.setMatKhau(passwordEncoder.encode(yeuCau.getMat_khau_moi()));
@@ -61,7 +63,7 @@ public class TaiKhoanCaNhanService {
     }
 
     private ThongTinNguoiDungResponse.ThongTinData xayDungThongTinData(NguoiDung nguoiDung) {
-        String vaiTro = nguoiDung.getVaiTro().getMaVaiTro().equals(2L) ? "quan_tri" : "thanh_vien";
+        String vaiTro = nguoiDung.getVaiTro().getTenVaiTro();
         return new ThongTinNguoiDungResponse.ThongTinData(
                 nguoiDung.getMaNguoiDung(),
                 nguoiDung.getHoTen(),
