@@ -46,7 +46,7 @@ public class SachChiTietService {
 
         Double diemTrungBinh = danhGiaRepository.tinhDiemTrungBinh(maSach);
         Integer soLuotDanhGia = danhGiaRepository.demSoLuotDanhGia(maSach);
-        boolean sachThuocGoiHoiVien = goiHoiVienSachRepository.isSachHoiVien(maSach);
+        boolean sachThuocGoiHoiVien = goiHoiVienSachRepository.existsByMaSach(maSach);
 
         boolean daMua = false;
         boolean daYeuThich = false;

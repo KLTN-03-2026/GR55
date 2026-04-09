@@ -20,9 +20,9 @@ export default function DocThu() {
   const pdf_ref = useRef(null);
 
   const { data: chi_tiet_sach } = useQuery({
-    queryKey: ["chi_tiet_sach", ma_sach],
+    queryKey: ["doc_thu", ma_sach],
     queryFn: async () => {
-      const phan_hoi = await api.get(`/sach/${ma_sach}`);
+      const phan_hoi = await api.get(`/doc_thu/${ma_sach}`);
       return phan_hoi.data.du_lieu;
     },
     staleTime: 30 * 60 * 1000,
@@ -162,10 +162,13 @@ export default function DocThu() {
       {hien_banner && (
         <div className="banner_het_doc_thu">
           <span>
-            Bạn đã đọc hết {so_trang_doc_thu} trang thử. Mua sách để đọc tiếp!
+            Bạn đã đọc hết {so_trang_doc_thu} trang thử.{" "}
+            {chi_tiet_sach?.la_sach_hoi_vien
+              ? "Nâng cấp hội viên để đọc toàn bộ!"
+              : "Mua sách để đọc tiếp!"}
           </span>
           <Link to={`/sach/${ma_sach}`} className="nut_mua_ngay">
-            Mua ngay →
+            {chi_tiet_sach?.la_sach_hoi_vien ? "Nâng cấp hội viên →" : "Mua ngay →"}
           </Link>
         </div>
       )}
