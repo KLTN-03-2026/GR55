@@ -43,6 +43,7 @@ public class CacheConfig {
                 entry("danh_muc_trang_chu", macDinh.entryTtl(Duration.ofHours(1))),
                 entry("sach_noi_bat",       macDinh.entryTtl(Duration.ofMinutes(30))),
                 entry("sach_moi_nhat",      macDinh.entryTtl(Duration.ofMinutes(30))),
+                entry("sach_mien_phi",      macDinh.entryTtl(Duration.ofMinutes(30))),
                 entry("sach_hoi_vien",      macDinh.entryTtl(Duration.ofMinutes(30))),
                 entry("sach_goi_y",         macDinh.entryTtl(Duration.ofMinutes(30))),
                 entry("chi_tiet_sach",      macDinh.entryTtl(Duration.ofMinutes(10))),

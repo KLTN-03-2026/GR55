@@ -29,6 +29,7 @@ public class SachChiTietService {
     private final GoiHoiVienSachRepository goiHoiVienSachRepository;
     private final SachDanhMucRepository sachDanhMucRepository;
     private final DanhMucSachRepository danhMucSachRepository;
+    private final TienDoDocSachRepository tienDoDocSachRepository;
 
     @Cacheable(value = "chi_tiet_sach", key = "#maSach + '_' + #maNd")
     public ChiTietSachResponse layChiTietSach(Long maSach, Long maNd) {
@@ -50,11 +51,13 @@ public class SachChiTietService {
         boolean daMua = false;
         boolean daYeuThich = false;
         boolean laHoiVien = false;
+        boolean daBatDauDoc = false;
 
         if (maNd != null) {
             daMua = donHangRepository.countDaMuaSach(maNd, maSach) > 0;
             daYeuThich = sachYeuThichRepository.daYeuThich(maNd, maSach);
             laHoiVien = lichSuHoiVienRepository.isHoiVien(maNd, LocalDateTime.now());
+            daBatDauDoc = tienDoDocSachRepository.findByMaNdAndMaSach(maNd, maSach).isPresent();
         }
 
         ChiTietSachResponse.SachChiTietData duLieu = new ChiTietSachResponse.SachChiTietData(
@@ -77,6 +80,7 @@ public class SachChiTietService {
                 daYeuThich,
                 laHoiVien,
                 sachThuocGoiHoiVien,
+                daBatDauDoc,
                 sach.getNgayTao());
 
         return new ChiTietSachResponse(true, "Thành công", duLieu);

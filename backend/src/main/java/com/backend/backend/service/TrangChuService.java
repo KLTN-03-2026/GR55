@@ -68,6 +68,12 @@ public class TrangChuService {
         return taoKetQuaPhanTrang(sachRepository.findSachMoiNhat(pageable));
     }
 
+    @Cacheable(value = "sach_mien_phi", key = "#trang + '_' + #kichThuoc")
+    public DanhSachSachHomeResponse laySachMienPhi(int trang, int kichThuoc) {
+        Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
+        return taoKetQuaPhanTrang(sachRepository.findSachMienPhi(pageable));
+    }
+
     @Cacheable(value = "sach_hoi_vien", key = "#trang + '_' + #kichThuoc")
     public DanhSachSachHomeResponse laySachHoiVien(int trang, int kichThuoc) {
         Pageable pageable = PageRequest.of(trang - 1, kichThuoc);

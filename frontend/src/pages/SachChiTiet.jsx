@@ -53,19 +53,18 @@ export default function SachChiTiet() {
     enabled: !!ma_sach,
   });
 
-  // MỚI: Mutation xử lý thêm vào giỏ hàng
   const { mutate: them_vao_gio, isPending: dang_them } = useMutation({
-    mutationFn: () => api.post('/gio_hang', { ma_sach: chi_tiet.ma_sach }),
+    mutationFn: () => api.post("/gio_hang", { ma_sach: chi_tiet.ma_sach }),
     onSuccess: (phan_hoi) => {
       if (phan_hoi.data.thanh_cong) {
-        toast.success('Đã thêm vào giỏ hàng');
-        queryClient.invalidateQueries({ queryKey: ['so_luong_gio_hang'] });
-        queryClient.invalidateQueries({ queryKey: ['gio_hang'] });
+        toast.success("Đã thêm vào giỏ hàng");
+        queryClient.invalidateQueries({ queryKey: ["so_luong_gio_hang"] });
+        queryClient.invalidateQueries({ queryKey: ["gio_hang"] });
       } else {
         toast.info(phan_hoi.data.thong_bao); // Hiển thị "Sách đã có trong giỏ hàng"
       }
     },
-    onError: () => toast.error('Có lỗi xảy ra. Vui lòng thử lại.'),
+    onError: () => toast.error("Có lỗi xảy ra. Vui lòng thử lại."),
   });
 
   async function xu_ly_yeu_thich() {
@@ -76,11 +75,16 @@ export default function SachChiTiet() {
     }
     dat_dang_xu_ly_yeu_thich(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (chi_tiet.da_yeu_thich) {
+        await api.delete(`/thu_vien/yeu_thich/${chi_tiet.ma_sach}`);
+      } else {
+        await api.post(`/thu_vien/yeu_thich/${chi_tiet.ma_sach}`);
+      }
       toast.success(
         chi_tiet.da_yeu_thich ? "Đã bỏ yêu thích" : "Đã thêm vào yêu thích",
       );
       queryClient.invalidateQueries({ queryKey: ["chi_tiet_sach", ma_sach] });
+      queryClient.invalidateQueries({ queryKey: ["sach_yeu_thich"] });
     } catch {
       toast.error("Có lỗi xảy ra. Vui lòng thử lại.");
     } finally {
@@ -90,10 +94,12 @@ export default function SachChiTiet() {
 
   function xac_dinh_nut_hanh_dong(sach) {
     const mien_phi = Number(sach.gia) === 0;
-    const { da_mua, la_hoi_vien, sach_thuoc_goi_hoi_vien } = sach;
+    const { da_mua, la_hoi_vien, sach_thuoc_goi_hoi_vien, da_bat_dau_doc } =
+      sach;
 
-    if (mien_phi) return "doc_ngay";
-    if (da_mua || (la_hoi_vien && sach_thuoc_goi_hoi_vien)) return "doc_sach";
+    const co_quyen_doc =
+      mien_phi || da_mua || (la_hoi_vien && sach_thuoc_goi_hoi_vien);
+    if (co_quyen_doc) return da_bat_dau_doc ? "doc_tiep" : "doc_ngay";
     if (sach_thuoc_goi_hoi_vien && !la_hoi_vien) return "nang_cap_hoi_vien";
     return "mua_ngay";
   }
@@ -110,7 +116,11 @@ export default function SachChiTiet() {
               <div
                 key={i}
                 className="o_skeleton"
-                style={{ width: `${w}%`, height: i === 4 ? 80 : 20, marginBottom: 12 }}
+                style={{
+                  width: `${w}%`,
+                  height: i === 4 ? 80 : 20,
+                  marginBottom: 12,
+                }}
               />
             ))}
           </div>
@@ -239,16 +249,16 @@ export default function SachChiTiet() {
                 className="nut_chinh nut_doc_sach"
                 onClick={() => dieu_huong(`/doc_sach/${chi_tiet.ma_sach}`)}
               >
-                Đọc ngay
+                Đọc sách
               </button>
             )}
 
-            {loai_nut === "doc_sach" && (
+            {loai_nut === "doc_tiep" && (
               <button
                 className="nut_chinh nut_doc_sach"
                 onClick={() => dieu_huong(`/doc_sach/${chi_tiet.ma_sach}`)}
               >
-                Đọc sách
+                Đọc tiếp
               </button>
             )}
 
@@ -275,12 +285,12 @@ export default function SachChiTiet() {
                 >
                   Mua ngay — {dinh_dang_gia(chi_tiet.gia_giam ?? chi_tiet.gia)}
                 </button>
-                
+
                 <button
                   className="nut_phu nut_gio_hang"
                   onClick={() => {
                     if (!da_dang_nhap) {
-                      dieu_huong('/dang_nhap');
+                      dieu_huong("/dang_nhap");
                       return;
                     }
                     them_vao_gio();
@@ -288,7 +298,7 @@ export default function SachChiTiet() {
                   disabled={dang_them}
                 >
                   <FiShoppingCart />
-                  {dang_them ? 'Đang thêm...' : 'Thêm vào giỏ'}
+                  {dang_them ? "Đang thêm..." : "Thêm vào giỏ"}
                 </button>
               </div>
             )}

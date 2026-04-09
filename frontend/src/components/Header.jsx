@@ -4,9 +4,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Header.css';
-import { FiSearch, FiShoppingCart, FiUser, FiLogOut } from 'react-icons/fi';
-import { BsStars } from 'react-icons/bs';
-import { FiBookOpen, FiDollarSign, FiAward } from 'react-icons/fi';
+import { FiSearch, FiShoppingCart, FiUser, FiLogOut, FiBookOpen } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
 export default function Header() {
   const { da_dang_nhap, nguoiDung, dang_xuat } = useAuth();
@@ -137,6 +135,11 @@ export default function Header() {
                           Bảng điều khiển Admin
                         </Link>
                       )}
+
+                      <Link to="/thu_vien" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                        <FiBookOpen className="item-icon" />
+                        Thư viện của tôi
+                      </Link>
 
                       <Link to="/tai_khoan" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                         <FiUser className="item-icon" />
