@@ -18,6 +18,8 @@ public interface SachDanhMucRepository extends JpaRepository<SachDanhMuc, Long> 
 
     List<SachDanhMuc> findByMaSach(Long maSach);
 
+    List<SachDanhMuc> findByMaSachIn(List<Long> sachIds);
+
     @Query("SELECT DISTINCT sd.maDm FROM SachDanhMuc sd WHERE sd.maSach IN :sachIds")
     List<Long> findDanhMucIdsBySachIds(@Param("sachIds") List<Long> sachIds);
 
