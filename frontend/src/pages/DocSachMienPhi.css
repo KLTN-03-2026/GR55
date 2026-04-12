@@ -1,0 +1,196 @@
+/* frontend/src/pages/DocThu.css */
+
+/* Container chính của trang đọc */
+.trang_doc_thu,
+.trang_doc_sach,
+.trang_doc_mien_phi {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    background: #f3f4f6;
+    color: #1f2937;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+/* Chế độ tối [cite: 713, 1106] */
+.trang_doc_thu.che_do_toi {
+    background: #111827;
+    color: #f9fafb;
+}
+
+/* Thanh công cụ phía trên [cite: 690, 1103] */
+.thanh_cong_cu_doc {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: 56px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.che_do_toi .thanh_cong_cu_doc {
+    background: #1f2937;
+    border-bottom-color: #374151;
+}
+
+.ten_sach_doc {
+    font-weight: 600;
+    font-size: 16px;
+    max-width: 40%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Nhãn và Banner [cite: 745, 1114] */
+.nhan_doc_thu {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.banner_het_doc_thu,
+.popup_dang_nhap {
+    position: absolute;
+    top: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffff;
+    border: 1px solid #2563eb;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 10;
+    width: max-content;
+    max-width: 90%;
+}
+
+.che_do_toi .banner_het_doc_thu {
+    background: #1f2937;
+}
+
+/* Nút bấm điều khiển [cite: 658, 1018] */
+.nut_quay_lai_doc,
+.nut_cong_cu,
+.nut_chuyen_trang {
+    background: none;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    color: inherit;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.che_do_toi .nut_quay_lai_doc,
+.che_do_toi .nut_cong_cu,
+.che_do_toi .nut_chuyen_trang {
+    border-color: #374151;
+}
+
+.nut_quay_lai_doc:hover,
+.nut_cong_cu:hover:not(:disabled) {
+    background: #f9fafb;
+}
+
+.che_do_toi .nut_quay_lai_doc:hover {
+    background: #374151;
+}
+
+.nut_mua_ngay,
+.nut_dang_nhap_popup {
+    background: #2563eb;
+    color: #ffffff;
+    padding: 6px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* Vùng hiển thị Canvas [cite: 693] */
+.khung_canvas {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    scrollbar-width: thin;
+}
+
+.canvas_pdf {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    background: #ffffff;
+    max-width: 100%;
+}
+
+/* Thanh phân trang dưới cùng [cite: 696, 1108] */
+.thanh_phan_trang_doc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    height: 56px;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    padding: 0 16px;
+}
+
+.che_do_toi .thanh_phan_trang_doc {
+    background: #1f2937;
+    border-top-color: #374151;
+}
+
+.thanh_truot_trang {
+    width: 300px;
+    cursor: pointer;
+}
+
+/* Skeleton & Loading [cite: 659, 1119] */
+.o_skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton_pdf {
+    width: 600px;
+    height: 800px;
+    margin: 0 auto;
+}
+
+/* Màn hình lỗi [cite: 1118, 1120] */
+.thong_bao_loi_pdf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    height: 100%;
+    text-align: center;
+    padding: 20px;
+}

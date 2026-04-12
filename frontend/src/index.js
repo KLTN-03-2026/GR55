@@ -35,6 +35,8 @@ import DocSach from './pages/DocSach';
 import DocThu from './pages/DocThu';
 import TaiKhoan from './pages/TaiKhoan';
 import ThuVien from './pages/ThuVien';
+import DocSachMienPhi from "./pages/DocSachMienPhi";
+
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -97,15 +99,15 @@ root.render(
               }
             />
             <Route path="/doc_thu/:ma_sach" element={<DocThu />} />
+            <Route path="/doc_sach_mien_phi/:ma_sach" element={<DocSachMienPhi />} />
 
-<<<<<<< HEAD
             <Route path='/sach/:masach' element={<App><TheCardSach /> </App>} />
             <Route path="/sach_moi_nhat" element={<App><DanhSachMoiNhat /></App>} />
             <Route path="/sach_hoi_vien" element={<App><DanhSachHoiVien /></App>} />
             <Route path="/sach_goi_y" element={<App><DanhSachGoiY /></App>} />
             <Route path="/sach_noi_bat" element={<App><DanhSachNoiBat /></App>} />
             <Route path="/thu_vien" element={<App><ThuVien /></App>} />
-=======
+
             <Route
               path="/sach/:ma_sach"
               element={
@@ -146,74 +148,74 @@ root.render(
                 </App>
               }
             />
-            <Route path="/gio_hang" element={<App><GioHang /></App>} />
+            {/* <Route path="/gio_hang" element={<App><GioHang /></App>} /> */}
 
->>>>>>> 3d84c2fd06358f222f29d0d9c294494849c9e1ea
-            {/* NHÓM 2: GIAO DIỆN QUẢN TRỊ (Các trang này KHÔNG bọc <App> để tự thiết kế layout riêng)*/ }
-  < Route
-              path = "/quan_tri"
-              element = {
+
+            {/* NHÓM 2: GIAO DIỆN QUẢN TRỊ (Các trang này KHÔNG bọc <App> để tự thiết kế layout riêng)*/}
+            < Route
+              path="/quan_tri"
+              element={
                 // <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
                 < AdminLayout >
-  <QuanTri />
+                  <QuanTri />
                 </AdminLayout >
                 // </ProtectedRoute>
               }
             />
-  < Route
-              path = "/quan_tri/danh_muc"
-              element = {
+            < Route
+              path="/quan_tri/danh_muc"
+              element={
                 // <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
                 < AdminLayout >
-  <QuanLyDanhMuc />
+                  <QuanLyDanhMuc />
                 </AdminLayout >
                 // </ProtectedRoute>
               }
             />
-  < Route
-              path = "/quan_tri/sach"
-              element = {
+            < Route
+              path="/quan_tri/sach"
+              element={
                 // <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
                 < AdminLayout >
-  <QuanLySach />
+                  <QuanLySach />
                 </AdminLayout >
                 // </ProtectedRoute>
               }
             />
-  < Route
-              path = "/quan_tri/nguoi_dung"
-              element = {
+            < Route
+              path="/quan_tri/nguoi_dung"
+              element={
                 // <ProtectedRoute vai_tro_duoc_phep={['quan_tri']}>
                 < AdminLayout >
-  <QuanLyNguoiDung />
+                  <QuanLyNguoiDung />
                 </AdminLayout >
                 // </ProtectedRoute>
               }
             />
-  < Route
-              path = "/tai_khoan"
-              element = {
-                < ProtectedRoute vai_tro_duoc_phep = { ["thanh_vien", "quan_tri"]} >
-<App>
-  <TaiKhoan />
-</App>
+            < Route
+              path="/tai_khoan"
+              element={
+                < ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]} >
+                  <App>
+                    <TaiKhoan />
+                  </App>
                 </ProtectedRoute >
               }
             />
           </Routes >
-  {/* <Route path='/sach_noi_bat' element={<App><DanhSachSachNoiBat /></App>} />
+          {/* <Route path='/sach_noi_bat' element={<App><DanhSachSachNoiBat /></App>} />
         <Route path='/sach_moi_nhat' element={<App><DanhSachSachMoi /></App>} />
         <Route path='/sach_hoi_vien' element={<App><DanhSachSachHoiVien /></App>} />
         <Route path='/sach_goi_y' element={<App><DanhSachSachGoiY /></App>} /> */}
 
-          {/* Thông báo toàn cục đặt ở đây để dùng chung cho cả Client và Admin */ }
-  < ToastContainer
-            position = "top-right"
-            autoClose = { 3000}
-            hideProgressBar = { false}
+          {/* Thông báo toàn cục đặt ở đây để dùng chung cho cả Client và Admin */}
+          < ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
             closeOnClick
             pauseOnHover
-  />
+          />
         </BrowserRouter >
       </QueryClientProvider >
     </AuthProvider >
