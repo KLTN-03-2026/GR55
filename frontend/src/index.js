@@ -35,6 +35,7 @@ import QuanLySach from "./pages/admin/QuanLySach";
 import QuanLyNguoiDung from "./pages/admin/QuanLyNguoiDung";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import TimKiem from "./pages/TimKiem";
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -61,6 +62,7 @@ root.render(
             <Route path="/thu_vien" element={<App><ThuVien /></App>} />
             <Route path="/doc_sach/:ma_sach" element={<App><DocSach /></App>} />
             <Route path="/doc_thu/:ma_sach" element={<DocThu />} />
+            <Route path="/tim_kiem" element={<App><TimKiem/></App>}/>
             <Route
               path="/tai_khoan"
               element={

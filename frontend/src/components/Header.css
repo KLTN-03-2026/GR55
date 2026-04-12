@@ -758,3 +758,117 @@ body {
 html {
   scroll-behavior: smooth;
 }
+/* 1. HỢP NHẤT VÀ FIX LỖI WRAPPER (Xóa các class .search-input-wrapper cũ đi nhé) */
+.search-input-wrapper {
+  position: relative; /* Bắt buộc để làm gốc tọa độ cho Dropdown */
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 50px;
+  padding: 0.75rem 1.25rem;
+  box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.05), 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2000; /* Quan trọng: Đẩy nguyên cụm search nổi hẳn lên trên thanh Menu Nav */
+}
+
+.search-input-wrapper:hover,
+.search-input-wrapper:focus-within {
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.05), 0 8px 32px rgba(102, 126, 234, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Đẩy padding bên phải của thẻ input để chữ dài không lẹm vào nút X */
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: var(--text-primary);
+  padding: 0.5rem 2rem 0.5rem 0; /* Thêm padding-right 2rem */
+  font-weight: 400;
+}
+
+/* 2. MENU DROPDOWN GỢI Ý */
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 12px); /* Cách viền input một chút cho thoáng */
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  box-shadow: var(--shadow-xl);
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  z-index: 3000; /* Đảm bảo đè lên mọi thứ bên dưới */
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Tùy chỉnh thanh cuộn (Scrollbar) cho thanh lịch */
+.search-suggestions::-webkit-scrollbar {
+  width: 6px;
+}
+.search-suggestions::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* 3. DÀN TRANG LẠI NỘI DUNG TỪNG CUỐN SÁCH */
+.suggestion-item {
+  padding: 12px 1.5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column; /* Bắt buộc: Ép tên sách và tác giả xếp dọc */
+  align-items: flex-start; /* Ép tất cả căn lề trái */
+  gap: 4px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+  text-align: left; /* Chống bị lây thuộc tính text-align: center từ các class khác */
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background-color: #f8fafc;
+  padding-left: 1.75rem; /* Thêm hiệu ứng thụt lề nhẹ (hover effect) */
+}
+
+.suggestion-ten {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.suggestion-tac-gia {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* 4. CHỈNH VỊ TRÍ NÚT XÓA TỪ KHÓA (CLEAR BUTTON) */
+.clear-search-btn {
+  position: absolute;
+  right: 1.25rem; /* Neo nút X cân bằng với viền phải của wrapper */
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  transition: color 0.2s ease;
+  z-index: 10;
+}
+
+.clear-search-btn:hover {
+  color: #ef4444; /* Đổi màu đỏ nhạt khi hover */
+}

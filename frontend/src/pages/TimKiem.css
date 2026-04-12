@@ -1,0 +1,490 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* =============================================
+   BOOKNEST – TRANG TÌM KIẾM
+   Aesthetic: Hiện đại, Minimalist, Xanh Lạnh (Cool Blue)
+   ============================================= */
+
+:root {
+  --mau_nen: #f8fafc; /* Nền xám xanh cực nhạt, sang trọng */
+  --mau_the: #ffffff;
+  --mau_bien: #e2e8f0;
+  --mau_bien_dam: #cbd5e1;
+  --mau_chu_chinh: #0f172a;
+  --mau_chu_phu: #475569;
+  --mau_chu_mo: #94a3b8;
+  --mau_xanh_chinh: #3b82f6; /* Xanh dương chủ đạo */
+  --mau_xanh_nhat: #eff6ff; /* Xanh dương nhạt cho hover */
+  --mau_sao: #f59e0b;
+  --mau_xanh_mien_phi: #10b981;
+  --font_chinh: 'Inter', sans-serif;
+  --bo_goc: 8px;
+  --bo_goc_lon: 16px;
+  --bong: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --bong_hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+/* =============================================
+   LAYOUT GỐC
+   ============================================= */
+
+.trang_tim_kiem {
+  min-height: 100vh;
+  background: var(--mau_nen);
+  font-family: var(--font_chinh);
+  color: var(--mau_chu_chinh);
+  padding: 0 0 4rem;
+}
+
+/* =============================================
+   TIÊU ĐỀ KẾT QUẢ
+   ============================================= */
+
+.tieu_de_tim_kiem {
+  padding: 2.5rem 2rem 1.5rem;
+  border-bottom: 1px solid var(--mau_bien);
+  background: var(--mau_the);
+}
+
+.tieu_de_tim_kiem h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--mau_chu_chinh);
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.tieu_de_tim_kiem h1 em {
+  font-style: normal;
+  color: var(--mau_xanh_chinh);
+}
+
+/* =============================================
+   BỐ CỤC CHÍNH: sidebar + content
+   ============================================= */
+
+.bo_cuc_chinh {
+  display: flex;
+  gap: 2rem;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 0;
+  align-items: flex-start;
+}
+
+/* =============================================
+   BỘ LỌC BÊN TRÁI (ĐÃ FIX LỖI)
+   ============================================= */
+
+.bo_loc_ben_trai {
+  width: 280px; /* Tăng từ 240px lên 280px để các ô input giá có không gian thở */
+  flex-shrink: 0;
+  background: var(--mau_the);
+  border: 1px solid var(--mau_bien);
+  border-radius: var(--bo_goc_lon);
+  padding: 1.5rem;
+  position: sticky;
+  top: 1.5rem;
+  height: fit-content; /* Ngăn sidebar giãn chiều cao bất thường */
+}
+
+.tieu_de_bo_loc {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--mau_chu_chinh);
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1.5px solid var(--mau_bien);
+}
+
+.nhom_bo_loc {
+  margin-bottom: 1.25rem;
+}
+
+.nhom_bo_loc:last-of-type {
+  margin-bottom: 1.5rem;
+}
+
+.nhan_bo_loc {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--mau_chu_mo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.chon_sap_xep,
+.chon_danh_gia {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--mau_bien);
+  border-radius: var(--bo_goc);
+  background: var(--mau_the);
+  font-family: var(--font_chinh);
+  font-size: 0.875rem;
+  color: var(--mau_chu_chinh);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chon_sap_xep:focus,
+.chon_danh_gia:focus {
+  outline: none;
+  border-color: var(--mau_xanh_chinh);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.nhom_gia {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nhap_gia {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid var(--mau_bien);
+  border-radius: var(--bo_goc);
+  background: var(--mau_the);
+  font-family: var(--font_chinh);
+  font-size: 0.875rem;
+  color: var(--mau_chu_chinh);
+  transition: all 0.2s ease;
+}
+
+.nhap_gia:focus {
+  outline: none;
+  border-color: var(--mau_xanh_chinh);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.nhap_gia::placeholder {
+  color: var(--mau_chu_mo);
+}
+
+.ky_tu_den {
+  color: var(--mau_chu_mo);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.nhan_checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--mau_chu_phu);
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+}
+
+.nhan_checkbox input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--mau_xanh_chinh);
+  cursor: pointer;
+  flex-shrink: 0;
+  border: 1px solid var(--mau_bien);
+  border-radius: 4px;
+}
+
+.nut_ap_dung {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--mau_xanh_chinh);
+  color: #fff;
+  border: none;
+  border-radius: var(--bo_goc);
+  font-family: var(--font_chinh);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.nut_ap_dung:hover {
+  background: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.nut_ap_dung:active {
+  transform: scale(0.98);
+}
+
+/* =============================================
+   KHU VỰC KẾT QUẢ
+   ============================================= */
+
+.khu_vuc_ket_qua {
+  flex: 1;
+  min-width: 0;
+}
+
+.luoi_ket_qua {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.the_sach {
+  display: flex;
+  flex-direction: column;
+  background: var(--mau_the);
+  border: 1px solid var(--mau_bien);
+  border-radius: var(--bo_goc_lon);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--bong);
+  transition: all 0.2s ease;
+}
+
+.the_sach:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--bong_hover);
+  border-color: var(--mau_bien_dam);
+}
+
+.khung_anh_bia {
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background: var(--mau_nen);
+  position: relative;
+}
+
+.anh_bia {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  display: block;
+}
+
+.the_sach:hover .anh_bia {
+  transform: scale(1.05);
+}
+
+.thong_tin_sach {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.ten_sach {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--mau_chu_chinh);
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tac_gia {
+  font-size: 0.8125rem;
+  color: var(--mau_chu_phu);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gia_sach {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--mau_xanh_chinh);
+  margin: 0.5rem 0 0;
+}
+
+.gia_sach.mien_phi {
+  color: var(--mau_xanh_mien_phi);
+}
+
+.danh_gia {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--mau_chu_phu);
+  margin: 0.25rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.danh_gia::before {
+  content: '★';
+  color: var(--mau_sao);
+  font-size: 0.875rem;
+}
+
+/* SKELETON LOADING */
+
+@keyframes shimmer {
+  0% { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+.o_skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--mau_bien) 25%,
+    #f1f5f9 50%,
+    var(--mau_bien) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: var(--bo_goc_lon);
+}
+
+.the_sach_skeleton {
+  height: 320px;
+  border: 1px solid var(--mau_bien);
+}
+
+/* KHÔNG CÓ KẾT QUẢ */
+
+.khong_co_ket_qua {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.khong_co_ket_qua p {
+  font-size: 1.125rem;
+  color: var(--mau_chu_phu);
+  margin: 0;
+}
+
+.nut_xem_tat_ca {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--mau_the);
+  border: 1px solid var(--mau_xanh_chinh);
+  border-radius: var(--bo_goc);
+  color: var(--mau_xanh_chinh);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.nut_xem_tat_ca:hover {
+  background: var(--mau_xanh_nhat);
+}
+
+/* PHÂN TRANG */
+
+.phan_trang {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--mau_bien);
+}
+
+.nut_phan_trang {
+  padding: 0.6rem 1.25rem;
+  background: var(--mau_the);
+  border: 1px solid var(--mau_bien);
+  border-radius: var(--bo_goc);
+  font-family: var(--font_chinh);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--mau_chu_chinh);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nut_phan_trang:hover:not(:disabled) {
+  background: var(--mau_xanh_nhat);
+  border-color: var(--mau_xanh_chinh);
+  color: var(--mau_xanh_chinh);
+}
+
+.nut_phan_trang:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: var(--mau_nen);
+}
+
+.vi_tri_trang {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--mau_chu_phu);
+  min-width: 100px;
+  text-align: center;
+}
+
+/* =============================================
+   RESPONSIVE (ĐÃ SỬA LỖI GRID VÀ MARGIN)
+   ============================================= */
+
+@media (max-width: 900px) {
+  .bo_cuc_chinh {
+    flex-direction: column;
+    padding: 1.5rem 1rem 0;
+  }
+
+  .bo_loc_ben_trai {
+    width: 100%;
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Nới rộng minmax cho các ô input */
+    gap: 1.25rem 1.5rem;
+    align-items: flex-end; 
+    padding: 1.25rem;
+  }
+
+  .tieu_de_bo_loc {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+    padding-bottom: 0.5rem;
+  }
+
+  /* RESET MARGIN DƯỚI KHI VÀO GRID ĐỂ TRÁNH LỆCH DÒNG */
+  .nhom_bo_loc {
+    margin-bottom: 0 !important; 
+  }
+
+  .nut_ap_dung {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .tieu_de_tim_kiem {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .tieu_de_tim_kiem h1 {
+    font-size: 1.25rem;
+  }
+
+  .luoi_ket_qua {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .bo_loc_ben_trai {
+    grid-template-columns: 1fr; /* Trở về 1 cột trên điện thoại nhỏ để nhập giá dễ hơn */
+  }
+}
