@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ThongTinNguoiDungResponse {
 
-    private boolean success;
-    private String message;
-    private ThongTinData data;
+    private boolean thanh_cong;
+    private String thong_bao;
+    private ThongTinData du_lieu;
 
     @Data
     @NoArgsConstructor

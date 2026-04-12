@@ -122,7 +122,7 @@ export default function QuanLySach() {
         return '';
       case 'tac_gia':
         if (!gia_tri.trim()) return 'Tác giả không được để trống';
-        if (gia_tri.trim().length > 150) return 'Tác giả không được vượt quá 150 ký tự';
+        if (gia_tri.trim().length > 100) return 'Tác giả không được vượt quá 100 ký tự';
         return '';
       case 'gia':
         if (gia_tri === '' || gia_tri == null) return 'Giá không được để trống';
@@ -516,7 +516,7 @@ export default function QuanLySach() {
                       dat_loi_form(prev => ({ ...prev, tac_gia: kiem_tra_truong('tac_gia', e.target.value) }));
                     }}
                     placeholder="Nhập tên tác giả"
-                    maxLength={150}
+                    maxLength={100}
                   />
                   <span className="thong_bao_loi_modal">{loi_form.tac_gia}</span>
                 </div>

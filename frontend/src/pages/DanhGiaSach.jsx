@@ -42,7 +42,44 @@ export default function DanhGiaSach({ ma_sach }) {
   }
 
   if (dang_tai_dg) {
-    return <div className="khung_loading_danh_gia">Đang tải đánh giá...</div>;
+    return (
+      <div className="section_danh_gia_sach">
+        <h2 className="tieu_de_lon">Đánh giá từ độc giả</h2>
+        {/* Skeleton: tổng quan */}
+        <div className="khung_tong_quan_danh_gia">
+          <div className="cot_diem_so" style={{ borderRight: "1px solid #e5e7eb", paddingRight: 32 }}>
+            <div className="skeleton_dg" style={{ width: 80, height: 64, margin: "0 auto 12px" }} />
+            <div className="skeleton_dg" style={{ width: 120, height: 20, margin: "0 auto 8px" }} />
+            <div className="skeleton_dg" style={{ width: 80, height: 14, margin: "0 auto" }} />
+          </div>
+          <div className="cot_bieu_do_sao">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="hang_sao">
+                <div className="skeleton_dg" style={{ width: 50, height: 14 }} />
+                <div className="skeleton_dg" style={{ flex: 1, height: 8 }} />
+                <div className="skeleton_dg" style={{ width: 24, height: 14 }} />
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Skeleton: danh sách đánh giá */}
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="the_nhan_xet">
+            <div className="dong_dau_the">
+              <div className="thong_tin_nguoi_dung">
+                <div className="skeleton_dg" style={{ width: 44, height: 44, borderRadius: 10, flexShrink: 0 }} />
+                <div>
+                  <div className="skeleton_dg" style={{ width: 120, height: 14, marginBottom: 8 }} />
+                  <div className="skeleton_dg" style={{ width: 160, height: 12 }} />
+                </div>
+              </div>
+            </div>
+            <div className="skeleton_dg" style={{ width: "80%", height: 14, marginTop: 16, marginLeft: 60 }} />
+            <div className="skeleton_dg" style={{ width: "60%", height: 14, marginTop: 8, marginLeft: 60 }} />
+          </div>
+        ))}
+      </div>
+    );
   }
 
   const { diem_trung_binh, tong_so_danh_gia, phan_bo_sao, danh_sach, tong_so_trang } =

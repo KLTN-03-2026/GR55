@@ -74,8 +74,20 @@ function FormMatKhau({ dang_luu_mk, loi_server_mk, loi_mk, gia_tri_mk, dat_gia_t
               className={`o_nhap ${loi_mk[truong.ten] ? "loi" : ""}`}
               value={gia_tri_mk[truong.ten]}
               onChange={(e) => {
-                dat_gia_tri_mk((prev) => ({ ...prev, [truong.ten]: e.target.value }));
-                dat_loi_mk((prev) => ({ ...prev, [truong.ten]: kiem_tra_truong_mk(truong.ten, e.target.value, gia_tri_mk) }));
+                const gia_tri_moi = e.target.value;
+                const form_moi = { ...gia_tri_mk, [truong.ten]: gia_tri_moi };
+                dat_gia_tri_mk(form_moi);
+                const loi_truong = kiem_tra_truong_mk(truong.ten, gia_tri_moi, form_moi);
+                // Khi mat_khau_moi thay đổi, re-validate xac_nhan nếu đã nhập
+                if (truong.ten === "mat_khau_moi" && gia_tri_mk.xac_nhan_mat_khau) {
+                  dat_loi_mk((prev) => ({
+                    ...prev,
+                    [truong.ten]: loi_truong,
+                    xac_nhan_mat_khau: kiem_tra_truong_mk("xac_nhan_mat_khau", gia_tri_mk.xac_nhan_mat_khau, form_moi),
+                  }));
+                } else {
+                  dat_loi_mk((prev) => ({ ...prev, [truong.ten]: loi_truong }));
+                }
               }}
               placeholder={`Nhập ${truong.nhan.toLowerCase()}`}
               autoComplete="new-password"
@@ -133,7 +145,7 @@ export default function TaiKhoan() {
     queryKey: ["thong_tin_tai_khoan"],
     queryFn: async () => {
       const phan_hoi = await api.get("/nguoi_dung/thong_tin");
-      return phan_hoi.data.data;
+      return phan_hoi.data.du_lieu;
     },
     staleTime: 30 * 60 * 1000,
   });
@@ -174,6 +186,8 @@ export default function TaiKhoan() {
         if (!gia_tri.trim()) return "Mật khẩu mới không được để trống";
         if (!/^(?=.*[a-zA-Z])(?=.*[0-9]).{8,64}$/.test(gia_tri))
           return "Mật khẩu phải từ 8-64 ký tự, bao gồm ít nhất 1 chữ cái và 1 số";
+        if (gia_tri === (gia_tri_form?.mat_khau_cu || ""))
+          return "Mật khẩu mới không được trùng mật khẩu cũ";
         return "";
       case "xac_nhan_mat_khau":
         if (!gia_tri.trim()) return "Xác nhận mật khẩu không được để trống";
@@ -189,7 +203,7 @@ export default function TaiKhoan() {
   const { mutate: cap_nhat_tt, isPending: dang_luu_tt } = useMutation({
     mutationFn: (du_lieu) => api.put("/nguoi_dung/thong_tin", du_lieu),
     onSuccess: (phan_hoi) => {
-      const du_lieu_moi = phan_hoi.data.data;
+      const du_lieu_moi = phan_hoi.data.du_lieu;
       toast.success("Cập nhật thông tin thành công");
       dat_loi_server_tt("");
       queryClient.invalidateQueries({ queryKey: ["thong_tin_tai_khoan"] });
@@ -197,7 +211,7 @@ export default function TaiKhoan() {
     },
     onError: (loi) => {
       const thong_bao =
-        loi.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại.";
+        loi.response?.data?.thong_bao || loi.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại.";
       dat_loi_server_tt(thong_bao);
     },
   });
@@ -231,8 +245,8 @@ export default function TaiKhoan() {
     },
     onError: (loi) => {
       const thong_bao =
-        loi.response?.data?.message ||
         loi.response?.data?.thong_bao ||
+        loi.response?.data?.message ||
         "Có lỗi xảy ra. Vui lòng thử lại.";
       dat_loi_server_mk(thong_bao);
     },

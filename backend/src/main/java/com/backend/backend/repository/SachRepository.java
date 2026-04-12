@@ -15,9 +15,9 @@ import java.util.List;
 @Repository
 public interface SachRepository extends JpaRepository<Sach, Long> {
 
-    boolean existsByTenSachAndDaXoaFalse(String tenSach);
+    boolean existsByTenSachIgnoreCaseAndDaXoaFalse(String tenSach);
 
-    boolean existsByTenSachAndMaSachNotAndDaXoaFalse(String tenSach, Long maSach);
+    boolean existsByTenSachIgnoreCaseAndMaSachNotAndDaXoaFalse(String tenSach, Long maSach);
 
     @Query("SELECT s FROM Sach s WHERE s.daXoa = false ORDER BY s.luotXem DESC, s.danhGiaTrungBinh DESC")
     Page<Sach> findSachNoiBat(Pageable pageable);

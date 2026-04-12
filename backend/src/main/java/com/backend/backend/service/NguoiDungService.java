@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,11 +36,11 @@ public class NguoiDungService {
 
     public DangKyResponse dangKy(DangKyRequest yeuCauDangKy) {
         if (nguoiDungRepository.existsByEmail(yeuCauDangKy.getEmail())) {
-            return new DangKyResponse(false, "Email đã tồn tại trong hệ thống", null);
+            return new DangKyResponse(false, "Email đã tồn tại trong hệ thống", null, null);
         }
 
         if (!yeuCauDangKy.getMat_khau().equals(yeuCauDangKy.getXac_nhan_mat_khau())) {
-            return new DangKyResponse(false, "Xác nhận mật khẩu không khớp", null);
+            return new DangKyResponse(false, "Xác nhận mật khẩu không khớp", null, null);
         }
 
         VaiTro vaiTroThanhVien = vaiTroRepository.findById(1L)
@@ -63,7 +63,7 @@ public class NguoiDungService {
                 nguoiDungDaLuu.getSoDienThoai()
         );
 
-        return new DangKyResponse(true, "Đăng ký thành công!", duLieu);
+        return new DangKyResponse(true, "Đăng ký thành công!", null, duLieu);
     }
 
     public DangNhapResponse dangNhap(DangNhapRequest yeuCauDangNhap) {
@@ -153,7 +153,7 @@ public class NguoiDungService {
 
         maOtpRepository.deleteByMaNd(nguoiDung.getMaNguoiDung());
 
-        String chuoiOtp = String.format("%06d", new Random().nextInt(1000000));
+        String chuoiOtp = String.format("%06d", new SecureRandom().nextInt(1000000));
 
         MaOtp maOtpMoi = new MaOtp();
         maOtpMoi.setMaNd(nguoiDung.getMaNguoiDung());

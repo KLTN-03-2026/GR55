@@ -60,7 +60,7 @@ public class DanhMucSachService {
 
     @CacheEvict(value = "danh_muc", allEntries = true)
     public DanhMucResponse themDanhMuc(DanhMucRequest yeuCau) {
-        if (danhMucSachRepository.existsByTenDanhMuc(yeuCau.getTen_danh_muc().trim())) {
+        if (danhMucSachRepository.existsByTenDanhMucIgnoreCase(yeuCau.getTen_danh_muc().trim())) {
             return new DanhMucResponse(false, "Tên danh mục đã tồn tại", null);
         }
 
@@ -84,7 +84,7 @@ public class DanhMucSachService {
             return new DanhMucResponse(false, "Danh mục không tồn tại", null);
         }
 
-        if (danhMucSachRepository.existsByTenDanhMucAndMaDmNot(yeuCau.getTen_danh_muc().trim(), maDm)) {
+        if (danhMucSachRepository.existsByTenDanhMucIgnoreCaseAndMaDmNot(yeuCau.getTen_danh_muc().trim(), maDm)) {
             return new DanhMucResponse(false, "Tên danh mục đã tồn tại", null);
         }
 
@@ -109,12 +109,6 @@ public class DanhMucSachService {
             return new DanhMucResponse(false, "Danh mục không tồn tại", null);
         }
 
-        int soLuongSach = sachDanhMucRepository.countByMaDm(maDm);
-        if (soLuongSach > 0) {
-            return new DanhMucResponse(false,
-                    "Không thể xóa danh mục đang có " + soLuongSach + " sách", null);
-        }
-
         if (chuongTrinhGiamGiaSachRepository.countSachTrongDanhMucCoGiamGia(maDm) > 0) {
             return new DanhMucResponse(false,
                     "Vui lòng xóa sách khỏi chương trình giảm giá trước khi xóa danh mục", null);
@@ -123,6 +117,12 @@ public class DanhMucSachService {
         if (goiHoiVienSachRepository.countSachTrongDanhMucCoTrongGoiHoiVien(maDm) > 0) {
             return new DanhMucResponse(false,
                     "Vui lòng xóa sách khỏi gói hội viên trước khi xóa danh mục", null);
+        }
+
+        int soLuongSach = sachDanhMucRepository.countByMaDm(maDm);
+        if (soLuongSach > 0) {
+            return new DanhMucResponse(false,
+                    "Không thể xóa danh mục đang có " + soLuongSach + " sách", null);
         }
 
         danhMucSachRepository.delete(danhMuc);

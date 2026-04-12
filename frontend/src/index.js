@@ -24,6 +24,7 @@ import GioHang from "./pages/GioHang";
 // Import danh sách sách
 import DanhSachNoiBat from "./pages/booklist/DanhSachNoiBat";
 import DanhSachMoiNhat from "./pages/booklist/DanhSachMoiNhat";
+import DanhSachMienPhi from "./pages/booklist/DanhSachMienPhi";
 import DanhSachHoiVien from "./pages/booklist/DanhSachHoiVien";
 import DanhSachGoiY from "./pages/booklist/DanhSachGoiY";
 
@@ -53,13 +54,35 @@ root.render(
             <Route path="/dang_nhap" element={<App><DangNhap /></App>} />
             <Route path="/quen_mat_khau" element={<App><QuenMatKhau /></App>} />
             <Route path="/sach/:ma_sach" element={<App><SachChiTiet /></App>} />
-            <Route path="/sach_mien_phi" element={<App><DanhSachMoiNhat /></App>} />
+            <Route path="/sach_moi_nhat" element={<App><DanhSachMoiNhat /></App>} />
+            <Route path="/sach_mien_phi" element={<App><DanhSachMienPhi /></App>} />
             <Route path="/sach_hoi_vien" element={<App><DanhSachHoiVien /></App>} />
             <Route path="/sach_goi_y" element={<App><DanhSachGoiY /></App>} />
             <Route path="/sach_noi_bat" element={<App><DanhSachNoiBat /></App>} />
-            <Route path="/gio_hang" element={<App><GioHang /></App>} />
-            <Route path="/thu_vien" element={<App><ThuVien /></App>} />
-            <Route path="/doc_sach/:ma_sach" element={<App><DocSach /></App>} />
+            <Route
+              path="/gio_hang"
+              element={
+                <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                  <App><GioHang /></App>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/thu_vien"
+              element={
+                <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                  <App><ThuVien /></App>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/doc_sach/:ma_sach"
+              element={
+                <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                  <App><DocSach /></App>
+                </ProtectedRoute>
+              }
+            />
             <Route path="/doc_thu/:ma_sach" element={<DocThu />} />
             <Route
               path="/tai_khoan"

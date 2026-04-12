@@ -7,9 +7,6 @@ import com.backend.backend.entity.Sach;
 import com.backend.backend.repository.GioHangRepository;
 import com.backend.backend.repository.SachRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +22,6 @@ public class GioHangService {
     private final GioHangRepository gioHangRepository;
     private final SachRepository sachRepository;
 
-    @CacheEvict(value = "gio_hang", key = "#maNd")
     @Transactional
     public GioHangResponse themVaoGio(Long maNd, ThemVaoGioRequest yeuCau) {
         Sach sach = sachRepository.findById(yeuCau.getMa_sach())
@@ -48,13 +44,11 @@ public class GioHangService {
                 new GioHangResponse.GioHangData(null, null, soLuong));
     }
 
-    @Cacheable(value = "gio_hang", key = "#maNd")
     public GioHangResponse layGioHang(Long maNd) {
         List<GioHang> danhSachGio = gioHangRepository.findByMaNd(maNd);
         return xayDungGioHangResponse(danhSachGio);
     }
 
-    @CachePut(value = "gio_hang", key = "#maNd")
     @Transactional
     public GioHangResponse xoaKhoiGio(Long maNd, Long maSach) {
         GioHang gioHang = gioHangRepository.findByMaNdAndMaSach(maNd, maSach)

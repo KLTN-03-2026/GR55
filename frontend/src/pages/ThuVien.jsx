@@ -234,6 +234,29 @@ export default function ThuVien() {
                         : <EmptyState icon={<FiClock />} tieu_de="Chưa có sách đang đọc" mo_ta="Bắt đầu đọc một cuốn sách để theo dõi tiến độ tại đây." link="/trang_chu" ten_link="Tìm sách đọc" />
                 )}
             </div>
+
+            {/* Phân trang */}
+            {tab_hien_tai === TAB_DA_MUA && du_lieu_da_mua?.tong_so_trang > 1 && (
+                <div className="phan_trang_thu_vien">
+                    <button className="nut_trang_tv" onClick={() => dat_trang_da_mua(p => p - 1)} disabled={trang_da_mua === 1}>‹</button>
+                    <span className="so_trang_tv">{trang_da_mua} / {du_lieu_da_mua.tong_so_trang}</span>
+                    <button className="nut_trang_tv" onClick={() => dat_trang_da_mua(p => p + 1)} disabled={trang_da_mua === du_lieu_da_mua.tong_so_trang}>›</button>
+                </div>
+            )}
+            {tab_hien_tai === TAB_YEU_THICH && du_lieu_yeu_thich?.tong_so_trang > 1 && (
+                <div className="phan_trang_thu_vien">
+                    <button className="nut_trang_tv" onClick={() => dat_trang_yeu_thich(p => p - 1)} disabled={trang_yeu_thich === 1}>‹</button>
+                    <span className="so_trang_tv">{trang_yeu_thich} / {du_lieu_yeu_thich.tong_so_trang}</span>
+                    <button className="nut_trang_tv" onClick={() => dat_trang_yeu_thich(p => p + 1)} disabled={trang_yeu_thich === du_lieu_yeu_thich.tong_so_trang}>›</button>
+                </div>
+            )}
+            {tab_hien_tai === TAB_DANG_DOC && du_lieu_dang_doc?.tong_so_trang > 1 && (
+                <div className="phan_trang_thu_vien">
+                    <button className="nut_trang_tv" onClick={() => dat_trang_dang_doc(p => p - 1)} disabled={trang_dang_doc === 1}>‹</button>
+                    <span className="so_trang_tv">{trang_dang_doc} / {du_lieu_dang_doc.tong_so_trang}</span>
+                    <button className="nut_trang_tv" onClick={() => dat_trang_dang_doc(p => p + 1)} disabled={trang_dang_doc === du_lieu_dang_doc.tong_so_trang}>›</button>
+                </div>
+            )}
         </div>
     );
 }

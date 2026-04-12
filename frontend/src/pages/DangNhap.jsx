@@ -92,7 +92,7 @@ export default function DangNhap() {
               type="email"
               value={du_lieu.email}
               onChange={xu_ly_thay_doi}
-              placeholder="example@gmail.com"
+              placeholder="example@email.com"
               className={`o_nhap${loi.email ? " loi" : ""}`}
               autoComplete="email"
             />

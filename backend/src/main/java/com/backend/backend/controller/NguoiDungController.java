@@ -30,7 +30,8 @@ public class NguoiDungController {
             Map<String, String> loi = new HashMap<>();
             ketQuaKiemTra.getFieldErrors().forEach(fieldError ->
                     loi.put(fieldError.getField(), fieldError.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(loi);
+            return ResponseEntity.badRequest().body(
+                    new DangKyResponse(false, "Thông tin đăng ký không hợp lệ", loi, null));
         }
 
         DangKyResponse ketQua = nguoiDungService.dangKy(yeuCauDangKy);

@@ -13,9 +13,9 @@ import java.util.List;
 @Repository
 public interface DanhMucSachRepository extends JpaRepository<DanhMucSach, Long> {
 
-    boolean existsByTenDanhMuc(String tenDanhMuc);
+    boolean existsByTenDanhMucIgnoreCase(String tenDanhMuc);
 
-    boolean existsByTenDanhMucAndMaDmNot(String tenDanhMuc, Long maDm);
+    boolean existsByTenDanhMucIgnoreCaseAndMaDmNot(String tenDanhMuc, Long maDm);
 
     Page<DanhMucSach> findByTenDanhMucContainingIgnoreCase(String tenDanhMuc, Pageable pageable);
 

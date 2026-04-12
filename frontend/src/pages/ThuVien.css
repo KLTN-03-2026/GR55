@@ -426,3 +426,38 @@
     background-position: -200% 0;
   }
 }
+
+.phan_trang_thu_vien {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.nut_trang_tv {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nut_trang_tv:hover:not(:disabled) {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.nut_trang_tv:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.so_trang_tv {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+

@@ -12,6 +12,8 @@ const quy_tac_mat_khau = {
   thong_bao: 'Mật khẩu phải từ 8-64 ký tự, có ít nhất 1 chữ và 1 số',
 };
 
+const regex_email = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+
 export default function QuenMatKhau() {
   const dieu_huong = useNavigate();
 
@@ -59,6 +61,10 @@ export default function QuenMatKhau() {
 
     if (!email.trim()) {
       dat_loi_email('Email không được để trống');
+      return;
+    }
+    if (!regex_email.test(email.trim())) {
+      dat_loi_email('Email không đúng định dạng');
       return;
     }
     dat_loi_email('');
@@ -195,7 +201,7 @@ export default function QuenMatKhau() {
                     dat_email(e.target.value);
                     if (loi_email) dat_loi_email('');
                   }}
-                  placeholder="example@gmail.com"
+                  placeholder="example@email.com"
                   className={`o_nhap${loi_email ? ' loi' : ''}`}
                   autoComplete="email"
                 />
@@ -309,7 +315,7 @@ export default function QuenMatKhau() {
                 <span className="thong_bao_loi">{loi_buoc2.xac_nhan_mat_khau_moi || ''}</span>
               </div>
 
-              <button type="submit" className="nut_chinh" disabled={dang_gui}>
+              <button type="submit" className="nut_chinh" disabled={dang_gui || co_the_gui_lai}>
                 {dang_gui ? 'Đang xử lý...' : 'Đặt lại mật khẩu'}
               </button>
             </form>

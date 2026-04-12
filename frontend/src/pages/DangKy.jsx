@@ -11,8 +11,8 @@ const quy_tac_kiem_tra = {
     thong_bao: 'Họ tên phải từ 2-50 ký tự và không chứa số hoặc ký tự đặc biệt',
   },
   email: {
-    regex: /^[a-zA-Z0-9._%+\-]+@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com)$/,
-    thong_bao: 'Email không đúng định dạng. Chỉ chấp nhận @gmail.com, @yahoo.com, @outlook.com, @hotmail.com',
+    regex: /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/,
+    thong_bao: 'Email không đúng định dạng',
   },
   so_dien_thoai: {
     regex: /^0[0-9]{9}$/,
@@ -98,10 +98,10 @@ export default function DangKy() {
       }
     } catch (loi_api) {
       const du_lieu_loi = loi_api.response?.data;
-      if (du_lieu_loi?.message) {
+      if (du_lieu_loi?.errors) {
+        dat_loi(truoc => ({ ...truoc, ...du_lieu_loi.errors }));
+      } else if (du_lieu_loi?.message) {
         dat_loi_server(du_lieu_loi.message);
-      } else if (typeof du_lieu_loi === 'object') {
-        dat_loi(truoc => ({ ...truoc, ...du_lieu_loi }));
       } else {
         dat_loi_server('Có lỗi xảy ra. Vui lòng thử lại sau.');
       }

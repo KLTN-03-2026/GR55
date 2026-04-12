@@ -6,8 +6,6 @@ import com.backend.backend.dto.ThongTinNguoiDungResponse;
 import com.backend.backend.entity.NguoiDung;
 import com.backend.backend.repository.NguoiDungRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,6 @@ public class TaiKhoanCaNhanService {
     private final NguoiDungRepository nguoiDungRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Cacheable(value = "thong_tin_nguoi_dung", key = "#maNd")
     public ThongTinNguoiDungResponse layThongTin(Long maNd) {
         NguoiDung nguoiDung = nguoiDungRepository.findById(maNd)
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
@@ -29,7 +26,6 @@ public class TaiKhoanCaNhanService {
         return new ThongTinNguoiDungResponse(true, "Lấy thông tin thành công", xayDungThongTinData(nguoiDung));
     }
 
-    @CacheEvict(value = "thong_tin_nguoi_dung", key = "#maNd")
     @Transactional
     public ThongTinNguoiDungResponse capNhatThongTin(Long maNd, CapNhatThongTinRequest yeuCau) {
         NguoiDung nguoiDung = nguoiDungRepository.findById(maNd)
@@ -42,7 +38,6 @@ public class TaiKhoanCaNhanService {
         return new ThongTinNguoiDungResponse(true, "Cập nhật thông tin thành công", xayDungThongTinData(nguoiDung));
     }
 
-    @CacheEvict(value = "thong_tin_nguoi_dung", key = "#maNd")
     @Transactional
     public ThongTinNguoiDungResponse doiMatKhau(Long maNd, DoiMatKhauRequest yeuCau) {
         NguoiDung nguoiDung = nguoiDungRepository.findById(maNd)
@@ -50,6 +45,10 @@ public class TaiKhoanCaNhanService {
 
         if (!passwordEncoder.matches(yeuCau.getMat_khau_cu(), nguoiDung.getMatKhau())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Mật khẩu cũ không chính xác");
+        }
+
+        if (yeuCau.getMat_khau_moi().equals(yeuCau.getMat_khau_cu())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Mật khẩu mới không được trùng mật khẩu cũ");
         }
 
         if (!yeuCau.getMat_khau_moi().equals(yeuCau.getXac_nhan_mat_khau())) {

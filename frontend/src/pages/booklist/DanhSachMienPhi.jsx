@@ -7,13 +7,13 @@ import "./DanhSachSach.css";
 
 const KICH_THUOC_TRANG = 20;
 
-export default function DanhSachMoiNhat() {
+export default function DanhSachMienPhi() {
   const [trang_hien_tai, dat_trang_hien_tai] = useState(1);
 
   const { data: ket_qua, isLoading: dang_tai } = useQuery({
-    queryKey: ["sach_moi_nhat", trang_hien_tai, KICH_THUOC_TRANG],
+    queryKey: ["sach_mien_phi", trang_hien_tai, KICH_THUOC_TRANG],
     queryFn: async () => {
-      const phan_hoi = await api.get("/home/sach_moi_nhat", {
+      const phan_hoi = await api.get("/home/sach_mien_phi", {
         params: { trang: trang_hien_tai, kich_thuoc: KICH_THUOC_TRANG },
       });
       return phan_hoi.data;
@@ -29,7 +29,7 @@ export default function DanhSachMoiNhat() {
     <div className="trang_danh_sach">
       <div className="dau_trang_danh_sach">
         <Link to="/trang_chu" className="nut_quay_lai_ds">← Trang chủ</Link>
-        <h1 className="tieu_de_danh_sach">Sách mới nhất</h1>
+        <h1 className="tieu_de_danh_sach">Sách miễn phí</h1>
         {tong_ban_ghi > 0 && (
           <span className="so_luong_sach">{tong_ban_ghi} cuốn sách</span>
         )}
@@ -41,7 +41,7 @@ export default function DanhSachMoiNhat() {
               <TheCardSach key={i} skeleton />
             ))
           : danh_sach.length === 0
-            ? <p className="chua_co_du_lieu_ds">Chưa có sách mới nhất nào.</p>
+            ? <p className="chua_co_du_lieu_ds">Chưa có sách miễn phí nào.</p>
             : danh_sach.map((sach) => (
                 <TheCardSach key={sach.ma_sach} sach={sach} />
               ))}
