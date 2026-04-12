@@ -28,7 +28,6 @@ public class DanhGiaService {
     private final DanhGiaRepository danhGiaRepository;
     private final NguoiDungRepository nguoiDungRepository;
 
-    // Self-injection để @Cacheable hoạt động khi gọi nội bộ (tránh Spring AOP self-invocation)
     @Lazy
     @Autowired
     private DanhGiaService self;

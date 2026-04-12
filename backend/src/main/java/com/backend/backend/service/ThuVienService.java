@@ -12,6 +12,7 @@ import com.backend.backend.repository.TienDoDocSachRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,8 +35,6 @@ public class ThuVienService {
     private final SachRepository sachRepository;
     private final SachYeuThichRepository sachYeuThichRepository;
     private final TienDoDocSachRepository tienDoDocSachRepository;
-
-    // ── Sách đã mua ──────────────────────────────────────────────────────────
 
     @Cacheable(value = "sach_da_mua", key = "#maNd + '_' + #trang + '_' + #kichThuoc")
     public SachThuVienResponse laySachDaMua(Long maNd, int trang, int kichThuoc) {
@@ -69,8 +68,6 @@ public class ThuVienService {
                 trang, page.getTotalPages(), page.getTotalElements());
     }
 
-    // ── Sách yêu thích ────────────────────────────────────────────────────────
-
     @Cacheable(value = "sach_yeu_thich", key = "#maNd + '_' + #trang + '_' + #kichThuoc")
     public YeuThichResponse laySachYeuThich(Long maNd, int trang, int kichThuoc) {
         Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
@@ -100,7 +97,10 @@ public class ThuVienService {
                 trang, page.getTotalPages(), page.getTotalElements());
     }
 
-    @CacheEvict(value = "sach_yeu_thich", allEntries = true)
+    @Caching(evict = {
+        @CacheEvict(value = "sach_yeu_thich", allEntries = true),
+        @CacheEvict(value = "chi_tiet_sach", key = "#maSach + '_' + #maNd")
+    })
     @Transactional
     public YeuThichResponse themYeuThich(Long maNd, Long maSach) {
         Sach sach = sachRepository.findById(maSach).orElse(null);
@@ -119,7 +119,10 @@ public class ThuVienService {
         return new YeuThichResponse(true, "Đã thêm vào yêu thích", null, 0, 0, 0);
     }
 
-    @CacheEvict(value = "sach_yeu_thich", allEntries = true)
+    @Caching(evict = {
+        @CacheEvict(value = "sach_yeu_thich", allEntries = true),
+        @CacheEvict(value = "chi_tiet_sach", key = "#maSach + '_' + #maNd")
+    })
     @Transactional
     public YeuThichResponse xoaYeuThich(Long maNd, Long maSach) {
         SachYeuThich yeuThich = sachYeuThichRepository.findByMaNdAndMaSach(maNd, maSach)
@@ -129,8 +132,6 @@ public class ThuVienService {
 
         return new YeuThichResponse(true, "Đã xóa khỏi yêu thích", null, 0, 0, 0);
     }
-
-    // ── Sách đang đọc ─────────────────────────────────────────────────────────
 
     public SachThuVienResponse laySachDangDoc(Long maNd, int trang, int kichThuoc) {
         Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
@@ -142,6 +143,7 @@ public class ThuVienService {
                 .collect(Collectors.toList());
         Map<Long, Sach> sachMap = sachRepository.findAllById(dsMaSach)
                 .stream()
+                .filter(s -> !Boolean.TRUE.equals(s.getDaXoa()))
                 .collect(Collectors.toMap(Sach::getMaSach, s -> s));
 
         List<SachThuVienResponse.SachThuVienData> danhSach = page.getContent().stream()

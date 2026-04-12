@@ -169,10 +169,10 @@ export default function TrangChu() {
       <SectionKhamPha />
       <SectionGoiY />
       <SectionSach
-        tieu_de="Sách mới nhất"
-        query_key="sach_moi_nhat"
-        endpoint="/home/sach_moi_nhat"
-        duong_dan_xem_them="/sach_moi_nhat"
+        tieu_de="Sách miễn phí"
+        query_key="sach_mien_phi"
+        endpoint="/home/sach_mien_phi"
+        duong_dan_xem_them="/sach_mien_phi"
       />
       <SectionSach
         tieu_de="Sách hội viên"

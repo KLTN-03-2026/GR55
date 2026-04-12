@@ -8,5 +8,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ChiTietNguoiDungResponse {
     private NguoiDungResponse.NguoiDungData thong_tin;
-    private List<Object> lich_su_don_hang; // TODO: bổ sung khi hoàn thiện entity DonHang
+    private List<Object> lich_su_don_hang; // bổ sung khi hoàn thiện entity DonHang
 }

@@ -34,6 +34,13 @@ public class TrangChuController {
         return ResponseEntity.ok(trangChuService.laySachMoiNhat(trang, kich_thuoc));
     }
 
+    @GetMapping("/sach_mien_phi")
+    public ResponseEntity<DanhSachSachHomeResponse> laySachMienPhi(
+            @RequestParam(defaultValue = "1") int trang,
+            @RequestParam(defaultValue = "10") int kich_thuoc) {
+        return ResponseEntity.ok(trangChuService.laySachMienPhi(trang, kich_thuoc));
+    }
+
     @GetMapping("/sach_hoi_vien")
     public ResponseEntity<DanhSachSachHomeResponse> laySachHoiVien(
             @RequestParam(defaultValue = "1") int trang,

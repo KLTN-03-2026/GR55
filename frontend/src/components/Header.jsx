@@ -4,10 +4,9 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Header.css';
-import { FiSearch, FiShoppingCart, FiUser, FiLogOut } from 'react-icons/fi';
-import { BsStars } from 'react-icons/bs';
-import { FiBookOpen, FiDollarSign, FiAward } from 'react-icons/fi';
+import { FiSearch, FiShoppingCart, FiUser, FiLogOut, FiBookOpen, FiX } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
+
 export default function Header() {
   const { da_dang_nhap, nguoiDung, dang_xuat } = useAuth();
   const navigate = useNavigate();
@@ -16,6 +15,12 @@ export default function Header() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // State và Ref mới cho Autocomplete
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const debounceRef = useRef(null);
+  
   const dropdownRef = useRef(null);
 
   // Close dropdown on outside click
@@ -27,6 +32,11 @@ export default function Header() {
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Cleanup debounce timer khi unmount
+  useEffect(() => {
+    return () => clearTimeout(debounceRef.current);
   }, []);
 
   const getInitials = (name) => {
@@ -52,11 +62,45 @@ export default function Header() {
     }
   };
 
-  const handleSearch = (e) => {
+  // Logic xử lý Autocomplete khi gõ
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    clearTimeout(debounceRef.current);
+
+    if (value.trim().length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await api.get('/tim_kiem/goi_y', { 
+          params: { tu_khoa: value.trim() } 
+        });
+        setSuggestions(res.data.goi_y || []);
+        setShowSuggestions(true);
+      } catch {
+        setSuggestions([]);
+      }
+    }, 300);
+  };
+
+  // Xử lý khi submit form
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/tim_kiem?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSuggestions(false);
     }
+  };
+
+  // Nút xóa nhanh nội dung tìm kiếm
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSuggestions([]);
+    setShowSuggestions(false);
   };
 
   const toggleDropdown = useCallback(() => {
@@ -73,6 +117,7 @@ export default function Header() {
     staleTime: 0,
     enabled: da_dang_nhap,
   });
+
   return (
     <>
       <header className="header">
@@ -86,7 +131,7 @@ export default function Header() {
           </Link>
 
           {/* Search Bar */}
-          <form className="search-form" onSubmit={handleSearch}>
+          <form className="search-form" onSubmit={handleSearchSubmit}>
             <div className="search-input-wrapper">
               <FiSearch className="search-icon" />
               <input
@@ -94,8 +139,38 @@ export default function Header() {
                 type="text"
                 placeholder="Tìm kiếm sách, tác giả..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               />
+              
+              {/* Nút xóa từ khóa */}
+              {searchQuery && (
+                <button type="button" className="clear-search-btn" onClick={clearSearch}>
+                  <FiX />
+                </button>
+              )}
+
+              {/* Dropdown gợi ý */}
+              {showSuggestions && suggestions.length > 0 && (
+                <ul className="search-suggestions">
+                  {suggestions.map((goi_y) => (
+                    <li
+                      key={goi_y.ma_sach}
+                      className="suggestion-item"
+                      onMouseDown={() => {
+                        navigate(`/tim_kiem?q=${encodeURIComponent(goi_y.ten_sach)}`);
+                        setSearchQuery(goi_y.ten_sach);
+                        setShowSuggestions(false);
+                      }}
+                    >
+                      <span className="suggestion-ten">{goi_y.ten_sach}</span>
+                      {goi_y.tac_gia && (
+                        <span className="suggestion-tac-gia"> - {goi_y.tac_gia}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </form>
 
@@ -137,6 +212,11 @@ export default function Header() {
                           Bảng điều khiển Admin
                         </Link>
                       )}
+
+                      <Link to="/thu_vien" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                        <FiBookOpen className="item-icon" />
+                        Thư viện của tôi
+                      </Link>
 
                       <Link to="/tai_khoan" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                         <FiUser className="item-icon" />

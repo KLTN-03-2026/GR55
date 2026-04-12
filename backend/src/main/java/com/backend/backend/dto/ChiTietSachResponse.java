@@ -47,6 +47,7 @@ public class ChiTietSachResponse {
         private Boolean da_yeu_thich;
         private Boolean la_hoi_vien;
         private Boolean sach_thuoc_goi_hoi_vien;
+        private Boolean da_bat_dau_doc;
         private LocalDateTime ngay_tao;
     }
 }
