@@ -169,7 +169,7 @@ export default function SachChiTiet() {
           )}
 
           {/* ĐỌC THỬ ĐƯỢC CHUYỂN SANG ĐÂY */}
-          {chi_tiet.cho_phep_doc_thu && (
+          {chi_tiet.cho_phep_doc_thu && Number(chi_tiet.gia) > 0 && (
             <button
               className="nut_phu nut_doc_thu"
               onClick={() => dieu_huong(`/doc_thu/${chi_tiet.ma_sach}`)}
@@ -247,7 +247,12 @@ export default function SachChiTiet() {
             {loai_nut === "doc_ngay" && (
               <button
                 className="nut_chinh nut_doc_sach"
-                onClick={() => dieu_huong(`/doc_sach/${chi_tiet.ma_sach}`)}
+                onClick={() => {
+                  const duong_dan = Number(chi_tiet.gia) === 0
+                    ? `/doc_sach_mien_phi/${chi_tiet.ma_sach}`
+                    : `/doc_sach/${chi_tiet.ma_sach}`;
+                  dieu_huong(duong_dan);
+                }}
               >
                 Đọc sách
               </button>
@@ -256,7 +261,12 @@ export default function SachChiTiet() {
             {loai_nut === "doc_tiep" && (
               <button
                 className="nut_chinh nut_doc_sach"
-                onClick={() => dieu_huong(`/doc_sach/${chi_tiet.ma_sach}`)}
+                onClick={() => {
+                  const duong_dan = Number(chi_tiet.gia) === 0
+                    ? `/doc_sach_mien_phi/${chi_tiet.ma_sach}`
+                    : `/doc_sach/${chi_tiet.ma_sach}`;
+                  dieu_huong(duong_dan);
+                }}
               >
                 Đọc tiếp
               </button>

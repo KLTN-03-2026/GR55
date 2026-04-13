@@ -51,6 +51,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/doc_sach_mien_phi/**").permitAll()
                     .requestMatchers("/api/doc_thu/**").permitAll()
                     .requestMatchers("/api/tim_kiem/**").permitAll()
+                    .requestMatchers("/api/the_loai/**").permitAll()
                     .anyRequest().authenticated())
             .authenticationProvider(nhaXacThuc())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -59,7 +60,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:3000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -71,7 +72,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider nhaXacThuc() {
+    AuthenticationProvider nhaXacThuc() {
         DaoAuthenticationProvider nhaXacThuc = new DaoAuthenticationProvider();
         nhaXacThuc.setUserDetailsService(customUserDetailsService);
         nhaXacThuc.setPasswordEncoder(boMaHoaMatKhau());
@@ -79,12 +80,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager boQuanLyXacThuc(AuthenticationConfiguration cauHinhXacThuc) throws Exception {
+    AuthenticationManager boQuanLyXacThuc(AuthenticationConfiguration cauHinhXacThuc) throws Exception {
         return cauHinhXacThuc.getAuthenticationManager();
     }
 
     @Bean
-    public PasswordEncoder boMaHoaMatKhau() {
+    PasswordEncoder boMaHoaMatKhau() {
         return new BCryptPasswordEncoder();
     }
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import api from "../services/api";
 import "./DocThu.css";
@@ -7,6 +8,7 @@ import "./DocThu.css";
 export default function DocThu() {
   const { ma_sach } = useParams();
   const navigate = useNavigate();
+  const { da_dang_nhap } = useAuth();
 
   const [trang_hien_tai, dat_trang_hien_tai] = useState(1);
   const [tong_so_trang, dat_tong_so_trang] = useState(0);
@@ -167,8 +169,15 @@ export default function DocThu() {
               ? "Nâng cấp hội viên để đọc toàn bộ!"
               : "Mua sách để đọc tiếp!"}
           </span>
-          <Link to={`/sach/${ma_sach}`} className="nut_mua_ngay">
-            {chi_tiet_sach?.la_sach_hoi_vien ? "Nâng cấp hội viên →" : "Mua ngay →"}
+          <Link
+            to={da_dang_nhap ? `/sach/${ma_sach}` : `/dang_nhap`}
+            className="nut_mua_ngay"
+          >
+            {!da_dang_nhap
+              ? "Đăng nhập để mua →"
+              : chi_tiet_sach?.la_sach_hoi_vien
+              ? "Nâng cấp hội viên →"
+              : "Mua ngay →"}
           </Link>
         </div>
       )}

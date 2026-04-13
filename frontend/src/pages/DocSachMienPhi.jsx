@@ -138,6 +138,15 @@ export default function DocSachMienPhi() {
     }, [trang_hien_tai, ti_le_phong_to, dang_tai_pdf]);
 
     // Xử lý lỗi hệ thống [cite: 1072]
+    if (loi_api?.response?.status === 404) {
+        return (
+            <div className="thong_bao_loi_pdf">
+                <p>Không tìm thấy sách này.</p>
+                <Link to="/trang_chu" className="nut_mua_ngay">Về trang chủ</Link>
+            </div>
+        );
+    }
+
     if (loi_api?.response?.status === 403) {
         return (
             <div className="thong_bao_loi_pdf">

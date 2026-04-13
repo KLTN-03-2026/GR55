@@ -22,6 +22,6 @@ public interface DanhMucSachRepository extends JpaRepository<DanhMucSach, Long> 
     @Query("SELECT dm FROM DanhMucSach dm ORDER BY dm.tenDanhMuc")
     List<DanhMucSach> findAllOrderByTen();
 
-    @Query("SELECT COUNT(sd) FROM SachDanhMuc sd WHERE sd.maDm = :maDm")
+    @Query("SELECT COUNT(sd) FROM SachDanhMuc sd JOIN Sach s ON s.maSach = sd.maSach WHERE sd.maDm = :maDm AND s.daXoa = false")
     int countSachByDanhMuc(@Param("maDm") Long maDm);
 }

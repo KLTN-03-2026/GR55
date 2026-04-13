@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -10,18 +10,22 @@ import { useQuery } from '@tanstack/react-query';
 export default function Header() {
   const { da_dang_nhap, nguoiDung, dang_xuat } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // State và Ref mới cho Autocomplete
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const debounceRef = useRef(null);
-  
   const dropdownRef = useRef(null);
+
+  // Sync ô tìm kiếm với URL khi đang ở trang /tim_kiem
+  useEffect(() => {
+    if (location.pathname === '/tim_kiem') {
+      setSearchQuery(searchParams.get('q') || '');
+    }
+  }, [location.pathname, searchParams]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -62,45 +66,39 @@ export default function Header() {
     }
   };
 
-  // Logic xử lý Autocomplete khi gõ
+  // Khi gõ: debounce 300ms rồi navigate đến trang tìm kiếm
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
     clearTimeout(debounceRef.current);
 
-    if (value.trim().length < 2) {
-      setSuggestions([]);
-      setShowSuggestions(false);
-      return;
-    }
-
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const res = await api.get('/tim_kiem/goi_y', { 
-          params: { tu_khoa: value.trim() } 
-        });
-        setSuggestions(res.data.goi_y || []);
-        setShowSuggestions(true);
-      } catch {
-        setSuggestions([]);
+    debounceRef.current = setTimeout(() => {
+      const q = value.trim();
+      if (q.length >= 1) {
+        navigate(`/tim_kiem?q=${encodeURIComponent(q)}`, { replace: location.pathname === '/tim_kiem' });
+      } else if (location.pathname === '/tim_kiem') {
+        navigate('/tim_kiem', { replace: true });
       }
     }, 300);
   };
 
-  // Xử lý khi submit form
+  // Enter cũng navigate
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/tim_kiem?q=${encodeURIComponent(searchQuery.trim())}`);
-      setShowSuggestions(false);
+    clearTimeout(debounceRef.current);
+    const q = searchQuery.trim();
+    if (q) {
+      navigate(`/tim_kiem?q=${encodeURIComponent(q)}`, { replace: location.pathname === '/tim_kiem' });
     }
   };
 
   // Nút xóa nhanh nội dung tìm kiếm
   const clearSearch = () => {
     setSearchQuery('');
-    setSuggestions([]);
-    setShowSuggestions(false);
+    clearTimeout(debounceRef.current);
+    if (location.pathname === '/tim_kiem') {
+      navigate('/tim_kiem', { replace: true });
+    }
   };
 
   const toggleDropdown = useCallback(() => {
@@ -140,7 +138,6 @@ export default function Header() {
                 placeholder="Tìm kiếm sách, tác giả..."
                 value={searchQuery}
                 onChange={handleSearchChange}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               />
               
               {/* Nút xóa từ khóa */}
@@ -150,27 +147,6 @@ export default function Header() {
                 </button>
               )}
 
-              {/* Dropdown gợi ý */}
-              {showSuggestions && suggestions.length > 0 && (
-                <ul className="search-suggestions">
-                  {suggestions.map((goi_y) => (
-                    <li
-                      key={goi_y.ma_sach}
-                      className="suggestion-item"
-                      onMouseDown={() => {
-                        navigate(`/tim_kiem?q=${encodeURIComponent(goi_y.ten_sach)}`);
-                        setSearchQuery(goi_y.ten_sach);
-                        setShowSuggestions(false);
-                      }}
-                    >
-                      <span className="suggestion-ten">{goi_y.ten_sach}</span>
-                      {goi_y.tac_gia && (
-                        <span className="suggestion-tac-gia"> - {goi_y.tac_gia}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
           </form>
 

@@ -27,6 +27,15 @@ export default function TimKiem() {
 
   const [bo_loc_tam, dat_bo_loc_tam] = useState({ ...bo_loc });
 
+  const { data: danh_muc = [] } = useQuery({
+    queryKey: ['danh_muc_trang_chu'],
+    queryFn: async () => {
+      const res = await api.get('/home/danh_muc');
+      return res.data;
+    },
+    staleTime: 60 * 60 * 1000,
+  });
+
   const { data: ket_qua, isLoading: dang_tim_kiem } = useQuery({
     queryKey: ['tim_kiem_sach', tu_khoa, trang_hien_tai, bo_loc],
     queryFn: async () => {
@@ -35,7 +44,13 @@ export default function TimKiem() {
           tu_khoa: tu_khoa || undefined,
           trang: trang_hien_tai,
           kich_thuoc: KICH_THUOC_TRANG,
-          ...bo_loc,
+          ma_danh_muc: bo_loc.ma_danh_muc ?? undefined,
+          min_gia: bo_loc.min_gia ?? undefined,
+          max_gia: bo_loc.max_gia ?? undefined,
+          min_danh_gia: bo_loc.min_danh_gia ?? undefined,
+          sach_mien_phi: bo_loc.sach_mien_phi ?? undefined,
+          sach_hoi_vien: bo_loc.sach_hoi_vien ?? undefined,
+          sap_xep: bo_loc.sap_xep,
         },
       });
       return phan_hoi.data;
@@ -81,6 +96,24 @@ export default function TimKiem() {
         {/* Bộ lọc bên trái */}
         <aside className="bo_loc_ben_trai">
           <h3 className="tieu_de_bo_loc">Bộ lọc</h3>
+
+          <div className="nhom_bo_loc">
+            <label className="nhan_bo_loc">Thể loại</label>
+            <select
+              className="chon_sap_xep"
+              value={bo_loc_tam.ma_danh_muc ?? ''}
+              onChange={(e) =>
+                xu_ly_thay_doi_bo_loc('ma_danh_muc', e.target.value ? Number(e.target.value) : null)
+              }
+            >
+              <option value="">Tất cả</option>
+              {danh_muc.map((dm) => (
+                <option key={dm.ma_dm} value={dm.ma_dm}>
+                  {dm.ten_danh_muc}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className="nhom_bo_loc">
             <label className="nhan_bo_loc">Sắp xếp</label>
