@@ -23,4 +23,10 @@ public interface TienDoDocSachRepository extends JpaRepository<TienDoDocSach, Lo
     List<Long> findSachDaDocByUserId(@Param("maNd") Long maNd);
 
     boolean existsByMaSach(Long maSach);
+
+    @Query("SELECT sd.maDm FROM TienDoDocSach td " +
+           "JOIN SachDanhMuc sd ON td.maSach = sd.maSach " +
+           "WHERE td.maNd = :maNd " +
+           "GROUP BY sd.maDm ORDER BY COUNT(sd.maDm) DESC")
+    List<Long> findTheLoaiYeuThichByUserId(@Param("maNd") Long maNd);
 }

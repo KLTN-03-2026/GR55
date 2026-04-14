@@ -51,7 +51,9 @@ public class CacheConfig {
                 entry("danh_gia_sach",      macDinh.entryTtl(Duration.ofMinutes(10))),
                 entry("tim_kiem_sach",        macDinh.entryTtl(Duration.ofMinutes(5))),
                 entry("goi_y_tim_kiem",       macDinh.entryTtl(Duration.ofHours(1))),
-                entry("sach_theo_the_loai",   macDinh.entryTtl(Duration.ofMinutes(10)))
+                entry("sach_theo_the_loai",   macDinh.entryTtl(Duration.ofMinutes(10))),
+                entry("goi_y_sach_khach",        macDinh.entryTtl(Duration.ofHours(1))),
+                entry("goi_y_sach_thanh_vien",   macDinh.entryTtl(Duration.ofMinutes(30)))
         );
 
         return RedisCacheManager.builder(connectionFactory)
