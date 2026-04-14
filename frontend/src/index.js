@@ -6,35 +6,39 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 // Context & Bảo mật
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-// Import các trang Khách hàng
+
+// Trang khách hàng
+import TrangChu from "./pages/TrangChu";
 import DangKy from "./pages/DangKy";
 import DangNhap from "./pages/DangNhap";
-import TrangChu from "./pages/TrangChu";
 import QuenMatKhau from "./pages/QuenMatKhau";
 import SachChiTiet from "./pages/SachChiTiet";
 import DocSach from "./pages/DocSach";
 import DocThu from "./pages/DocThu";
+import DocSachMienPhi from "./pages/DocSachMienPhi";
 import TaiKhoan from "./pages/TaiKhoan";
 import ThuVien from "./pages/ThuVien";
 import GioHang from "./pages/GioHang";
+import TimKiem from "./pages/TimKiem";
 
-// Import danh sách sách
+// Danh sách sách
 import DanhSachNoiBat from "./pages/booklist/DanhSachNoiBat";
 import DanhSachMoiNhat from "./pages/booklist/DanhSachMoiNhat";
+import DanhSachMienPhi from "./pages/booklist/DanhSachMienPhi";
 import DanhSachHoiVien from "./pages/booklist/DanhSachHoiVien";
 import DanhSachGoiY from "./pages/booklist/DanhSachGoiY";
 
-// Import các trang Quản trị (Admin)
+// Trang quản trị
 import AdminLayout from "./pages/admin/AdminLayout";
 import QuanTri from "./pages/QuanTri";
 import QuanLyDanhMuc from "./pages/admin/QuanLyDanhMuc";
 import QuanLySach from "./pages/admin/QuanLySach";
 import QuanLyNguoiDung from "./pages/admin/QuanLyNguoiDung";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -47,28 +51,45 @@ root.render(
           <Routes>
             {/* NHÓM 1: GIAO DIỆN KHÁCH HÀNG */}
             <Route path="/" element={<Navigate to="/trang_chu" replace />} />
-
             <Route path="/trang_chu" element={<App><TrangChu /></App>} />
             <Route path="/dang_ky" element={<App><DangKy /></App>} />
             <Route path="/dang_nhap" element={<App><DangNhap /></App>} />
             <Route path="/quen_mat_khau" element={<App><QuenMatKhau /></App>} />
             <Route path="/sach/:ma_sach" element={<App><SachChiTiet /></App>} />
-            <Route path="/sach_mien_phi" element={<App><DanhSachMoiNhat /></App>} />
+            <Route path="/tim_kiem" element={<App><TimKiem /></App>} />
+
+            {/* Danh sách sách */}
+            <Route path="/sach_noi_bat" element={<App><DanhSachNoiBat /></App>} />
+            <Route path="/sach_moi_nhat" element={<App><DanhSachMoiNhat /></App>} />
+            <Route path="/sach_mien_phi" element={<App><DanhSachMienPhi /></App>} />
             <Route path="/sach_hoi_vien" element={<App><DanhSachHoiVien /></App>} />
             <Route path="/sach_goi_y" element={<App><DanhSachGoiY /></App>} />
-            <Route path="/sach_noi_bat" element={<App><DanhSachNoiBat /></App>} />
-            <Route path="/gio_hang" element={<App><GioHang /></App>} />
-            <Route path="/thu_vien" element={<App><ThuVien /></App>} />
-            <Route path="/doc_sach/:ma_sach" element={<App><DocSach /></App>} />
+
+            {/* Đọc sách — không cần đăng nhập */}
             <Route path="/doc_thu/:ma_sach" element={<DocThu />} />
-            <Route
-              path="/tai_khoan"
-              element={
-                <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
-                  <App><TaiKhoan /></App>
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/doc_sach_mien_phi/:ma_sach" element={<DocSachMienPhi />} />
+
+            {/* Trang yêu cầu đăng nhập */}
+            <Route path="/doc_sach/:ma_sach" element={
+              <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                <App><DocSach /></App>
+              </ProtectedRoute>
+            } />
+            <Route path="/gio_hang" element={
+              <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                <App><GioHang /></App>
+              </ProtectedRoute>
+            } />
+            <Route path="/thu_vien" element={
+              <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                <App><ThuVien /></App>
+              </ProtectedRoute>
+            } />
+            <Route path="/tai_khoan" element={
+              <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                <App><TaiKhoan /></App>
+              </ProtectedRoute>
+            } />
 
             {/* NHÓM 2: GIAO DIỆN QUẢN TRỊ */}
             <Route path="/quan_tri" element={<AdminLayout><QuanTri /></AdminLayout>} />
@@ -87,7 +108,7 @@ root.render(
         </BrowserRouter>
       </QueryClientProvider>
     </AuthProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 
 reportWebVitals();

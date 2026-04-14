@@ -5,6 +5,8 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,6 +15,7 @@ public class DangKyResponse {
 
     private boolean success;
     private String message;
+    private Map<String, String> errors;
     private DuLieuNguoiDung data;
 
     @Getter

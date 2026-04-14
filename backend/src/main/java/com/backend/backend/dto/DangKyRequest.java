@@ -21,10 +21,10 @@ public class DangKyRequest {
     private String ho_ten;
 
     @NotBlank(message = "Email không được để trống")
-    @Email(message = "Email không đúng định dạng. Chỉ chấp nhận @gmail.com, @yahoo.com, @outlook.com, @hotmail.com")
+    @Email(message = "Email không đúng định dạng")
     @Pattern(
-        regexp = "^[a-zA-Z0-9._%+\\-]+@(gmail\\.com|yahoo\\.com|outlook\\.com|hotmail\\.com)$",
-        message = "Email không đúng định dạng. Chỉ chấp nhận @gmail.com, @yahoo.com, @outlook.com, @hotmail.com"
+        regexp = "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$",
+        message = "Email không đúng định dạng"
     )
     private String email;
 

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,13 +37,20 @@ public class SachChiTietService {
         Sach sach = sachRepository.findById(maSach)
                 .orElseThrow(() -> new RuntimeException("Sách không tồn tại"));
 
-        List<ChiTietSachResponse.SachChiTietData.DanhMucData> danhSachDanhMuc =
-                sachDanhMucRepository.findByMaSach(maSach).stream()
-                        .map(sdm -> danhMucSachRepository.findById(sdm.getMaDm())
-                                .map(dm -> new ChiTietSachResponse.SachChiTietData.DanhMucData(sdm.getMaDm(), dm.getTenDanhMuc()))
-                                .orElse(null))
-                        .filter(dm -> dm != null)
-                        .collect(Collectors.toList());
+        // Batch fetch: 1 query thay vì N queries (N+1 fix)
+        List<SachDanhMuc> sachDanhMucs = sachDanhMucRepository.findByMaSach(maSach);
+        List<Long> danhMucIds = sachDanhMucs.stream()
+                .map(SachDanhMuc::getMaDm)
+                .collect(Collectors.toList());
+        Map<Long, String> tenDanhMucTheoId = danhMucSachRepository.findAllById(danhMucIds).stream()
+                .collect(Collectors.toMap(
+                        dm -> dm.getMaDm(),
+                        dm -> dm.getTenDanhMuc()));
+        List<ChiTietSachResponse.SachChiTietData.DanhMucData> danhSachDanhMuc = sachDanhMucs.stream()
+                .filter(sdm -> tenDanhMucTheoId.containsKey(sdm.getMaDm()))
+                .map(sdm -> new ChiTietSachResponse.SachChiTietData.DanhMucData(
+                        sdm.getMaDm(), tenDanhMucTheoId.get(sdm.getMaDm())))
+                .collect(Collectors.toList());
 
         Double diemTrungBinh = danhGiaRepository.tinhDiemTrungBinh(maSach);
         Integer soLuotDanhGia = danhGiaRepository.demSoLuotDanhGia(maSach);

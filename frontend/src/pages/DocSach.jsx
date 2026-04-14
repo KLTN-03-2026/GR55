@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
@@ -32,15 +32,25 @@ export default function DocSach() {
     ref_tong_trang.current = tong_so_trang;
   }, [tong_so_trang]);
 
-  // Lấy chi tiết sách từ cache hoặc gọi API
-  const { data: chi_tiet_sach } = useQuery({
-    queryKey: ["chi_tiet_sach", ma_sach],
+  // PB17: Redirect nếu chưa đăng nhập
+  useEffect(() => {
+    if (!da_dang_nhap) navigate("/dang_nhap");
+  }, [da_dang_nhap, navigate]);
+
+  // PB17: Thay query lấy thông tin sách — gọi endpoint có kiểm tra quyền
+  const {
+    data: thong_tin_doc_sach,
+    isLoading: dang_tai_thong_tin,
+    error: loi_quyen,
+  } = useQuery({
+    queryKey: ["doc_sach_da_mua", ma_sach, nguoiDung?.ma_nguoi_dung],
     queryFn: async () => {
-      const phan_hoi = await api.get(`/sach/${ma_sach}`);
+      const phan_hoi = await api.get(`/doc_sach_da_mua/${ma_sach}`);
       return phan_hoi.data.du_lieu;
     },
     staleTime: 30 * 60 * 1000,
-    enabled: !!ma_sach,
+    retry: false,
+    enabled: !!ma_sach && da_dang_nhap,
   });
 
   // Lấy tiến độ ban đầu — key gắn user ID để tránh cache nhầm giữa các tài khoản
@@ -106,9 +116,10 @@ export default function DocSach() {
 
   // Load và render PDF
   useEffect(() => {
-    const file_pdf_url = chi_tiet_sach?.file_pdf_url;
+    // PB17: dùng thong_tin_doc_sach thay vì chi_tiet_sach
+    const file_pdf_url = thong_tin_doc_sach?.file_pdf_url;
     if (!file_pdf_url) {
-      if (chi_tiet_sach) {
+      if (thong_tin_doc_sach) {
         dat_loi_pdf("Sách này chưa có file PDF.");
         dat_dang_tai_pdf(false);
       }
@@ -142,7 +153,8 @@ export default function DocSach() {
     return () => {
       if (document.head.contains(script)) document.head.removeChild(script);
     };
-  }, [chi_tiet_sach?.file_pdf_url]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [thong_tin_doc_sach?.file_pdf_url]);
 
   // Render trang PDF khi trang hoặc tỉ lệ thay đổi
   useEffect(() => {
@@ -184,6 +196,55 @@ export default function DocSach() {
     dat_trang_hien_tai(Number(e.target.value));
   }
 
+  // PB17: Màn hình lỗi quyền truy cập
+  if (loi_quyen) {
+    const status = loi_quyen?.response?.status;
+    return (
+      <div className={`trang_doc_sach ${che_do_toi ? "che_do_toi" : ""}`}>
+        <div className="thanh_cong_cu_doc">
+          <button className="nut_quay_lai_doc" onClick={() => navigate(-1)}>
+            ← Quay lại
+          </button>
+        </div>
+        <div className="khung_canvas">
+          <div className="thong_bao_loi_pdf">
+            {status === 403 ? (
+              <>
+                <p>
+                  Bạn không có quyền đọc sách này. Vui lòng mua sách hoặc
+                  đăng ký hội viên.
+                </p>
+                <Link to={`/sach/${ma_sach}`} className="nut_quay_lai_doc">
+                  Xem chi tiết sách
+                </Link>
+              </>
+            ) : status === 404 ? (
+              <>
+                <p>Không tìm thấy sách.</p>
+                <button
+                  className="nut_quay_lai_doc"
+                  onClick={() => navigate(-1)}
+                >
+                  ← Quay lại
+                </button>
+              </>
+            ) : (
+              <>
+                <p>Có lỗi xảy ra. Vui lòng thử lại.</p>
+                <button
+                  className="nut_quay_lai_doc"
+                  onClick={() => navigate(-1)}
+                >
+                  ← Quay lại
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`trang_doc_sach ${che_do_toi ? "che_do_toi" : ""}`}>
       {/* Thanh công cụ */}
@@ -191,8 +252,9 @@ export default function DocSach() {
         <button className="nut_quay_lai_doc" onClick={() => navigate(-1)}>
           ← Quay lại
         </button>
-        <span className="ten_sach_doc" title={chi_tiet_sach?.ten_sach}>
-          {chi_tiet_sach?.ten_sach || "Đang tải..."}
+        {/* PB17: dùng thong_tin_doc_sach thay vì chi_tiet_sach */}
+        <span className="ten_sach_doc" title={thong_tin_doc_sach?.ten_sach}>
+          {thong_tin_doc_sach?.ten_sach || "Đang tải..."}
         </span>
         <div className="nhom_nut_cong_cu">
           <button
@@ -233,7 +295,7 @@ export default function DocSach() {
               ← Quay lại
             </button>
           </div>
-        ) : dang_tai_pdf ? (
+        ) : dang_tai_pdf || dang_tai_thong_tin ? (
           <div className="skeleton_pdf o_skeleton" />
         ) : (
           <canvas ref={canvas_ref} className="canvas_pdf" />

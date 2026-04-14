@@ -7,8 +7,6 @@ import com.backend.backend.entity.TienDoDocSach;
 import com.backend.backend.repository.SachRepository;
 import com.backend.backend.repository.TienDoDocSachRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,6 @@ public class TienDoDocService {
     private final TienDoDocSachRepository tienDoDocSachRepository;
     private final SachRepository sachRepository;
 
-    @CachePut(value = "tien_do_doc", key = "#maNd + '_' + #yeuCau.ma_sach")
     @Transactional
     public TienDoDocResponse luuTienDo(Long maNd, LuuTienDoRequest yeuCau) {
         var sach = sachRepository.findById(yeuCau.getMa_sach())
@@ -57,7 +54,6 @@ public class TienDoDocService {
         return new TienDoDocResponse(true, "Lưu tiến độ thành công", duLieu);
     }
 
-    @Cacheable(value = "tien_do_doc", key = "#maNd + '_' + #maSach")
     public TienDoDocResponse layTienDo(Long maNd, Long maSach) {
         var sach = sachRepository.findById(maSach)
                 .orElseThrow(() -> new RuntimeException("Sách không tồn tại"));

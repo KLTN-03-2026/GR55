@@ -10,6 +10,7 @@ import com.backend.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,8 +48,38 @@ public class SachService {
 
         Page<Sach> trangKetQua = sachRepository.timKiemVaLocSach(tuKhoaLoc, maDmLoc, mienPhi, phanTrang);
 
-        List<SachResponse.DuLieuSach> danhSach = trangKetQua.getContent().stream()
-                .map(this::chuyenSangDuLieuSach)
+        List<Sach> sachs = trangKetQua.getContent();
+        List<Long> sachIds = sachs.stream().map(Sach::getMaSach).collect(Collectors.toList());
+
+        // Batch fetch: 1 query lấy toàn bộ SachDanhMuc của cả trang
+        Map<Long, List<SachDanhMuc>> lienKetTheoSach = sachDanhMucRepository
+                .findByMaSachIn(sachIds).stream()
+                .collect(Collectors.groupingBy(SachDanhMuc::getMaSach));
+
+        // Batch fetch: 1 query lấy toàn bộ DanhMucSach cần thiết
+        Set<Long> tatCaDanhMucIds = lienKetTheoSach.values().stream()
+                .flatMap(List::stream)
+                .map(SachDanhMuc::getMaDm)
+                .collect(Collectors.toSet());
+        Map<Long, String> tenDanhMucTheoId = danhMucSachRepository.findAllById(tatCaDanhMucIds)
+                .stream()
+                .collect(Collectors.toMap(DanhMucSach::getMaDm, DanhMucSach::getTenDanhMuc));
+
+        List<SachResponse.DuLieuSach> danhSach = sachs.stream()
+                .map(sach -> {
+                    List<SachDanhMuc> lienKets = lienKetTheoSach.getOrDefault(sach.getMaSach(), List.of());
+                    List<Long> danhMucIds = lienKets.stream().map(SachDanhMuc::getMaDm).collect(Collectors.toList());
+                    List<String> tenDanhMuc = danhMucIds.stream()
+                            .map(id -> tenDanhMucTheoId.getOrDefault(id, ""))
+                            .filter(ten -> !ten.isEmpty())
+                            .collect(Collectors.toList());
+                    return new SachResponse.DuLieuSach(
+                            sach.getMaSach(), sach.getTenSach(), sach.getTacGia(), sach.getMoTa(),
+                            sach.getGia(), sach.getAnhBiaUrl(), sach.getFilePdfUrl(),
+                            sach.getChoPhepDocThu(), sach.getSoTrangDocThu(),
+                            sach.getLuotXem(), sach.getDanhGiaTrungBinh(),
+                            danhMucIds, tenDanhMuc, sach.getNgayTao());
+                })
                 .collect(Collectors.toList());
 
         return new DanhSachSachResponse(
@@ -57,10 +90,13 @@ public class SachService {
         );
     }
 
-    @CacheEvict(value = "sach", allEntries = true)
+    @Caching(evict = {
+        @CacheEvict(value = "sach", allEntries = true),
+        @CacheEvict(value = "danh_muc", allEntries = true)
+    })
     @Transactional
     public SachResponse themSachMoi(SachRequest yeuCau, MultipartFile anhBia, MultipartFile filePdf) throws IOException {
-        if (sachRepository.existsByTenSachAndDaXoaFalse(yeuCau.getTen_sach().trim())) {
+        if (sachRepository.existsByTenSachIgnoreCaseAndDaXoaFalse(yeuCau.getTen_sach().trim())) {
             return new SachResponse(false, "Tên sách đã tồn tại trong hệ thống", null);
         }
 
@@ -96,7 +132,10 @@ public class SachService {
         return new SachResponse(true, "Thêm sách thành công", chuyenSangDuLieuSach(daLuu));
     }
 
-    @CacheEvict(value = "sach", allEntries = true)
+    @Caching(evict = {
+        @CacheEvict(value = "sach", allEntries = true),
+        @CacheEvict(value = "danh_muc", allEntries = true)
+    })
     @Transactional
     public SachResponse suaSach(Long maSach, SachRequest yeuCau, MultipartFile anhBia, MultipartFile filePdf) throws IOException {
         Sach sach = sachRepository.findById(maSach).orElse(null);
@@ -104,7 +143,7 @@ public class SachService {
             return new SachResponse(false, "Sách không tồn tại", null);
         }
 
-        if (sachRepository.existsByTenSachAndMaSachNotAndDaXoaFalse(yeuCau.getTen_sach().trim(), maSach)) {
+        if (sachRepository.existsByTenSachIgnoreCaseAndMaSachNotAndDaXoaFalse(yeuCau.getTen_sach().trim(), maSach)) {
             return new SachResponse(false, "Tên sách đã tồn tại trong hệ thống", null);
         }
 
@@ -132,7 +171,10 @@ public class SachService {
         return new SachResponse(true, "Cập nhật sách thành công", chuyenSangDuLieuSach(daCapNhat));
     }
 
-    @CacheEvict(value = "sach", allEntries = true)
+    @Caching(evict = {
+        @CacheEvict(value = "sach", allEntries = true),
+        @CacheEvict(value = "danh_muc", allEntries = true)
+    })
     @Transactional
     public SachResponse xoaSach(Long maSach) {
         Sach sach = sachRepository.findById(maSach).orElse(null);
@@ -152,9 +194,6 @@ public class SachService {
         if (goiHoiVienSachRepository.existsByMaSach(maSach)) {
             return new SachResponse(false, "Vui lòng xóa sách khỏi gói hội viên trước", null);
         }
-
-        s3Service.xoaFile(sach.getAnhBiaUrl());
-        s3Service.xoaFile(sach.getFilePdfUrl());
 
         sach.setDaXoa(true);
         sach.setNgayXoa(LocalDateTime.now());
@@ -182,9 +221,12 @@ public class SachService {
                 .map(SachDanhMuc::getMaDm)
                 .collect(Collectors.toList());
 
-        List<String> tenDanhMuc = cácLienKet.stream()
-                .map(lk -> danhMucSachRepository.findById(lk.getMaDm())
-                        .map(DanhMucSach::getTenDanhMuc).orElse(""))
+        Map<Long, String> tenDanhMucTheoId = danhMucSachRepository.findAllById(danhMucIds)
+                .stream()
+                .collect(Collectors.toMap(DanhMucSach::getMaDm, DanhMucSach::getTenDanhMuc));
+
+        List<String> tenDanhMuc = danhMucIds.stream()
+                .map(id -> tenDanhMucTheoId.getOrDefault(id, ""))
                 .filter(ten -> !ten.isEmpty())
                 .collect(Collectors.toList());
 

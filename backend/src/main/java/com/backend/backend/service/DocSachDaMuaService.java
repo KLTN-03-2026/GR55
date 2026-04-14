@@ -3,7 +3,6 @@ package com.backend.backend.service;
 import com.backend.backend.dto.DocSachDaMuaResponse;
 import com.backend.backend.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,7 +18,6 @@ public class DocSachDaMuaService {
     private final LichSuHoiVienRepository lichSuHoiVienRepository;
     private final GoiHoiVienSachRepository goiHoiVienSachRepository;
 
-    @Cacheable(value = "quyen_doc_sach", key = "#maNd + '_' + #maSach")
     public DocSachDaMuaResponse kiemTraQuyenVaLayUrl(Long maNd, Long maSach) {
         var sach = sachRepository.findById(maSach)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sách không tồn tại"));

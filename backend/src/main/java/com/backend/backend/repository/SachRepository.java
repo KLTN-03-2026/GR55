@@ -15,9 +15,9 @@ import java.util.List;
 @Repository
 public interface SachRepository extends JpaRepository<Sach, Long> {
 
-    boolean existsByTenSachAndDaXoaFalse(String tenSach);
+    boolean existsByTenSachIgnoreCaseAndDaXoaFalse(String tenSach);
 
-    boolean existsByTenSachAndMaSachNotAndDaXoaFalse(String tenSach, Long maSach);
+    boolean existsByTenSachIgnoreCaseAndMaSachNotAndDaXoaFalse(String tenSach, Long maSach);
 
     @Query("SELECT s FROM Sach s WHERE s.daXoa = false ORDER BY s.luotXem DESC, s.danhGiaTrungBinh DESC")
     Page<Sach> findSachNoiBat(Pageable pageable);
@@ -56,6 +56,21 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
                                  @Param("maDanhMuc") Long maDanhMuc,
                                  @Param("mienPhi") Boolean mienPhi,
                                  Pageable pageable);
+
+    // Lấy sách theo thể loại với bộ lọc
+    @Query("SELECT DISTINCT s FROM Sach s " +
+           "JOIN SachDanhMuc sd ON sd.maSach = s.maSach " +
+           "WHERE s.daXoa = false AND sd.maDm = :maDanhMuc " +
+           "AND (:minGia IS NULL OR s.gia >= :minGia) " +
+           "AND (:maxGia IS NULL OR s.gia <= :maxGia) " +
+           "AND (:minDanhGia IS NULL OR s.danhGiaTrungBinh >= :minDanhGia) " +
+           "AND (:mienPhi IS NULL OR (:mienPhi = true AND s.gia = 0) OR (:mienPhi = false AND s.gia > 0))")
+    Page<Sach> findSachByTheLoai(@Param("maDanhMuc") Long maDanhMuc,
+                                  @Param("minGia") BigDecimal minGia,
+                                  @Param("maxGia") BigDecimal maxGia,
+                                  @Param("minDanhGia") BigDecimal minDanhGia,
+                                  @Param("mienPhi") Boolean mienPhi,
+                                  Pageable pageable);
 
     // Tìm kiếm sách với đầy đủ bộ lọc
     @Query("SELECT DISTINCT s FROM Sach s " +

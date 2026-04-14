@@ -156,6 +156,9 @@ function GioHang() {
             Tiến hành thanh toán
           </button>
           <p className="chu_thich_thanh_toan">🔒 Tính năng thanh toán đang được phát triển</p>
+          <Link to="/trang_chu" className="nut_tiep_tuc_mua">
+            Tiếp tục mua sắm
+          </Link>
         </div>
       </div>
     </div>

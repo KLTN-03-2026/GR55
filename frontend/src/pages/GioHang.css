@@ -371,6 +371,16 @@
   line-height: 1.5;
 }
 
+.nut_tiep_tuc_mua {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--gh-red);
+  text-decoration: none;
+}
+
 .gio_hang_trong {
   display: flex;
   flex-direction: column;

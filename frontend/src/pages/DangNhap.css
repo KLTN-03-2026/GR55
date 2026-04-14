@@ -1,4 +1,4 @@
-* {
+gi* {
   box-sizing: border-box;
 }
 
@@ -6,7 +6,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 200px); 
+  min-height: calc(100vh - 200px);
   padding: 40px 20px;
   /* Thêm một chút màu nền thật nhạt để làm nổi bật form trắng */
   background-color: #fafafa;
@@ -16,11 +16,11 @@
 .hop_dang_nhap {
   background: linear-gradient(to right, #e0eafc, #cfdef3);
   width: 100%;
-  max-width: 440px; 
+  max-width: 440px;
   padding: 40px 36px;
   border-radius: 20px;
   /* Đổ bóng mềm mại, pha chút màu tím/xanh nhạt */
-  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1); 
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
@@ -111,7 +111,7 @@
   color: #ef4444;
   font-size: 13px;
   margin-top: 6px;
-  min-height: 18px; 
+  min-height: 18px;
 }
 
 /* KHUNG MẬT KHẨU CÓ NÚT ẨN/HIỆN */
@@ -140,7 +140,8 @@
   outline: none;
 }
 
-.nut_hien_mat_khau:hover, .nut_hien_mat_khau:focus {
+.nut_hien_mat_khau:hover,
+.nut_hien_mat_khau:focus {
   color: #667eea;
 }
 
@@ -193,7 +194,8 @@
 }
 
 .lien_ket_quen_mat_khau:hover {
-  color: #f5576c; /* Hiệu ứng đổi màu sang dải hồng khi hover */
+  color: #f5576c;
+  /* Hiệu ứng đổi màu sang dải hồng khi hover */
   text-decoration: underline;
 }
 
@@ -222,4 +224,3 @@
   color: #764ba2;
   text-decoration: underline;
 }
-

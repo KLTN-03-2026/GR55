@@ -1,20 +1,31 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Header.css';
-import { FiSearch, FiShoppingCart, FiUser, FiLogOut, FiBookOpen } from 'react-icons/fi';
+import { FiSearch, FiShoppingCart, FiUser, FiLogOut, FiBookOpen, FiX } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
+
 export default function Header() {
   const { da_dang_nhap, nguoiDung, dang_xuat } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const debounceRef = useRef(null);
   const dropdownRef = useRef(null);
+
+  // Sync ô tìm kiếm với URL khi đang ở trang /tim_kiem
+  useEffect(() => {
+    if (location.pathname === '/tim_kiem') {
+      setSearchQuery(searchParams.get('q') || '');
+    }
+  }, [location.pathname, searchParams]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -25,6 +36,11 @@ export default function Header() {
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Cleanup debounce timer khi unmount
+  useEffect(() => {
+    return () => clearTimeout(debounceRef.current);
   }, []);
 
   const getInitials = (name) => {
@@ -50,10 +66,38 @@ export default function Header() {
     }
   };
 
-  const handleSearch = (e) => {
+  // Khi gõ: debounce 300ms rồi navigate đến trang tìm kiếm
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(() => {
+      const q = value.trim();
+      if (q.length >= 1) {
+        navigate(`/tim_kiem?q=${encodeURIComponent(q)}`, { replace: location.pathname === '/tim_kiem' });
+      } else if (location.pathname === '/tim_kiem') {
+        navigate('/tim_kiem', { replace: true });
+      }
+    }, 300);
+  };
+
+  // Enter cũng navigate
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/tim_kiem?q=${encodeURIComponent(searchQuery.trim())}`);
+    clearTimeout(debounceRef.current);
+    const q = searchQuery.trim();
+    if (q) {
+      navigate(`/tim_kiem?q=${encodeURIComponent(q)}`, { replace: location.pathname === '/tim_kiem' });
+    }
+  };
+
+  // Nút xóa nhanh nội dung tìm kiếm
+  const clearSearch = () => {
+    setSearchQuery('');
+    clearTimeout(debounceRef.current);
+    if (location.pathname === '/tim_kiem') {
+      navigate('/tim_kiem', { replace: true });
     }
   };
 
@@ -71,6 +115,7 @@ export default function Header() {
     staleTime: 0,
     enabled: da_dang_nhap,
   });
+
   return (
     <>
       <header className="header">
@@ -84,7 +129,7 @@ export default function Header() {
           </Link>
 
           {/* Search Bar */}
-          <form className="search-form" onSubmit={handleSearch}>
+          <form className="search-form" onSubmit={handleSearchSubmit}>
             <div className="search-input-wrapper">
               <FiSearch className="search-icon" />
               <input
@@ -92,8 +137,16 @@ export default function Header() {
                 type="text"
                 placeholder="Tìm kiếm sách, tác giả..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
               />
+              
+              {/* Nút xóa từ khóa */}
+              {searchQuery && (
+                <button type="button" className="clear-search-btn" onClick={clearSearch}>
+                  <FiX />
+                </button>
+              )}
+
             </div>
           </form>
 

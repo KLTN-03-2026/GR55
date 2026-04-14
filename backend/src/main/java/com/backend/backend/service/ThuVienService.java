@@ -11,8 +11,6 @@ import com.backend.backend.repository.SachYeuThichRepository;
 import com.backend.backend.repository.TienDoDocSachRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +34,6 @@ public class ThuVienService {
     private final SachYeuThichRepository sachYeuThichRepository;
     private final TienDoDocSachRepository tienDoDocSachRepository;
 
-    @Cacheable(value = "sach_da_mua", key = "#maNd + '_' + #trang + '_' + #kichThuoc")
     public SachThuVienResponse laySachDaMua(Long maNd, int trang, int kichThuoc) {
         Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
         Page<Object[]> page = donHangRepository.findSachDaMuaByMaNd(maNd, pageable);
@@ -68,7 +65,6 @@ public class ThuVienService {
                 trang, page.getTotalPages(), page.getTotalElements());
     }
 
-    @Cacheable(value = "sach_yeu_thich", key = "#maNd + '_' + #trang + '_' + #kichThuoc")
     public YeuThichResponse laySachYeuThich(Long maNd, int trang, int kichThuoc) {
         Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
         Page<SachYeuThich> page = sachYeuThichRepository.findByMaNd(maNd, pageable);
@@ -97,10 +93,7 @@ public class ThuVienService {
                 trang, page.getTotalPages(), page.getTotalElements());
     }
 
-    @Caching(evict = {
-        @CacheEvict(value = "sach_yeu_thich", allEntries = true),
-        @CacheEvict(value = "chi_tiet_sach", key = "#maSach + '_' + #maNd")
-    })
+    @CacheEvict(value = "chi_tiet_sach", key = "#maSach + '_' + #maNd")
     @Transactional
     public YeuThichResponse themYeuThich(Long maNd, Long maSach) {
         Sach sach = sachRepository.findById(maSach).orElse(null);
@@ -119,10 +112,7 @@ public class ThuVienService {
         return new YeuThichResponse(true, "Đã thêm vào yêu thích", null, 0, 0, 0);
     }
 
-    @Caching(evict = {
-        @CacheEvict(value = "sach_yeu_thich", allEntries = true),
-        @CacheEvict(value = "chi_tiet_sach", key = "#maSach + '_' + #maNd")
-    })
+    @CacheEvict(value = "chi_tiet_sach", key = "#maSach + '_' + #maNd")
     @Transactional
     public YeuThichResponse xoaYeuThich(Long maNd, Long maSach) {
         SachYeuThich yeuThich = sachYeuThichRepository.findByMaNdAndMaSach(maNd, maSach)

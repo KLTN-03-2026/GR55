@@ -141,14 +141,17 @@ function SectionGoiY() {
   });
 
   const danh_sach = ket_qua?.danh_sach || [];
+  const co_them = (ket_qua?.tong_so_ban_ghi || 0) > SO_SACH_TRANG_CHU;
 
   return (
     <section className="section_trang_chu">
       <div className="tieu_de_section">
         <h2>Gợi ý cho bạn</h2>
-        <Link to="/sach_goi_y" className="nut_xem_them">
-          Xem thêm →
-        </Link>
+        {co_them && (
+          <Link to="/sach_goi_y" className="nut_xem_them">
+            Xem thêm →
+          </Link>
+        )}
       </div>
       <div className="luoi_sach">
         {dang_tai
@@ -168,6 +171,12 @@ export default function TrangChu() {
     <div className="trang_chu">
       <SectionKhamPha />
       <SectionGoiY />
+      <SectionSach
+        tieu_de="Sách mới nhất"
+        query_key="sach_moi_nhat"
+        endpoint="/home/sach_moi_nhat"
+        duong_dan_xem_them="/sach_moi_nhat"
+      />
       <SectionSach
         tieu_de="Sách miễn phí"
         query_key="sach_mien_phi"

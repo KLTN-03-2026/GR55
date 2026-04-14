@@ -482,3 +482,86 @@
   background-color: #f3f4f6;
   color: #1f2937;
 }
+
+/* MODAL CHI TIẾT NGƯỜI DÙNG */
+
+.hop_modal_chi_tiet {
+  max-width: 560px;
+}
+
+.tieu_de_modal_chi_tiet {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.tieu_de_modal_chi_tiet .tieu_de_modal {
+  margin: 0;
+}
+
+.nut_dong_modal {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.nut_dong_modal:hover {
+  color: #374151;
+}
+
+.khung_tai_chi_tiet {
+  padding: 8px 0;
+}
+
+.luoi_thong_tin_chi_tiet {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hang_thong_tin {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hang_thong_tin .nhan_thong_tin {
+  flex: 0 0 160px;
+  margin-bottom: 0;
+}
+
+.hang_thong_tin .gia_tri_thong_tin {
+  flex: 1;
+  padding: 8px 12px;
+}
+
+/* Phần lịch sử đơn hàng */
+
+.phan_lich_su_don_hang {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.tieu_de_phan {
+  font-size: 15px;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 12px 0;
+}
+
+.chua_co_du_lieu {
+  font-size: 14px;
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  padding: 16px 0;
+  margin: 0;
+}
