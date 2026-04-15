@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Thêm useNavigate theo PB19 [cite: 1213, 1253]
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -8,9 +8,10 @@ import './TrangChu.css';
 
 const SO_SACH_TRANG_CHU = 10;
 
-// 1. Section Khám phá sách (ngẫu nhiên — sau này sẽ thêm filter theo thể loại)
+// 1. Section Khám phá sách (Cập nhật logic điều hướng theo PB19)
 function SectionKhamPha() {
   const [ma_dm_chon, dat_ma_dm_chon] = useState(null);
+  const dieu_huong = useNavigate(); // Khởi tạo điều hướng [cite: 1254]
 
   const { data: danh_muc = [], isLoading: dang_tai_dm } = useQuery({
     queryKey: ['danh_muc_trang_chu'],
@@ -46,7 +47,7 @@ function SectionKhamPha() {
         )}
       </div>
 
-      {/* Filter thể loại — TODO: wire API lọc sách khi làm chức năng lọc */}
+      {/* Filter thể loại — Đã wire logic điều hướng [cite: 1251] */}
       <div className="thanh_loc_the_loai">
         <button
           className={`nut_the_loai ${ma_dm_chon === null ? 'dang_chon' : ''}`}
@@ -61,7 +62,7 @@ function SectionKhamPha() {
               <button
                 key={dm.ma_dm}
                 className={`nut_the_loai ${ma_dm_chon === dm.ma_dm ? 'dang_chon' : ''}`}
-                onClick={() => dat_ma_dm_chon(dm.ma_dm)}
+                onClick={() => dieu_huong(`/the_loai/${dm.ma_dm}`)} // Chuyển sang trang lọc theo thể loại [cite: 1256]
               >
                 {dm.ten_danh_muc}
               </button>
@@ -71,15 +72,15 @@ function SectionKhamPha() {
       <div className="luoi_sach">
         {dang_tai
           ? Array.from({ length: SO_SACH_TRANG_CHU }).map((_, i) => (
-              <TheCardSach key={i} skeleton />
-            ))
+            <TheCardSach key={i} skeleton />
+          ))
           : danh_sach.length === 0
             ? <p className="chua_co_du_lieu">Chưa có sách nào.</p>
             : danh_sach.map((sach) => (
-                <TheCardSach key={sach.ma_sach} sach={sach} />
-              ))}
+              <TheCardSach key={sach.ma_sach} sach={sach} />
+            ))}
       </div>
-    </section>
+    </section >
   );
 }
 
@@ -112,13 +113,13 @@ function SectionSach({ tieu_de, query_key, endpoint, duong_dan_xem_them }) {
       <div className="luoi_sach">
         {dang_tai
           ? Array.from({ length: SO_SACH_TRANG_CHU }).map((_, i) => (
-              <TheCardSach key={i} skeleton />
-            ))
+            <TheCardSach key={i} skeleton />
+          ))
           : danh_sach.length === 0
             ? <p className="chua_co_du_lieu">Chưa có sách nào.</p>
             : danh_sach.map((sach) => (
-                <TheCardSach key={sach.ma_sach} sach={sach} />
-              ))}
+              <TheCardSach key={sach.ma_sach} sach={sach} />
+            ))}
       </div>
     </section>
   );
@@ -153,11 +154,11 @@ function SectionGoiY() {
       <div className="luoi_sach">
         {dang_tai
           ? Array.from({ length: SO_SACH_TRANG_CHU }).map((_, i) => (
-              <TheCardSach key={i} skeleton />
-            ))
+            <TheCardSach key={i} skeleton />
+          ))
           : danh_sach.map((sach) => (
-              <TheCardSach key={sach.ma_sach} sach={sach} />
-            ))}
+            <TheCardSach key={sach.ma_sach} sach={sach} />
+          ))}
       </div>
     </section>
   );
