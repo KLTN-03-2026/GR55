@@ -25,6 +25,7 @@ import TaiKhoan from "./pages/TaiKhoan";
 import ThuVien from "./pages/ThuVien";
 import GioHang from "./pages/GioHang";
 import TimKiem from "./pages/TimKiem";
+import LocSachTheoTheLoai from "./pages/LocSachTheoTheLoai";
 
 // Danh sách sách
 import DanhSachNoiBat from "./pages/booklist/DanhSachNoiBat";
@@ -33,7 +34,7 @@ import DanhSachMienPhi from "./pages/booklist/DanhSachMienPhi";
 import DanhSachHoiVien from "./pages/booklist/DanhSachHoiVien";
 import DanhSachGoiY from "./pages/booklist/DanhSachGoiY";
 
-// Trang quản trị
+// Admin
 import AdminLayout from "./pages/admin/AdminLayout";
 import QuanTri from "./pages/QuanTri";
 import QuanLyDanhMuc from "./pages/admin/QuanLyDanhMuc";
@@ -49,12 +50,14 @@ root.render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            {/* NHÓM 1: GIAO DIỆN KHÁCH HÀNG */}
+
             <Route path="/" element={<Navigate to="/trang_chu" replace />} />
+
             <Route path="/trang_chu" element={<App><TrangChu /></App>} />
             <Route path="/dang_ky" element={<App><DangKy /></App>} />
             <Route path="/dang_nhap" element={<App><DangNhap /></App>} />
             <Route path="/quen_mat_khau" element={<App><QuenMatKhau /></App>} />
+
             <Route path="/sach/:ma_sach" element={<App><SachChiTiet /></App>} />
             <Route path="/tim_kiem" element={<App><TimKiem /></App>} />
 
@@ -64,38 +67,43 @@ root.render(
             <Route path="/sach_mien_phi" element={<App><DanhSachMienPhi /></App>} />
             <Route path="/sach_hoi_vien" element={<App><DanhSachHoiVien /></App>} />
             <Route path="/sach_goi_y" element={<App><DanhSachGoiY /></App>} />
+            <Route path="/the_loai/:ma_the_loai" element={<App><LocSachTheoTheLoai /></App>} />
 
-            {/* Đọc sách — không cần đăng nhập */}
+            {/* Đọc sách */}
             <Route path="/doc_thu/:ma_sach" element={<DocThu />} />
             <Route path="/doc_sach_mien_phi/:ma_sach" element={<DocSachMienPhi />} />
 
-            {/* Trang yêu cầu đăng nhập */}
             <Route path="/doc_sach/:ma_sach" element={
               <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
                 <App><DocSach /></App>
               </ProtectedRoute>
             } />
+
+            {/* User */}
             <Route path="/gio_hang" element={
               <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
                 <App><GioHang /></App>
               </ProtectedRoute>
             } />
+
             <Route path="/thu_vien" element={
               <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
                 <App><ThuVien /></App>
               </ProtectedRoute>
             } />
+
             <Route path="/tai_khoan" element={
               <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
                 <App><TaiKhoan /></App>
               </ProtectedRoute>
             } />
 
-            {/* NHÓM 2: GIAO DIỆN QUẢN TRỊ */}
+            {/* ADMIN */}
             <Route path="/quan_tri" element={<AdminLayout><QuanTri /></AdminLayout>} />
             <Route path="/quan_tri/danh_muc" element={<AdminLayout><QuanLyDanhMuc /></AdminLayout>} />
             <Route path="/quan_tri/sach" element={<AdminLayout><QuanLySach /></AdminLayout>} />
             <Route path="/quan_tri/nguoi_dung" element={<AdminLayout><QuanLyNguoiDung /></AdminLayout>} />
+
           </Routes>
 
           <ToastContainer
