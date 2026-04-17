@@ -236,8 +236,7 @@ export default function Header() {
                   </div>
                   <div className="mega-column">
                     <h4>🌟 Khuyến nghị</h4>
-                    <Link to="/kham-pha/moi-nhat" className="mega-link highlight">Sách mới nhất ✨</Link>
-                    <Link to="/kham-pha/doc-nhieu" className="mega-link highlight">Đọc nhiều nhất</Link>
+<Link to="/kham-pha/doc-nhieu" className="mega-link highlight">Đọc nhiều nhất</Link>
                     <Link to="/kham-pha/mien-phi" className="mega-link highlight">Miễn phí</Link>
                   </div>
                 </div>

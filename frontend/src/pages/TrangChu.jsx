@@ -83,7 +83,7 @@ function SectionKhamPha() {
   );
 }
 
-// 2. Section Sách chung (Mới nhất, Hội viên)
+// 2. Section Sách chung (Hội viên, Miễn phí)
 function SectionSach({ tieu_de, query_key, endpoint, duong_dan_xem_them }) {
   const { data: ket_qua, isLoading: dang_tai } = useQuery({
     queryKey: [query_key, 1, SO_SACH_TRANG_CHU],
@@ -171,12 +171,6 @@ export default function TrangChu() {
     <div className="trang_chu">
       <SectionKhamPha />
       <SectionGoiY />
-      <SectionSach
-        tieu_de="Sách mới nhất"
-        query_key="sach_moi_nhat"
-        endpoint="/home/sach_moi_nhat"
-        duong_dan_xem_them="/sach_moi_nhat"
-      />
       <SectionSach
         tieu_de="Sách miễn phí"
         query_key="sach_mien_phi"

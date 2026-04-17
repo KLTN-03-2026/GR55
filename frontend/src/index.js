@@ -28,7 +28,6 @@ import TimKiem from "./pages/TimKiem";
 
 // Danh sách sách
 import DanhSachNoiBat from "./pages/booklist/DanhSachNoiBat";
-import DanhSachMoiNhat from "./pages/booklist/DanhSachMoiNhat";
 import DanhSachMienPhi from "./pages/booklist/DanhSachMienPhi";
 import DanhSachHoiVien from "./pages/booklist/DanhSachHoiVien";
 import DanhSachGoiY from "./pages/booklist/DanhSachGoiY";
@@ -60,7 +59,6 @@ root.render(
 
             {/* Danh sách sách */}
             <Route path="/sach_noi_bat" element={<App><DanhSachNoiBat /></App>} />
-            <Route path="/sach_moi_nhat" element={<App><DanhSachMoiNhat /></App>} />
             <Route path="/sach_mien_phi" element={<App><DanhSachMienPhi /></App>} />
             <Route path="/sach_hoi_vien" element={<App><DanhSachHoiVien /></App>} />
             <Route path="/sach_goi_y" element={<App><DanhSachGoiY /></App>} />

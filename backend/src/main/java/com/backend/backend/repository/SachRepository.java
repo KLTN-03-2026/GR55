@@ -22,9 +22,6 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
     @Query("SELECT s FROM Sach s WHERE s.daXoa = false ORDER BY s.luotXem DESC, s.danhGiaTrungBinh DESC")
     Page<Sach> findSachNoiBat(Pageable pageable);
 
-    @Query("SELECT s FROM Sach s WHERE s.daXoa = false ORDER BY s.ngayTao DESC")
-    Page<Sach> findSachMoiNhat(Pageable pageable);
-
     @Query("SELECT s FROM Sach s WHERE s.daXoa = false AND s.gia = 0 ORDER BY s.luotXem DESC, s.danhGiaTrungBinh DESC")
     Page<Sach> findSachMienPhi(Pageable pageable);
 
