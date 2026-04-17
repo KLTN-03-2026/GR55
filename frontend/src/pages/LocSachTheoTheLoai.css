@@ -1,0 +1,107 @@
+.trang_the_loai {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px;
+}
+
+.header_the_loai {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 32px;
+    border-bottom: 2px solid #f3f4f6;
+    padding-bottom: 16px;
+}
+
+.header_the_loai h1 {
+    font-size: 28px;
+    color: #1e3a5f;
+}
+
+.header_the_loai span {
+    color: #6b7280;
+    font-size: 16px;
+}
+
+.khung_noi_dung {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 32px;
+}
+
+.bo_loc_ben_trai {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.nhom_loc {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nhom_loc label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.nhom_loc input,
+.nhom_loc select {
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+}
+
+.nut_ap_dung {
+    width: 100%;
+    padding: 10px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.luoi_ket_qua {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.phan_trang {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+
+.phan_trang button {
+    padding: 8px 16px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.phan_trang button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .khung_noi_dung {
+        grid-template-columns: 1fr;
+    }
+
+    .bo_loc_ben_trai {
+        position: static;
+    }
+}

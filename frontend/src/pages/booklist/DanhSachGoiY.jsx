@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
@@ -6,27 +5,29 @@ import { useAuth } from "../../context/AuthContext";
 import TheCardSach from "../../components/TheCardSach";
 import "./DanhSachSach.css";
 
-const KICH_THUOC_TRANG = 20;
+const SO_LUONG_GOI_Y = 20;
 
 export default function DanhSachGoiY() {
-  const [trang_hien_tai, dat_trang_hien_tai] = useState(1);
+  // Đã gỡ bỏ state trang_hien_tai
   const { da_dang_nhap, nguoiDung } = useAuth();
   const ma_nd = da_dang_nhap ? nguoiDung?.ma_nguoi_dung : undefined;
 
   const { data: ket_qua, isLoading: dang_tai } = useQuery({
-    queryKey: ["sach_goi_y", ma_nd, trang_hien_tai, KICH_THUOC_TRANG],
+    queryKey: ["goi_y_sach", ma_nd ?? "khach"], // Đồng bộ key để share cache với TrangChu
     queryFn: async () => {
-      const phan_hoi = await api.get("/home/sach_goi_y", {
-        params: { ma_nd: ma_nd || undefined, trang: trang_hien_tai, kich_thuoc: KICH_THUOC_TRANG },
+      const phan_hoi = await api.get("/goi_y", {
+        params: { so_luong: SO_LUONG_GOI_Y }, // Chỉ truyền số lượng theo API mới
       });
       return phan_hoi.data;
     },
-    staleTime: da_dang_nhap ? 5 * 60 * 1000 : 30 * 60 * 1000,
+    // Stale time: 30 phút cho user đã đăng nhập, 60 phút cho khách
+    staleTime: da_dang_nhap ? 30 * 60 * 1000 : 60 * 60 * 1000,
   });
 
   const danh_sach = ket_qua?.danh_sach || [];
-  const tong_so_trang = ket_qua?.tong_so_trang || 1;
-  const tong_ban_ghi = ket_qua?.tong_so_ban_ghi || 0;
+  
+  // Tính tổng số bản ghi trực tiếp dựa trên số lượng trả về
+  const tong_ban_ghi = danh_sach.length;
 
   return (
     <div className="trang_danh_sach">
@@ -40,37 +41,17 @@ export default function DanhSachGoiY() {
 
       <div className="luoi_sach_ds">
         {dang_tai
-          ? Array.from({ length: KICH_THUOC_TRANG }).map((_, i) => (
+          ? Array.from({ length: SO_LUONG_GOI_Y }).map((_, i) => (
               <TheCardSach key={i} skeleton />
             ))
           : danh_sach.length === 0
-            ? <p className="chua_co_du_lieu_ds">Chưa có sách nào.</p>
+            ? <p className="chua_co_du_lieu_ds">Chưa có gợi ý nào cho bạn lúc này.</p>
             : danh_sach.map((sach) => (
                 <TheCardSach key={sach.ma_sach} sach={sach} />
               ))}
       </div>
 
-      {tong_so_trang > 1 && (
-        <div className="phan_trang_ds">
-          <button
-            className="nut_trang_ds"
-            onClick={() => dat_trang_hien_tai((t) => t - 1)}
-            disabled={trang_hien_tai <= 1}
-          >
-            ‹
-          </button>
-          <span className="vi_tri_trang_ds">
-            Trang {trang_hien_tai} / {tong_so_trang}
-          </span>
-          <button
-            className="nut_trang_ds"
-            onClick={() => dat_trang_hien_tai((t) => t + 1)}
-            disabled={trang_hien_tai >= tong_so_trang}
-          >
-            ›
-          </button>
-        </div>
-      )}
+      {/* Toàn bộ khối UI phân_trang_ds đã được gỡ bỏ vì API không còn hỗ trợ */}
     </div>
   );
 }
