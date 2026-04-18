@@ -61,12 +61,16 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
            "AND (:minGia IS NULL OR s.gia >= :minGia) " +
            "AND (:maxGia IS NULL OR s.gia <= :maxGia) " +
            "AND (:minDanhGia IS NULL OR s.danhGiaTrungBinh >= :minDanhGia) " +
-           "AND (:mienPhi IS NULL OR (:mienPhi = true AND s.gia = 0) OR (:mienPhi = false AND s.gia > 0))")
+           "AND (:mienPhi IS NULL OR (:mienPhi = true AND s.gia = 0) OR (:mienPhi = false AND s.gia > 0)) " +
+           "AND (:sachHoiVien IS NULL " +
+           "     OR (:sachHoiVien = true AND s.maSach IN (SELECT g.maSach FROM GoiHoiVienSach g)) " +
+           "     OR (:sachHoiVien = false AND s.maSach NOT IN (SELECT g.maSach FROM GoiHoiVienSach g)))")
     Page<Sach> findSachByTheLoai(@Param("maDanhMuc") Long maDanhMuc,
                                   @Param("minGia") BigDecimal minGia,
                                   @Param("maxGia") BigDecimal maxGia,
                                   @Param("minDanhGia") BigDecimal minDanhGia,
                                   @Param("mienPhi") Boolean mienPhi,
+                                  @Param("sachHoiVien") Boolean sachHoiVien,
                                   Pageable pageable);
 
     // Tìm kiếm sách với đầy đủ bộ lọc

@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Thêm useNavigate theo PB19
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -8,22 +7,10 @@ import './TrangChu.css';
 
 const SO_SACH_TRANG_CHU = 10;
 
-// 1. Section Khám phá sách (Cập nhật logic điều hướng theo PB19)
+// 1. Section Khám phá sách
 function SectionKhamPha() {
-  const [ma_dm_chon, dat_ma_dm_chon] = useState(null);
-  const dieu_huong = useNavigate(); // Khởi tạo điều hướng
-
-  const { data: danh_muc = [], isLoading: dang_tai_dm } = useQuery({
-    queryKey: ['danh_muc_trang_chu'],
-    queryFn: async () => {
-      const phan_hoi = await api.get('/home/danh_muc');
-      return phan_hoi.data;
-    },
-    staleTime: 60 * 60 * 1000,
-  });
-// thêm section
   const { data: ket_qua, isLoading: dang_tai } = useQuery({
-    queryKey: ['sach_kham_pha', ma_dm_chon, SO_SACH_TRANG_CHU],
+    queryKey: ['sach_kham_pha', SO_SACH_TRANG_CHU],
     queryFn: async () => {
       const phan_hoi = await api.get('/home/sach_noi_bat', {
         params: { trang: 1, kich_thuoc: SO_SACH_TRANG_CHU },
@@ -46,29 +33,6 @@ function SectionKhamPha() {
           </Link>
         )}
       </div>
-
-      {/* Filter thể loại — Đã wire logic điều hướng */}
-      <div className="thanh_loc_the_loai">
-        <button
-          className={`nut_the_loai ${ma_dm_chon === null ? 'dang_chon' : ''}`}
-          onClick={() => dat_ma_dm_chon(null)}
-        >
-          Tất cả
-        </button>
-        {!dang_tai_dm &&
-          danh_muc
-            .filter((dm) => dm.so_luong_sach > 0)
-            .map((dm) => (
-              <button
-                key={dm.ma_dm}
-                className={`nut_the_loai ${ma_dm_chon === dm.ma_dm ? 'dang_chon' : ''}`}
-                onClick={() => dieu_huong(`/the_loai/${dm.ma_dm}`)} // Chuyển sang trang lọc theo thể loại
-              >
-                {dm.ten_danh_muc}
-              </button>
-            ))}
-      </div>
-
       <div className="luoi_sach">
         {dang_tai
           ? Array.from({ length: SO_SACH_TRANG_CHU }).map((_, i) => (
@@ -80,7 +44,7 @@ function SectionKhamPha() {
               <TheCardSach key={sach.ma_sach} sach={sach} />
             ))}
       </div>
-    </section >
+    </section>
   );
 }
 
@@ -131,7 +95,7 @@ function SectionGoiY() {
   const ma_nd = da_dang_nhap ? nguoiDung?.ma_nguoi_dung : undefined;
 
   const { data: ket_qua, isLoading: dang_tai } = useQuery({
-    queryKey: ['goi_y_sach', ma_nd ?? 'khach'],
+    queryKey: ['goi_y_sach', ma_nd ?? 'khach', SO_SACH_TRANG_CHU],
     queryFn: async () => {
       const phan_hoi = await api.get('/goi_y', {
         params: { so_luong: SO_SACH_TRANG_CHU },

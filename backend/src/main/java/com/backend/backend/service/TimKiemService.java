@@ -122,10 +122,10 @@ public class TimKiemService {
     private Sort xacDinhSapXep(String sapXep) {
         if (sapXep == null) return Sort.by("ngayTao").descending();
         return switch (sapXep) {
-            case "ban_chay"     -> Sort.by("soLuongDaBan").descending();
+            case "doc_nhieu"    -> Sort.by("luotXem").descending();
             case "gia_tang_dan" -> Sort.by("gia").ascending();
             case "gia_giam_dan" -> Sort.by("gia").descending();
-            default             -> Sort.by("ngayTao").descending(); // moi_nhat
+            default             -> Sort.by("luotXem").descending();
         };
     }
 }

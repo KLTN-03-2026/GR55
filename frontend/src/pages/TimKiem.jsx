@@ -22,7 +22,7 @@ export default function TimKiem() {
     min_danh_gia: null,
     sach_mien_phi: null,
     sach_hoi_vien: null,
-    sap_xep: 'ban_chay',
+    sap_xep: 'doc_nhieu',
   });
 
   const [bo_loc_tam, dat_bo_loc_tam] = useState({ ...bo_loc });
@@ -122,7 +122,7 @@ export default function TimKiem() {
               value={bo_loc.sap_xep}
               onChange={(e) => xu_ly_sap_xep(e.target.value)}
             >
-              <option value="ban_chay">Bán chạy</option>
+              <option value="doc_nhieu">Đọc nhiều nhất</option>
               <option value="gia_tang_dan">Giá tăng dần</option>
               <option value="gia_giam_dan">Giá giảm dần</option>
             </select>

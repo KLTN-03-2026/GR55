@@ -1,63 +1,66 @@
-import { useState, useCallback } from 'react'; // [cite: 1212]
-import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom'; // [cite: 1213]
-import { useQuery } from '@tanstack/react-query'; // [cite: 1214]
-import api from '../services/api'; // [cite: 1215]
-import TheCardSach from '../components/TheCardSach'; // [cite: 1216]
-import './LocSachTheoTheLoai.css'; // [cite: 1217]
+import { useState } from 'react';
+import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import api from '../services/api';
+import TheCardSach from '../components/TheCardSach';
+import './LocSachTheoTheLoai.css';
 
-const KICH_THUOC_TRANG = 12; // [cite: 1210]
+const KICH_THUOC_TRANG = 12;
 
 export default function LocSachTheoTheLoai() {
-    const { ma_the_loai } = useParams(); // [cite: 1259]
-    const [searchParams, setSearchParams] = useSearchParams(); // [cite: 1260]
-    const trang_hien_tai = Number(searchParams.get('trang') || 1); // [cite: 1261]
+    const { ma_the_loai } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const trang_hien_tai = Number(searchParams.get('trang') || 1);
     const dieu_huong = useNavigate();
 
-    // Bộ lọc dual state [cite: 1262, 1263]
     const [bo_loc, dat_bo_loc] = useState({
         min_gia: null,
         max_gia: null,
         min_danh_gia: null,
         sach_mien_phi: null,
-        sap_xep: 'moi_nhat',
+        sach_hoi_vien: null,
+        sap_xep: 'doc_nhieu',
     });
-    const [bo_loc_tam, dat_bo_loc_tam] = useState({ ...bo_loc }); // [cite: 1270]
+    const [bo_loc_tam, dat_bo_loc_tam] = useState({ ...bo_loc });
 
-    // Query dữ liệu [cite: 1272]
     const { data: ket_qua, isLoading: dang_tai, error: loi_api } = useQuery({
-        queryKey: ['sach_theo_the_loai', ma_the_loai, trang_hien_tai, bo_loc], // [cite: 1273]
+        queryKey: ['sach_theo_the_loai', ma_the_loai, trang_hien_tai, bo_loc],
         queryFn: async () => {
             const phan_hoi = await api.get(`/the_loai/${ma_the_loai}/sach`, {
                 params: {
                     trang: trang_hien_tai,
                     kich_thuoc: KICH_THUOC_TRANG,
-                    ...bo_loc,
+                    min_gia: bo_loc.min_gia ?? undefined,
+                    max_gia: bo_loc.max_gia ?? undefined,
+                    min_danh_gia: bo_loc.min_danh_gia ?? undefined,
+                    sach_mien_phi: bo_loc.sach_mien_phi ?? undefined,
+                    sach_hoi_vien: bo_loc.sach_hoi_vien ?? undefined,
+                    sap_xep: bo_loc.sap_xep,
                 },
             });
-            return phan_hoi.data; // [cite: 1282]
+            return phan_hoi.data;
         },
-        staleTime: 5 * 60 * 1000, // 
-        placeholderData: (prev) => prev, // [cite: 1285]
+        staleTime: 5 * 60 * 1000,
+        placeholderData: (prev) => prev,
         enabled: !!ma_the_loai,
         retry: false,
     });
 
-    const xu_ly_sap_xep = (e) => {
-        const value = e.target.value;
-        dat_bo_loc_tam(prev => ({ ...prev, sap_xep: value }));
-        dat_bo_loc(prev => ({ ...prev, sap_xep: value })); // Áp dụng ngay [cite: 1292]
+    const xu_ly_sap_xep = (gia_tri) => {
+        dat_bo_loc_tam(prev => ({ ...prev, sap_xep: gia_tri }));
+        dat_bo_loc(prev => ({ ...prev, sap_xep: gia_tri }));
         setSearchParams({ trang: 1 });
     };
 
     const xu_ly_ap_dung_loc = () => {
-        dat_bo_loc({ ...bo_loc_tam }); // [cite: 1296]
+        dat_bo_loc({ ...bo_loc_tam });
         setSearchParams({ trang: 1 });
     };
 
     const xu_ly_doi_trang = (huong) => {
         const trang_moi = huong === 'truoc' ? trang_hien_tai - 1 : trang_hien_tai + 1;
         setSearchParams({ trang: trang_moi });
-        window.scrollTo(0, 0); // [cite: 1299]
+        window.scrollTo(0, 0);
     };
 
     if (loi_api?.response?.status === 404) {
@@ -66,74 +69,147 @@ export default function LocSachTheoTheLoai() {
                 <p>Thể loại không tồn tại</p>
                 <button onClick={() => dieu_huong(-1)}>Quay lại</button>
             </div>
-        ); // [cite: 1301]
+        );
     }
 
     return (
         <div className="trang_the_loai">
-            <header className="header_the_loai">
-                <h1>{ket_qua?.thong_tin_the_loai?.ten_the_loai}</h1>
+            {/* Dùng <div> thay vì <header> để tránh bị App.css áp sticky+z-index */}
+            <div className="tieu_de_the_loai">
+                <h1>{ket_qua?.thong_tin_the_loai?.ten_the_loai || '...'}</h1>
                 <span>({ket_qua?.thong_tin_the_loai?.so_luong_sach || 0} sách)</span>
-            </header>
+            </div>
 
-            <div className="khung_noi_dung">
+            <div className="bo_cuc_chinh">
+                {/* BỘ LỌC — cùng cấu trúc với TimKiem */}
                 <aside className="bo_loc_ben_trai">
-                    <div className="nhom_loc">
-                        <label>Sắp xếp</label>
-                        <select value={bo_loc_tam.sap_xep} onChange={xu_ly_sap_xep}>
-                            <option value="moi_nhat">Mới nhất</option>
-                            <option value="ban_chay">Bán chạy</option>
+                    <p className="tieu_de_bo_loc">Bộ lọc</p>
+
+                    <div className="nhom_bo_loc">
+                        <label className="nhan_bo_loc">Sắp xếp</label>
+                        <select
+                            className="chon_sap_xep"
+                            value={bo_loc_tam.sap_xep}
+                            onChange={(e) => xu_ly_sap_xep(e.target.value)}
+                        >
+                            <option value="doc_nhieu">Đọc nhiều nhất</option>
                             <option value="gia_tang_dan">Giá tăng dần</option>
                             <option value="gia_giam_dan">Giá giảm dần</option>
                         </select>
                     </div>
 
-                    <div className="nhom_loc">
-                        <label>Giá từ</label>
-                        <input type="number" value={bo_loc_tam.min_gia || ''}
-                            onChange={e => dat_bo_loc_tam({ ...bo_loc_tam, min_gia: e.target.value })} />
-                        <label>Đến</label>
-                        <input type="number" value={bo_loc_tam.max_gia || ''}
-                            onChange={e => dat_bo_loc_tam({ ...bo_loc_tam, max_gia: e.target.value })} />
+                    <div className="nhom_bo_loc">
+                        <label className="nhan_bo_loc">Khoảng giá</label>
+                        <div className="nhom_gia">
+                            <input
+                                type="number"
+                                className="nhap_gia"
+                                placeholder="Từ"
+                                min={0}
+                                value={bo_loc_tam.min_gia ?? ''}
+                                onChange={(e) =>
+                                    dat_bo_loc_tam(prev => ({ ...prev, min_gia: e.target.value ? Number(e.target.value) : null }))
+                                }
+                            />
+                            <span className="ky_tu_den">–</span>
+                            <input
+                                type="number"
+                                className="nhap_gia"
+                                placeholder="Đến"
+                                min={0}
+                                value={bo_loc_tam.max_gia ?? ''}
+                                onChange={(e) =>
+                                    dat_bo_loc_tam(prev => ({ ...prev, max_gia: e.target.value ? Number(e.target.value) : null }))
+                                }
+                            />
+                        </div>
                     </div>
 
-                    <div className="nhom_loc">
-                        <label>Đánh giá ít nhất</label>
-                        <select value={bo_loc_tam.min_danh_gia || ''}
-                            onChange={e => dat_bo_loc_tam({ ...bo_loc_tam, min_danh_gia: e.target.value })}>
+                    <div className="nhom_bo_loc">
+                        <label className="nhan_bo_loc">Đánh giá tối thiểu</label>
+                        <select
+                            className="chon_danh_gia"
+                            value={bo_loc_tam.min_danh_gia ?? ''}
+                            onChange={(e) =>
+                                dat_bo_loc_tam(prev => ({ ...prev, min_danh_gia: e.target.value ? Number(e.target.value) : null }))
+                            }
+                        >
                             <option value="">Tất cả</option>
-                            {[5, 4, 3, 2, 1].map(s => <option key={s} value={s}>{s} sao trở lên</option>)}
+                            {[1, 2, 3, 4, 5].map((sao) => (
+                                <option key={sao} value={sao}>{sao} sao trở lên</option>
+                            ))}
                         </select>
                     </div>
 
-                    <div className="nhom_loc_checkbox">
-                        <input type="checkbox" checked={!!bo_loc_tam.sach_mien_phi}
-                            onChange={e => dat_bo_loc_tam({ ...bo_loc_tam, sach_mien_phi: e.target.checked || null })} />
-                        <span>Sách miễn phí</span>
+                    <div className="nhom_bo_loc">
+                        <label className="nhan_checkbox">
+                            <input
+                                type="checkbox"
+                                checked={!!bo_loc_tam.sach_mien_phi}
+                                onChange={(e) =>
+                                    dat_bo_loc_tam(prev => ({ ...prev, sach_mien_phi: e.target.checked ? true : null }))
+                                }
+                            />
+                            Sách miễn phí
+                        </label>
                     </div>
 
-                    <button className="nut_ap_dung" onClick={xu_ly_ap_dung_loc}>Áp dụng</button>
+                    <div className="nhom_bo_loc">
+                        <label className="nhan_checkbox">
+                            <input
+                                type="checkbox"
+                                checked={!!bo_loc_tam.sach_hoi_vien}
+                                onChange={(e) =>
+                                    dat_bo_loc_tam(prev => ({ ...prev, sach_hoi_vien: e.target.checked ? true : null }))
+                                }
+                            />
+                            Sách hội viên
+                        </label>
+                    </div>
+
+                    <button className="nut_ap_dung" onClick={xu_ly_ap_dung_loc}>
+                        Áp dụng
+                    </button>
                 </aside>
 
-                <main className="vung_ket_qua">
+                {/* KẾT QUẢ */}
+                <main className="khu_vuc_ket_qua">
                     <div className="luoi_ket_qua">
                         {dang_tai ? (
-                            Array.from({ length: KICH_THUOC_TRANG }).map((_, i) => <TheCardSach key={i} skeleton />)
+                            Array.from({ length: KICH_THUOC_TRANG }).map((_, i) => (
+                                <TheCardSach key={i} skeleton />
+                            ))
                         ) : ket_qua?.danh_sach?.length === 0 ? (
-                            <div className="chua_co_sach">
-                                <p>Không có sách trong thể loại này</p>
-                                <Link to="/tim_kiem">Xem tất cả sách</Link>
+                            <div className="khong_co_ket_qua">
+                                <p>Không có sách phù hợp với bộ lọc.</p>
+                                <Link to="/tim_kiem" className="nut_xem_tat_ca">Xem tất cả sách</Link>
                             </div>
                         ) : (
-                            ket_qua.danh_sach.map(sach => <TheCardSach key={sach.ma_sach} sach={sach} />)
+                            ket_qua?.danh_sach?.map((sach) => (
+                                <TheCardSach key={sach.ma_sach} sach={sach} />
+                            ))
                         )}
                     </div>
 
                     {ket_qua?.tong_so_trang > 1 && (
                         <div className="phan_trang">
-                            <button disabled={trang_hien_tai <= 1} onClick={() => xu_ly_doi_trang('truoc')}>Trước</button>
-                            <span>Trang {trang_hien_tai} / {ket_qua.tong_so_trang}</span>
-                            <button disabled={trang_hien_tai >= ket_qua.tong_so_trang} onClick={() => xu_ly_doi_trang('sau')}>Sau</button>
+                            <button
+                                className="nut_phan_trang"
+                                disabled={trang_hien_tai <= 1}
+                                onClick={() => xu_ly_doi_trang('truoc')}
+                            >
+                                ← Trước
+                            </button>
+                            <span className="vi_tri_trang">
+                                Trang {trang_hien_tai} / {ket_qua.tong_so_trang}
+                            </span>
+                            <button
+                                className="nut_phan_trang"
+                                disabled={trang_hien_tai >= ket_qua.tong_so_trang}
+                                onClick={() => xu_ly_doi_trang('sau')}
+                            >
+                                Sau →
+                            </button>
                         </div>
                     )}
                 </main>

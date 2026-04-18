@@ -105,7 +105,15 @@ export default function Header() {
     setIsDropdownOpen(prev => !prev);
   }, []);
 
-  // Mock cart count - replace with real context later
+  const { data: danh_muc = [] } = useQuery({
+    queryKey: ['danh_muc_trang_chu'],
+    queryFn: async () => {
+      const phan_hoi = await api.get('/home/danh_muc');
+      return phan_hoi.data;
+    },
+    staleTime: 60 * 60 * 1000,
+  });
+
   const { data: cartCount = 0 } = useQuery({
     queryKey: ['so_luong_gio_hang', nguoiDung?.ma_nguoi_dung],
     queryFn: async () => {
@@ -225,20 +233,16 @@ export default function Header() {
             <li><Link to="/trang_chu" className="nav-link">Trang chủ</Link></li>
             
             <li className="mega-nav-item">
-              <Link to="/danh_muc" className="nav-link mega-trigger">Danh mục sách</Link>
+              <span className="nav-link mega-trigger">Danh mục sách</span>
               <div className="mega-menu">
-                <div className="mega-grid">
-                  <div className="mega-column">
-                    <h4>📖 Thể loại phổ biến</h4>
-                    <Link to="/the-loai/phat-trien" className="mega-link">Phát triển bản thân</Link>
-                    <Link to="/the-loai/tai-chinh" className="mega-link">Tài chính cá nhân</Link>
-                    <Link to="/the-loai/quan-tri" className="mega-link">Quản trị kinh doanh</Link>
-                  </div>
-                  <div className="mega-column">
-                    <h4>🌟 Khuyến nghị</h4>
-<Link to="/kham-pha/doc-nhieu" className="mega-link highlight">Đọc nhiều nhất</Link>
-                    <Link to="/kham-pha/mien-phi" className="mega-link highlight">Miễn phí</Link>
-                  </div>
+                <div className="mega-column">
+                  <h4>📖 Thể loại sách</h4>
+                  {danh_muc
+                    .map(dm => (
+                      <Link key={dm.ma_dm} to={`/the_loai/${dm.ma_dm}`} className="mega-link">
+                        {dm.ten_danh_muc}
+                      </Link>
+                    ))}
                 </div>
               </div>
             </li>

@@ -13,7 +13,7 @@ export default function DanhSachGoiY() {
   const ma_nd = da_dang_nhap ? nguoiDung?.ma_nguoi_dung : undefined;
 
   const { data: ket_qua, isLoading: dang_tai } = useQuery({
-    queryKey: ["goi_y_sach", ma_nd ?? "khach"], // Đồng bộ key để share cache với TrangChu
+    queryKey: ["goi_y_sach", ma_nd ?? "khach", SO_LUONG_GOI_Y],
     queryFn: async () => {
       const phan_hoi = await api.get("/goi_y", {
         params: { so_luong: SO_LUONG_GOI_Y }, // Chỉ truyền số lượng theo API mới

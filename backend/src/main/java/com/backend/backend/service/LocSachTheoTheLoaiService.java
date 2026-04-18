@@ -28,7 +28,7 @@ public class LocSachTheoTheLoaiService {
     private final DanhMucSachRepository danhMucSachRepository;
 
     @Cacheable(value = "sach_theo_the_loai",
-               key = "#request.ma_the_loai + '_' + #request.min_gia + '_' + #request.max_gia + '_' + #request.min_danh_gia + '_' + #request.sach_mien_phi + '_' + #request.sap_xep + '_' + #request.trang + '_' + #request.kich_thuoc")
+               key = "#request.ma_the_loai + '_' + #request.min_gia + '_' + #request.max_gia + '_' + #request.min_danh_gia + '_' + #request.sach_mien_phi + '_' + #request.sach_hoi_vien + '_' + #request.sap_xep + '_' + #request.trang + '_' + #request.kich_thuoc")
     public SachTheoTheLoaiResponse laySachTheoTheLoai(LocTheoTheLoaiRequest request) {
         DanhMucSach danhMuc = danhMucSachRepository.findById(request.getMa_the_loai())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Thể loại không tồn tại"));
@@ -46,6 +46,7 @@ public class LocSachTheoTheLoaiService {
                 maxGia,
                 minDanhGia,
                 request.getSach_mien_phi(),
+                request.getSach_hoi_vien(),
                 pageable
         );
 
@@ -83,10 +84,10 @@ public class LocSachTheoTheLoaiService {
     private Sort xacDinhSapXep(String sapXep) {
         if (sapXep == null) return Sort.by("ngayTao").descending();
         return switch (sapXep) {
-            case "ban_chay"     -> Sort.by("soLuongDaBan").descending();
+            case "doc_nhieu"    -> Sort.by("luotXem").descending();
             case "gia_tang_dan" -> Sort.by("gia").ascending();
             case "gia_giam_dan" -> Sort.by("gia").descending();
-            default             -> Sort.by("ngayTao").descending();
+            default             -> Sort.by("luotXem").descending();
         };
     }
 }

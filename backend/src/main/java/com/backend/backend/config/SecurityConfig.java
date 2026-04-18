@@ -53,6 +53,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/tim_kiem/**").permitAll()
                     .requestMatchers("/api/the_loai/**").permitAll()
                     .requestMatchers("/api/goi_y/**").permitAll()
+                    .requestMatchers("/api/webhook/**").permitAll()
                     .anyRequest().authenticated())
             .authenticationProvider(nhaXacThuc())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

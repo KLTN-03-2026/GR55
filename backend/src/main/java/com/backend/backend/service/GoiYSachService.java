@@ -6,6 +6,7 @@ import com.backend.backend.repository.SachRepository;
 import com.backend.backend.repository.TienDoDocSachRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,10 @@ public class GoiYSachService {
     private final SachRepository sachRepository;
     private final TienDoDocSachRepository tienDoDocSachRepository;
 
+    @Caching(cacheable = {
+        @Cacheable(value = "goi_y_sach_khach", key = "#soLuong", condition = "#maNd == null"),
+        @Cacheable(value = "goi_y_sach_thanh_vien", key = "#maNd + '_' + #soLuong", condition = "#maNd != null")
+    })
     public SachGoiYResponse layGoiYSach(Long maNd, int soLuong) {
         if (maNd != null) {
             return layGoiYThanhVien(maNd, soLuong);
@@ -27,13 +32,11 @@ public class GoiYSachService {
         return layGoiYKhach(soLuong);
     }
 
-    @Cacheable(value = "goi_y_sach_khach", key = "#soLuong")
     public SachGoiYResponse layGoiYKhach(int soLuong) {
         List<Sach> ketQua = sachRepository.findSachNoiBat(PageRequest.of(0, soLuong)).getContent();
         return xayDungResponse("Sách phổ biến", ketQua);
     }
 
-    @Cacheable(value = "goi_y_sach_thanh_vien", key = "#maNd + '_' + #soLuong")
     public SachGoiYResponse layGoiYThanhVien(Long maNd, int soLuong) {
         List<Long> theLoaiYeuThich = tienDoDocSachRepository.findTheLoaiYeuThichByUserId(maNd);
         if (!theLoaiYeuThich.isEmpty()) {

@@ -365,7 +365,7 @@ body {
   top: 100%;
   left: -20px;
   width: max-content;
-  min-width: 550px;
+  min-width: 260px;
   max-width: 90vw;
   background: rgba(30, 41, 59, 0.98);
   backdrop-filter: blur(25px);
@@ -391,10 +391,29 @@ body {
 }
 
 .mega-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  /* Tăng khoảng cách 2 cột cho thoáng */
+  max-height: 60vh;
+}
+
+.mega-column {
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.mega-column::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mega-column::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mega-column::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.mega-column::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .mega-column h4 {
