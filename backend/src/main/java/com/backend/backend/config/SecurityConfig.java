@@ -54,6 +54,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/the_loai/**").permitAll()
                     .requestMatchers("/api/goi_y/**").permitAll()
                     .requestMatchers("/api/webhook/**").permitAll()
+                    .requestMatchers("/api/mua_sach/vnpay_callback").permitAll()
                     .anyRequest().authenticated())
             .authenticationProvider(nhaXacThuc())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
