@@ -4,10 +4,12 @@ import com.backend.backend.dto.TaoDonHangRequest;
 import com.backend.backend.dto.TaoDonHangResponse;
 import com.backend.backend.entity.ChiTietDonHang;
 import com.backend.backend.entity.DonHang;
+import com.backend.backend.entity.GiaoDichThanhToan;
 import com.backend.backend.entity.GioHang;
 import com.backend.backend.entity.Sach;
 import com.backend.backend.repository.ChiTietDonHangRepository;
 import com.backend.backend.repository.DonHangRepository;
+import com.backend.backend.repository.GiaoDichThanhToanRepository;
 import com.backend.backend.repository.GioHangRepository;
 import com.backend.backend.repository.SachRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class MuaSachService {
     private final GioHangRepository gioHangRepository;
     private final SachRepository sachRepository;
     private final VnpayService vnpayService;
+    private final GiaoDichThanhToanRepository giaoDichThanhToanRepository;
 
     @Transactional
     public TaoDonHangResponse taoDonHang(Long maNd, TaoDonHangRequest request) {
@@ -94,19 +97,37 @@ public class MuaSachService {
     }
 
     @Transactional
-    public void xuLyThanhToanThanhCong(Long idDh) {
+    public void xuLyThanhToanThanhCong(Long idDh, String maGiaoDichNgoai) {
         DonHang donHang = donHangRepository.findById(idDh)
                 .orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại: " + idDh));
         donHang.setTrangThai("da_thanh_toan");
         donHangRepository.save(donHang);
         gioHangRepository.xoaToanBo(donHang.getMaNd());
+
+        GiaoDichThanhToan giaoDich = new GiaoDichThanhToan();
+        giaoDich.setIdDh(idDh);
+        giaoDich.setSoTien(donHang.getTongTien());
+        giaoDich.setPhuongThuc("VNPAY");
+        giaoDich.setTrangThai("thanh_cong");
+        giaoDich.setMaGiaoDichNgoai(maGiaoDichNgoai);
+        giaoDich.setPhanHoi("Giao dịch thành công");
+        giaoDichThanhToanRepository.save(giaoDich);
     }
 
     @Transactional
-    public void xuLyThanhToanThatBai(Long idDh) {
+    public void xuLyThanhToanThatBai(Long idDh, String maGiaoDichNgoai, String maLoi) {
         DonHang donHang = donHangRepository.findById(idDh)
                 .orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại: " + idDh));
         donHang.setTrangThai("that_bai");
         donHangRepository.save(donHang);
+
+        GiaoDichThanhToan giaoDich = new GiaoDichThanhToan();
+        giaoDich.setIdDh(idDh);
+        giaoDich.setSoTien(donHang.getTongTien());
+        giaoDich.setPhuongThuc("VNPAY");
+        giaoDich.setTrangThai("that_bai");
+        giaoDich.setMaGiaoDichNgoai(maGiaoDichNgoai);
+        giaoDich.setPhanHoi("Mã lỗi: " + maLoi);
+        giaoDichThanhToanRepository.save(giaoDich);
     }
 }

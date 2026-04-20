@@ -1,5 +1,7 @@
 package com.backend.backend.service;
 
+import com.backend.backend.repository.DonHangRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +14,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class VnpayService {
+
+    private final DonHangRepository donHangRepository;
 
     @Value("${vnpay.vnp_TmnCode}")
     private String vnpTmnCode;
@@ -83,6 +88,15 @@ public class VnpayService {
 
         String chuKyTinh = hmacSHA512(vnpHashSecret, hashData.toString());
         return chuKyTinh.equalsIgnoreCase(secureHash);
+    }
+
+    public boolean kiemTraSoTien(Long idDh, String vnpAmount) {
+        return donHangRepository.findById(idDh)
+                .map(dh -> {
+                    BigDecimal soTienVnpay = new BigDecimal(vnpAmount).divide(BigDecimal.valueOf(100));
+                    return dh.getTongTien().compareTo(soTienVnpay) == 0;
+                })
+                .orElse(false);
     }
 
     private String hmacSHA512(String key, String data) {

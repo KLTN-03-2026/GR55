@@ -54,13 +54,16 @@ public class MuaSachController {
             HttpServletResponse response) throws IOException {
 
         boolean chuKyHopLe = vnpayService.xacThucChuKy(params);
-        boolean thanhCong = chuKyHopLe && "00".equals(params.get("vnp_ResponseCode"));
+        String maLoi = params.get("vnp_ResponseCode");
         Long idDh = Long.parseLong(params.get("vnp_TxnRef"));
+        boolean soTienHopLe = vnpayService.kiemTraSoTien(idDh, params.get("vnp_Amount"));
+        boolean thanhCong = chuKyHopLe && soTienHopLe && "00".equals(maLoi);
+        String maGiaoDichNgoai = params.get("vnp_TransactionNo");
 
         if (thanhCong) {
-            muaSachService.xuLyThanhToanThanhCong(idDh);
+            muaSachService.xuLyThanhToanThanhCong(idDh, maGiaoDichNgoai);
         } else {
-            muaSachService.xuLyThanhToanThatBai(idDh);
+            muaSachService.xuLyThanhToanThatBai(idDh, maGiaoDichNgoai, maLoi);
         }
 
         response.sendRedirect(frontendUrl + "/thanh_toan/ket_qua?thanh_cong=" + thanhCong + "&id_dh=" + idDh);
