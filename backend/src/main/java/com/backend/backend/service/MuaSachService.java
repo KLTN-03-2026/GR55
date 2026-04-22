@@ -13,6 +13,8 @@ import com.backend.backend.repository.GiaoDichThanhToanRepository;
 import com.backend.backend.repository.GioHangRepository;
 import com.backend.backend.repository.SachRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,6 +98,10 @@ public class MuaSachService {
         return new TaoDonHangResponse(true, "Tạo đơn hàng thành công", data);
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "lich_su_don_hang", allEntries = true),
+        @CacheEvict(value = "chi_tiet_don_hang", allEntries = true)
+    })
     @Transactional
     public void xuLyThanhToanThanhCong(Long idDh, String maGiaoDichNgoai) {
         DonHang donHang = donHangRepository.findById(idDh)
@@ -114,6 +120,10 @@ public class MuaSachService {
         giaoDichThanhToanRepository.save(giaoDich);
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "lich_su_don_hang", allEntries = true),
+        @CacheEvict(value = "chi_tiet_don_hang", allEntries = true)
+    })
     @Transactional
     public void xuLyThanhToanThatBai(Long idDh, String maGiaoDichNgoai, String maLoi) {
         DonHang donHang = donHangRepository.findById(idDh)

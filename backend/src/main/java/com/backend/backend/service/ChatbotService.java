@@ -20,15 +20,15 @@ public class ChatbotService {
     private final GeminiService geminiService;
     private final SachRepository sachRepository;
 
-    public ChatResponse xuLyTinNhan(String maPhien, String noiDung) {
+    public ChatResponse xuLyTinNhan(String maPhien, String noiDung, Long maNd) {
         List<LichSuChat> lichSu = lichSuChatRepository.findTop10ByMaPhienOrderByNgayTaoDesc(maPhien);
         Collections.reverse(lichSu);
 
-        luuTinNhan(maPhien, "user", noiDung);
+        luuTinNhan(maPhien, "user", noiDung, maNd, null);
 
         GeminiService.KetQuaGemini ketQua = geminiService.goiGemini(noiDung, lichSu);
 
-        luuTinNhan(maPhien, "bot", ketQua.vanBan());
+        luuTinNhan(maPhien, "bot", ketQua.vanBan(), maNd, ketQua.yDinh());
 
         List<ChatResponse.SachData> sachGoiY = null;
         if (ketQua.tuKhoaTimSach() != null && !ketQua.tuKhoaTimSach().isBlank()) {
@@ -49,11 +49,13 @@ public class ChatbotService {
         return new ChatResponse(true, ketQua.vanBan(), sachGoiY);
     }
 
-    private void luuTinNhan(String maPhien, String vaiTro, String noiDung) {
+    private void luuTinNhan(String maPhien, String vaiTro, String noiDung, Long maNd, String yDinh) {
         LichSuChat chat = new LichSuChat();
         chat.setMaPhien(maPhien);
         chat.setVaiTro(vaiTro);
         chat.setNoiDung(noiDung != null ? noiDung : "");
+        chat.setMaNd(maNd);
+        chat.setYDinh(yDinh);
         lichSuChatRepository.save(chat);
     }
 }

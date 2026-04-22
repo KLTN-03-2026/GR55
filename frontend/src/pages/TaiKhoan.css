@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap");
 
 /* ===== RESET & BIẾN ===== */
 :root {
@@ -21,7 +20,7 @@
   --radius_vua: 10px;
   --radius_lon: 16px;
   --radius_xl: 24px;
-  --font: "Be Vietnam Pro", "Segoe UI", sans-serif;
+  --font: 'Inter', system-ui, sans-serif;
 }
 
 /* ===== TRANG ===== */

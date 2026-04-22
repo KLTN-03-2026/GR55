@@ -51,14 +51,14 @@ public class VnpayService {
         cld.add(Calendar.MINUTE, 15);
         thamSo.put("vnp_ExpireDate", sdf.format(cld.getTime()));
 
-        // hashData dùng raw value (không URL-encode)
         StringBuilder hashData = new StringBuilder();
         StringBuilder query = new StringBuilder();
         for (Map.Entry<String, String> entry : thamSo.entrySet()) {
-            hashData.append(entry.getKey()).append('=').append(entry.getValue()).append('&');
+            String encodedValue = URLEncoder.encode(entry.getValue(), StandardCharsets.US_ASCII);
+            hashData.append(entry.getKey()).append('=').append(encodedValue).append('&');
             query.append(URLEncoder.encode(entry.getKey(), StandardCharsets.US_ASCII))
                  .append('=')
-                 .append(URLEncoder.encode(entry.getValue(), StandardCharsets.US_ASCII))
+                 .append(encodedValue)
                  .append('&');
         }
         hashData.setLength(hashData.length() - 1);
