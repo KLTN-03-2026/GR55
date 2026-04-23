@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 :root {
   --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -19,11 +19,13 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
-
 
 /* HEADER CONTAINER */
 .header {
@@ -65,7 +67,6 @@ body {
 }
 
 @keyframes logoFloat {
-
   0%,
   100% {
     transform: translateY(0);
@@ -337,7 +338,7 @@ body {
 }
 
 .nav-link::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -426,7 +427,7 @@ body {
 }
 
 .mega-column h4::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -0.5rem;
   left: 0;
@@ -449,7 +450,7 @@ body {
 }
 
 .mega-link::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -574,7 +575,7 @@ body {
 }
 
 .dropdown-item::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -789,7 +790,9 @@ html {
   border: 1px solid var(--glass-border);
   border-radius: 50px;
   padding: 0.75rem 1.25rem;
-  box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.05), 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    inset 2px 2px 8px rgba(0, 0, 0, 0.05),
+    0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 2000; /* Quan trọng: Đẩy nguyên cụm search nổi hẳn lên trên thanh Menu Nav */
 }
@@ -797,7 +800,9 @@ html {
 .search-input-wrapper:hover,
 .search-input-wrapper:focus-within {
   border-color: rgba(102, 126, 234, 0.5);
-  box-shadow: inset 1px 1px 4px rgba(0, 0, 0, 0.05), 0 8px 32px rgba(102, 126, 234, 0.15);
+  box-shadow:
+    inset 1px 1px 4px rgba(0, 0, 0, 0.05),
+    0 8px 32px rgba(102, 126, 234, 0.15);
   transform: translateY(-1px);
 }
 
