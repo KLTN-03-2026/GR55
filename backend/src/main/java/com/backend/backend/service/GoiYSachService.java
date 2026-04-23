@@ -2,12 +2,11 @@ package com.backend.backend.service;
 
 import com.backend.backend.dto.SachGoiYResponse;
 import com.backend.backend.entity.Sach;
+import com.backend.backend.repository.LichSuChatRepository;
 import com.backend.backend.repository.SachRepository;
-import com.backend.backend.repository.TienDoDocSachRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 public class GoiYSachService {
 
     private final SachRepository sachRepository;
-    private final TienDoDocSachRepository tienDoDocSachRepository;
+    private final LichSuChatRepository lichSuChatRepository;
 
     @Caching(cacheable = {
         @Cacheable(value = "goi_y_sach_khach", key = "#soLuong", condition = "#maNd == null"),
@@ -38,17 +37,43 @@ public class GoiYSachService {
     }
 
     public SachGoiYResponse layGoiYThanhVien(Long maNd, int soLuong) {
-        List<Long> theLoaiYeuThich = tienDoDocSachRepository.findTheLoaiYeuThichByUserId(maNd);
-        if (!theLoaiYeuThich.isEmpty()) {
-            Page<Sach> page = sachRepository.findSachGoiYThanhVien(
-                    maNd, theLoaiYeuThich, PageRequest.of(0, soLuong));
-            if (!page.isEmpty()) {
-                return xayDungResponse("Gợi ý sách dựa trên lịch sử đọc", page.getContent());
-            }
+        // Lấy y_dinh mới nhất từ chatbot AI
+        List<String> yDinhList = lichSuChatRepository.findYDinhMoiNhatByMaNd(maNd, PageRequest.of(0, 1));
+
+        if (!yDinhList.isEmpty()) {
+            // Có y_dinh: 4 sách theo AI + 4 sách phổ biến
+            String yDinh = yDinhList.get(0);
+            List<Sach> sachAI = sachRepository
+                    .timKiemSach(yDinh, null, null, null, null, null, null, PageRequest.of(0, 4))
+                    .getContent();
+
+            List<Long> daMuon = sachAI.stream().map(Sach::getMaSach).collect(Collectors.toList());
+            List<Sach> phoBien = sachRepository.findSachNoiBat(PageRequest.of(0, soLuong)).getContent()
+                    .stream().filter(s -> !daMuon.contains(s.getMaSach()))
+                    .limit(soLuong - sachAI.size())
+                    .collect(Collectors.toList());
+
+            List<Sach> ketHop = new java.util.ArrayList<>(sachAI);
+            ketHop.addAll(phoBien);
+            return xayDungResponse("Gợi ý cho bạn", ketHop);
         }
-        // Chưa có lịch sử hoặc đã đọc hết → fallback phổ biến
+
+        // Không có y_dinh: fallback 8 sách phổ biến
         List<Sach> phoBien = sachRepository.findSachNoiBat(PageRequest.of(0, soLuong)).getContent();
-        return xayDungResponse("Sách phổ biến", phoBien);
+        return xayDungResponse("Gợi ý cho bạn", phoBien);
+    }
+
+    // Gợi ý dựa trên y_dinh từ chatbot AI (endpoint riêng)
+    public SachGoiYResponse layGoiYTheoYDinh(Long maNd, int soLuong) {
+        if (maNd == null) return new SachGoiYResponse(true, "", List.of());
+        List<String> yDinhList = lichSuChatRepository.findYDinhMoiNhatByMaNd(maNd, PageRequest.of(0, 1));
+        if (yDinhList.isEmpty()) return new SachGoiYResponse(true, "", List.of());
+        String yDinh = yDinhList.get(0);
+        List<Sach> sachs = sachRepository
+                .timKiemSach(yDinh, null, null, null, null, null, null, PageRequest.of(0, soLuong))
+                .getContent();
+        if (sachs.isEmpty()) return new SachGoiYResponse(true, "", List.of());
+        return xayDungResponse("Dựa trên sở thích của bạn: " + yDinh, sachs);
     }
 
     private SachGoiYResponse xayDungResponse(String thongBao, List<Sach> sachs) {

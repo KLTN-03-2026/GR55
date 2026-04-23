@@ -152,10 +152,9 @@ function GioHang() {
             <span>Tổng cộng</span>
             <span className="tong_tien">{dinh_dang_gia(gio_hang?.tong_tien)}</span>
           </div>
-          <button className="nut_thanh_toan" disabled title="Tính năng sắp ra mắt">
+          <button className="nut_thanh_toan" onClick={() => dieu_huong('/thanh_toan/xac_nhan')}>
             Tiến hành thanh toán
           </button>
-          <p className="chu_thich_thanh_toan">🔒 Tính năng thanh toán đang được phát triển</p>
           <Link to="/trang_chu" className="nut_tiep_tuc_mua">
             Tiếp tục mua sắm
           </Link>

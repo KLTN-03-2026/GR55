@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import TheCardSach from '../components/TheCardSach';
 import './TrangChu.css';
 
-const SO_SACH_TRANG_CHU = 10;
+const SO_SACH_TRANG_CHU = 8;
 
 // 1. Section Khám phá sách
 function SectionKhamPha() {
@@ -137,19 +137,19 @@ function SectionGoiY() {
 export default function TrangChu() {
   return (
     <div className="trang_chu">
-      <SectionKhamPha />
       <SectionGoiY />
-      <SectionSach
-        tieu_de="Sách miễn phí"
-        query_key="sach_mien_phi"
-        endpoint="/home/sach_mien_phi"
-        duong_dan_xem_them="/sach_mien_phi"
-      />
+      <SectionKhamPha />
       <SectionSach
         tieu_de="Sách hội viên"
         query_key="sach_hoi_vien"
         endpoint="/home/sach_hoi_vien"
         duong_dan_xem_them="/sach_hoi_vien"
+      />
+      <SectionSach
+        tieu_de="Sách miễn phí"
+        query_key="sach_mien_phi"
+        endpoint="/home/sach_mien_phi"
+        duong_dan_xem_them="/sach_mien_phi"
       />
     </div>
   );

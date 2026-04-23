@@ -24,6 +24,8 @@ import DocSachMienPhi from "./pages/DocSachMienPhi";
 import TaiKhoan from "./pages/TaiKhoan";
 import ThuVien from "./pages/ThuVien";
 import GioHang from "./pages/GioHang";
+import XacNhanDonHang from "./pages/XacNhanDonHang";
+import KetQuaThanhToan from "./pages/KetQuaThanhToan";
 import TimKiem from "./pages/TimKiem";
 import LocSachTheoTheLoai from "./pages/LocSachTheoTheLoai";
 
@@ -81,6 +83,17 @@ root.render(
             <Route path="/gio_hang" element={
               <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
                 <App><GioHang /></App>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/thanh_toan/xac_nhan" element={
+              <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                <App><XacNhanDonHang /></App>
+              </ProtectedRoute>
+            } />
+            <Route path="/thanh_toan/ket_qua" element={
+              <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                <App><KetQuaThanhToan /></App>
               </ProtectedRoute>
             } />
 

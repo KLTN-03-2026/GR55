@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +29,11 @@ public interface DanhGiaRepository extends JpaRepository<DanhGia, Long> {
     List<Object[]> thongKePhanBoSao(@Param("maSach") Long maSach);
 
     Optional<DanhGia> findByMaNdAndMaSach(Long maNd, Long maSach);
+
+    boolean existsByMaNdAndMaSach(Long maNd, Long maSach);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM DanhGia d WHERE d.maNd = :maNd AND d.maSach = :maSach")
+    void deleteByMaNdAndMaSach(@Param("maNd") Long maNd, @Param("maSach") Long maSach);
 }

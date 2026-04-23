@@ -53,7 +53,8 @@ public class SecurityConfig {
                     .requestMatchers("/api/tim_kiem/**").permitAll()
                     .requestMatchers("/api/the_loai/**").permitAll()
                     .requestMatchers("/api/goi_y/**").permitAll()
-                    .requestMatchers("/api/webhook/**").permitAll()
+                    .requestMatchers("/api/chatbot/**").permitAll()
+                    .requestMatchers("/api/mua_sach/vnpay_callback", "/api/thanh_toan/vnpay_ipn").permitAll()
                     .anyRequest().authenticated())
             .authenticationProvider(nhaXacThuc())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

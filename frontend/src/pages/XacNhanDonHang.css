@@ -1,0 +1,393 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --xn-grad: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --xn-red: #f5576c;
+  --xn-ink: #1a1218;
+  --xn-ink-soft: #3d2e35;
+  --xn-muted: #9b8a91;
+  --xn-bg: #fdf5f7;
+  --xn-bg-card: #ffffff;
+  --xn-border: #f0e0e5;
+  --xn-border-strong: #e0c0ca;
+  --xn-shadow-sm: 0 2px 10px rgba(245,87,108,0.08);
+  --xn-shadow-md: 0 8px 32px rgba(245,87,108,0.13);
+  --xn-radius: 16px;
+  --xn-radius-sm: 10px;
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Skeleton ──────────────────────────────────────────────── */
+
+.skeleton {
+  background: linear-gradient(90deg, #f8eff2 25%, #f0e0e6 50%, #f8eff2 75%);
+  background-size: 200% 100%;
+  animation: xn_shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+@keyframes xn_shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.xn_skeleton_wrap {
+  max-width: 600px;
+  margin: 48px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.xn_skeleton_item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--xn-bg-card);
+  border: 1.5px solid var(--xn-border);
+  border-radius: var(--xn-radius);
+  padding: 18px 20px;
+  box-shadow: var(--xn-shadow-sm);
+}
+
+.xn_sk_anh {
+  width: 72px;
+  height: 100px;
+  border-radius: var(--xn-radius-sm);
+  flex-shrink: 0;
+}
+
+.xn_sk_thong_tin {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.xn_sk_ten { height: 16px; width: 70%; }
+.xn_sk_gia { height: 14px; width: 40%; }
+
+/* ── Layout ──────────────────────────────────────────────────── */
+
+.trang_xac_nhan {
+  min-height: 80vh;
+  background: var(--xn-bg);
+  padding: 48px 24px 80px;
+  font-family: var(--font-body);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.xn_tieu_de {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--xn-ink);
+  margin: 0 0 32px;
+  letter-spacing: -0.5px;
+  padding-bottom: 20px;
+  border-bottom: 1.5px solid var(--xn-border);
+  position: relative;
+}
+
+.xn_tieu_de::after {
+  content: '';
+  position: absolute;
+  bottom: -1.5px;
+  left: 0;
+  width: 90px;
+  height: 2.5px;
+  background: var(--xn-grad);
+  border-radius: 2px;
+}
+
+.xn_noi_dung {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 28px;
+  align-items: start;
+}
+
+.xn_cot_trai {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.xn_cot_phai {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 24px;
+}
+
+/* ── Khung card ──────────────────────────────────────────────── */
+
+.xn_khung {
+  background: var(--xn-bg-card);
+  border: 1.5px solid var(--xn-border);
+  border-radius: var(--xn-radius);
+  padding: 24px 22px;
+  box-shadow: var(--xn-shadow-sm);
+}
+
+.xn_khung_tieu_de {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--xn-ink);
+  margin: 0 0 18px;
+}
+
+/* ── Danh sách sách ──────────────────────────────────────────── */
+
+.xn_danh_sach_sach {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.xn_item_sach {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  border: 1.5px solid var(--xn-border);
+  border-radius: var(--xn-radius-sm);
+  background: var(--xn-bg);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.xn_item_sach:hover {
+  border-color: var(--xn-border-strong);
+  box-shadow: var(--xn-shadow-sm);
+}
+
+.xn_anh_bia {
+  width: 64px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+
+.xn_thong_tin_sach {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.xn_ten_sach {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--xn-ink);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+.xn_tac_gia {
+  font-size: 0.8rem;
+  color: var(--xn-muted);
+  margin: 0;
+  font-style: italic;
+}
+
+.xn_gia {
+  font-size: 0.92rem;
+  font-weight: 700;
+  background: var(--xn-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+/* ── Form thông tin ──────────────────────────────────────────── */
+
+.xn_form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.xn_truong {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.xn_nhan {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--xn-ink-soft);
+  letter-spacing: 0.2px;
+}
+
+.xn_input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid var(--xn-border);
+  border-radius: var(--xn-radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: var(--xn-ink);
+  background: var(--xn-bg);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.xn_input:focus {
+  border-color: var(--xn-red);
+  box-shadow: 0 0 0 3px rgba(245,87,108,0.12);
+  background: #fff;
+}
+
+.xn_input::placeholder {
+  color: var(--xn-muted);
+  opacity: 0.8;
+}
+
+.xn_phuong_thuc {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.xn_vnpay_badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #0066cc, #004fa3);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  border-radius: 8px;
+  letter-spacing: 1px;
+  width: fit-content;
+  box-shadow: 0 3px 10px rgba(0,102,204,0.3);
+}
+
+.xn_nut_xac_nhan {
+  width: 100%;
+  padding: 14px;
+  border-radius: 50px;
+  border: none;
+  background: var(--xn-grad);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(245,87,108,0.35);
+  transition: all 0.25s ease;
+  letter-spacing: 0.3px;
+  margin-top: 4px;
+}
+
+.xn_nut_xac_nhan:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(245,87,108,0.45);
+}
+
+.xn_nut_xac_nhan:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Tóm tắt (cột phải) ──────────────────────────────────────── */
+
+.xn_tom_tat {
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--xn-shadow-md);
+}
+
+.xn_tom_tat::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--xn-grad);
+}
+
+.xn_dong_chi_tiet {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--xn-muted);
+  margin-bottom: 12px;
+}
+
+.xn_dong_chi_tiet span:last-child {
+  font-weight: 500;
+  color: var(--xn-ink-soft);
+}
+
+.xn_phan_cach {
+  height: 1px;
+  background: var(--xn-border);
+  margin: 12px 0;
+}
+
+.xn_dong_tong {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0 0;
+  border-top: 2px dashed var(--xn-border);
+}
+
+.xn_dong_tong > span:first-child {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--xn-ink-soft);
+}
+
+.xn_tong_tien {
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: var(--xn-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.xn_link_quay_lai {
+  display: block;
+  text-align: center;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--xn-red);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.xn_link_quay_lai:hover { opacity: 0.75; }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .trang_xac_nhan { padding: 28px 16px 60px; }
+  .xn_tieu_de { font-size: 1.5rem; }
+  .xn_noi_dung { grid-template-columns: 1fr; gap: 20px; }
+  .xn_cot_phai { position: static; }
+  .xn_tom_tat { order: -1; }
+}
+
+@media (max-width: 480px) {
+  .xn_item_sach { gap: 12px; padding: 12px; }
+  .xn_anh_bia { width: 54px; height: 76px; }
+}

@@ -11,10 +11,10 @@
 
 body {
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #f4f7f6; /* Màu nền xám nhạt dịu mắt cho toàn web */
+  background-color: #f4f7f6;
   color: #333;
   line-height: 1.6;
-  overflow-x: hidden; /* Ngăn lỗi xuất hiện thanh cuộn ngang rác */
+  overflow-x: hidden;
 }
 
 /* =========================================================

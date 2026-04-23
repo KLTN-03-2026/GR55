@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* =============================================
    BOOKNEST – TRANG TÌM KIẾM
@@ -17,7 +16,7 @@
   --mau_xanh_nhat: #eff6ff; /* Xanh dương nhạt cho hover */
   --mau_sao: #f59e0b;
   --mau_xanh_mien_phi: #10b981;
-  --font_chinh: 'Inter', sans-serif;
+  --font_chinh: 'Inter', system-ui, sans-serif;
   --bo_goc: 8px;
   --bo_goc_lon: 16px;
   --bong: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
