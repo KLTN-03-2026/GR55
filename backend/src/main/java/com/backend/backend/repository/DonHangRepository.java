@@ -38,6 +38,12 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
            nativeQuery = true)
     Page<Object[]> findSachDaMuaByMaNd(@Param("maNd") Long maNd, Pageable pageable);
 
+    @Query(value = "SELECT COUNT(*) > 0 FROM chi_tiet_don_hang ct " +
+                   "INNER JOIN don_hang dh ON ct.id_dh = dh.id_dh " +
+                   "WHERE ct.ma_sach = :maSach AND dh.ma_nd = :maNd AND dh.trang_thai = 'da_thanh_toan'",
+           nativeQuery = true)
+    boolean daMuaSach(@Param("maNd") Long maNd, @Param("maSach") Long maSach);
+
     @Query("SELECT d FROM DonHang d WHERE d.maNd = :maNd " +
            "AND (:trangThai IS NULL OR d.trangThai = :trangThai) " +
            "AND (:tuNgay IS NULL OR d.ngayTao >= :tuNgay) " +

@@ -76,9 +76,11 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
     // Tìm kiếm sách với đầy đủ bộ lọc
     @Query("SELECT DISTINCT s FROM Sach s " +
            "LEFT JOIN SachDanhMuc sd ON sd.maSach = s.maSach " +
+           "LEFT JOIN DanhMucSach dm ON dm.maDm = sd.maDm " +
            "WHERE s.daXoa = false " +
            "AND (:tuKhoa IS NULL OR LOWER(s.tenSach) LIKE LOWER(CONCAT('%', :tuKhoa, '%')) " +
-           "     OR LOWER(s.tacGia) LIKE LOWER(CONCAT('%', :tuKhoa, '%'))) " +
+           "     OR LOWER(s.tacGia) LIKE LOWER(CONCAT('%', :tuKhoa, '%')) " +
+           "     OR LOWER(dm.tenDanhMuc) LIKE LOWER(CONCAT('%', :tuKhoa, '%'))) " +
            "AND (:maDanhMuc IS NULL OR sd.maDm = :maDanhMuc) " +
            "AND (:minGia IS NULL OR s.gia >= :minGia) " +
            "AND (:maxGia IS NULL OR s.gia <= :maxGia) " +

@@ -69,6 +69,12 @@ services:
       SPRING_MAIL_PASSWORD: DUMMY_PASSWORD
       SPRING_MAIL_HOST: smtp.gmail.com
       SPRING_MAIL_PORT: 587
+      GEMINI_API_KEY: DUMMY_GEMINI_KEY
+      VNPAY_VNP_TMNCODE: DUMMY_TMN_CODE
+      VNPAY_VNP_HASHSECRET: DUMMY_HASH_SECRET
+      VNPAY_VNP_URL: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+      VNPAY_VNP_RETURNURL: http://localhost:8081/api/mua_sach/vnpay_callback
+      FRONTEND_URL: http://localhost:3000
 
 volumes:
   mysql_data:

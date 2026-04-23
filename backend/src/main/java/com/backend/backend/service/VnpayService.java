@@ -82,7 +82,8 @@ public class VnpayService {
 
         StringBuilder hashData = new StringBuilder();
         for (Map.Entry<String, String> entry : fields.entrySet()) {
-            hashData.append(entry.getKey()).append('=').append(entry.getValue()).append('&');
+            String encodedValue = URLEncoder.encode(entry.getValue(), StandardCharsets.US_ASCII);
+            hashData.append(entry.getKey()).append('=').append(encodedValue).append('&');
         }
         hashData.setLength(hashData.length() - 1);
 
