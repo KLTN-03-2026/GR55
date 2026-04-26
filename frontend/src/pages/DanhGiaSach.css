@@ -1,308 +1,85 @@
-/* ============================================================
-   SECTION: ĐÁNH GIÁ SÁCH (PB10)
-   Quy tắc: snake_case tiếng Việt
-   ============================================================ */
+/* --- Bổ sung vào CSS hiện tại của bạn --- */
 
-.section_danh_gia_sach {
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 0 20px;
-  font-family: "Inter", sans-serif;
+.khung_viet_danh_gia {
+  margin-bottom: 30px;
 }
 
-.tieu_de_lon {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 24px;
-  color: #111827;
-}
-
-/* 1. KHỐI TỔNG QUAN (OVERVIEW) */
-.khung_tong_quan_danh_gia {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 40px;
-  padding: 32px;
-  background-color: #f9fafb;
-  border-radius: 16px;
-  border: 1px solid #f3f4f6;
-  margin-bottom: 32px;
-  align-items: center;
-}
-
-.cot_diem_so {
-  text-align: center;
-  border-right: 1px solid #e5e7eb;
-  padding-right: 32px;
-}
-
-.con_so_trung_binh {
-  font-size: 4rem;
-  font-weight: 800;
-  color: #2563eb;
-  line-height: 1;
-}
-
-.sao_vang_lon {
-  color: #f59e0b;
-  font-size: 1.4rem;
-  margin: 12px 0 4px;
-  letter-spacing: 2px;
-}
-
-.chu_phu {
-  color: #6b7280;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-/* 2. BIỂU ĐỒ CỘT SAO */
-.cot_bieu_do_sao {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.hang_sao {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nhan_sao {
-  min-width: 50px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #4b5563;
-}
-
-.thanh_phan_bo_nen {
-  flex: 1;
-  height: 8px;
-  background-color: #e5e7eb;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.thanh_phan_bo_day {
-  height: 100%;
-  background-color: #f59e0b;
-  border-radius: 10px;
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.so_luong_phu {
-  min-width: 30px;
-  font-size: 0.85rem;
-  color: #9ca3af;
-  text-align: right;
-}
-
-/* 3. BỘ LỌC (FILTER) */
-.thanh_dieu_khien_dg {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.chu_label {
-  font-weight: 600;
-  color: #4b5563;
-  font-size: 0.9rem;
-}
-
-.nhom_nut_loc {
-  display: flex;
-  gap: 8px;
-}
-
-.nut_loc_dg {
-  padding: 6px 16px;
-  border-radius: 99px;
-  border: 1px solid #e5e7eb;
-  background: white;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.nut_loc_dg:hover {
-  border-color: #2563eb;
-  color: #2563eb;
-}
-
-.nut_loc_dg.dang_chon {
-  background-color: #111827;
-  color: white;
-  border-color: #111827;
-}
-
-/* 4. DANH SÁCH NHẬN XÉT */
-.the_nhan_xet {
-  padding: 24px;
-  border-bottom: 1px solid #f3f4f6;
-  background: white;
-}
-
-.nhan_xet_cua_toi {
-  background-color: #eff6ff;
+.thong_bao_login {
+  padding: 20px;
+  background: #f3f4f6;
   border-radius: 12px;
-  border: 1px solid #dbeafe;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.form_nhap_dg,
+.form_sua_inline {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.nhom_chon_sao {
   margin-bottom: 12px;
 }
 
-.dong_dau_the {
+.sao_bam {
+  font-size: 24px;
+  cursor: pointer;
+  color: #d1d5db;
+  transition: color 0.2s;
+  margin-right: 4px;
+}
+
+.sao_bam.kich_hoat,
+.sao_bam:hover {
+  color: #f59e0b;
+}
+
+textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-family: inherit;
+  margin-bottom: 10px;
+  outline: none;
+}
+
+textarea:focus {
+  border-color: #2563eb;
+}
+
+.thanh_duoi_form {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-}
-
-.thong_tin_nguoi_dung {
-  display: flex;
-  gap: 16px;
-}
-
-.avatar_chu_cai {
-  width: 44px;
-  height: 44px;
-  background-color: #2563eb;
-  color: white;
-  border-radius: 10px;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1.1rem;
 }
 
-.ten_hien_thi {
-  font-weight: 700;
-  color: #111827;
+.nhom_nut_sua {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
-.nhan_so_huu {
+.nhom_nut_sua button {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.nhom_nut_sua button:first-child {
   background: #2563eb;
   color: white;
-  font-size: 0.65rem;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: 8px;
-  text-transform: uppercase;
-  font-weight: 800;
 }
 
-.sao_va_ngay {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 4px;
-}
-
-.sao_nho {
-  color: #f59e0b;
-  font-size: 0.9rem;
-}
-
-.ngay_dang {
-  color: #9ca3af;
-  font-size: 0.8rem;
-}
-
-.noi_dung_text {
-  margin-top: 12px;
-  padding-left: 60px;
-  line-height: 1.6;
-  color: #374151;
-}
-
-.nhom_nut_tac_vu {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.nut_sua_dg,
-.nut_xoa_dg {
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.nut_sua_dg {
-  background-color: #eff6ff;
-  color: #2563eb;
-  border-color: #bfdbfe;
-}
-
-.nut_sua_dg:hover {
-  background-color: #dbeafe;
-  border-color: #93c5fd;
-}
-
-.nut_xoa_dg {
-  background-color: #fff1f2;
-  color: #e11d48;
-  border-color: #fecdd3;
-}
-
-.nut_xoa_dg:hover {
-  background-color: #ffe4e6;
-  border-color: #fda4af;
-}
-
-/* 5. PHÂN TRANG */
-.thanh_phan_trang_dg {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 32px;
-}
-
-.nut_trang_dg {
-  width: 36px;
-  height: 36px;
-  border: 1px solid #e5e7eb;
-  background: white;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.nut_trang_dg:hover:not(:disabled) {
-  border-color: #2563eb;
-  color: #2563eb;
-}
-
-.nut_trang_dg:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.so_trang_hien_tai {
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin: 0 10px;
-}
-
-.skeleton_dg {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer_dg 1.5s infinite;
-  border-radius: 6px;
-}
-
-@keyframes shimmer_dg {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+.nhom_nut_sua .nut_huy {
+  background: #f3f4f6;
+  color: #4b5563;
 }
