@@ -23,6 +23,9 @@ public interface SachDanhMucRepository extends JpaRepository<SachDanhMuc, Long> 
     @Query("SELECT DISTINCT sd.maDm FROM SachDanhMuc sd WHERE sd.maSach IN :sachIds")
     List<Long> findDanhMucIdsBySachIds(@Param("sachIds") List<Long> sachIds);
 
+    @Query("SELECT DISTINCT sd.maSach FROM SachDanhMuc sd WHERE sd.maDm IN :danhMucIds")
+    List<Long> findSachIdsByDanhMucIds(@Param("danhMucIds") List<Long> danhMucIds);
+
     @Modifying
     @Transactional
     @Query("DELETE FROM SachDanhMuc sd WHERE sd.maSach = :maSach")

@@ -31,6 +31,7 @@ public class SachChiTietService {
     private final SachDanhMucRepository sachDanhMucRepository;
     private final DanhMucSachRepository danhMucSachRepository;
     private final TienDoDocSachRepository tienDoDocSachRepository;
+    private final QuanLyGiamGiaService quanLyGiamGiaService;
 
     @Cacheable(value = "chi_tiet_sach", key = "#maSach + '_' + #maNd")
     public ChiTietSachResponse layChiTietSach(Long maSach, Long maNd) {
@@ -74,7 +75,7 @@ public class SachChiTietService {
                 sach.getTacGia(),
                 sach.getMoTa(),
                 sach.getGia(),
-                null,
+                quanLyGiamGiaService.tinhGiaDaGiam(maSach),
                 diemTrungBinh != null ? diemTrungBinh : 0.0,
                 soLuotDanhGia != null ? soLuotDanhGia : 0,
                 sach.getAnhBiaUrl(),

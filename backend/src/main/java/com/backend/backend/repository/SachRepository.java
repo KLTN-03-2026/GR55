@@ -123,4 +123,13 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
     Page<Sach> findSachCungTheLoai(@Param("maSach") Long maSach,
                                     @Param("danhSachDanhMuc") List<Long> danhSachDanhMuc,
                                     Pageable pageable);
+
+    @Query("SELECT s FROM Sach s WHERE s.daXoa = false ORDER BY s.ngayTao DESC")
+    Page<Sach> findSachMoiNhat(Pageable pageable);
+
+    @Query("SELECT s FROM Sach s WHERE s.daXoa = false ORDER BY s.soLuongDaBan DESC")
+    Page<Sach> findSachBanChay(Pageable pageable);
+
+    @Query("SELECT s.maSach FROM Sach s WHERE s.daXoa = false")
+    List<Long> findAllActiveIds();
 }
