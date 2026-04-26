@@ -41,6 +41,8 @@ import QuanTri from "./pages/QuanTri";
 import QuanLyDanhMuc from "./pages/admin/QuanLyDanhMuc";
 import QuanLySach from "./pages/admin/QuanLySach";
 import QuanLyNguoiDung from "./pages/admin/QuanLyNguoiDung";
+import LichSuDonHang from "./pages/LichSuDonHang";
+import ChiTietDonHang from "./pages/ChiTietDonHang";
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -106,6 +108,18 @@ root.render(
             <Route path="/tai_khoan" element={
               <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
                 <App><TaiKhoan /></App>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/lich_su_don_hang" element={
+              <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                <App><LichSuDonHang /></App>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/lich_su_don_hang/:id_dh" element={
+              <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                <App><ChiTietDonHang /></App>
               </ProtectedRoute>
             } />
 

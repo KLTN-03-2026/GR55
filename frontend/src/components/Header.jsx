@@ -19,7 +19,6 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const debounceRef = useRef(null);
   const dropdownRef = useRef(null);
-
   // Sync ô tìm kiếm với URL khi đang ở trang /tim_kiem
   useEffect(() => {
     if (location.pathname === '/tim_kiem') {
