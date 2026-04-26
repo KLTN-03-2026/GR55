@@ -44,6 +44,18 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
            nativeQuery = true)
     boolean daMuaSach(@Param("maNd") Long maNd, @Param("maSach") Long maSach);
 
+    @Query("SELECT d FROM DonHang d " +
+           "WHERE (:trangThai IS NULL OR d.trangThai = :trangThai) " +
+           "AND (:tenKhachHang IS NULL OR d.hoTen LIKE %:tenKhachHang%) " +
+           "AND (:tuNgay IS NULL OR d.ngayTao >= :tuNgay) " +
+           "AND (:denNgay IS NULL OR d.ngayTao <= :denNgay) " +
+           "ORDER BY d.ngayTao DESC")
+    Page<DonHang> timDonHangAdmin(@Param("trangThai") String trangThai,
+                                   @Param("tenKhachHang") String tenKhachHang,
+                                   @Param("tuNgay") LocalDateTime tuNgay,
+                                   @Param("denNgay") LocalDateTime denNgay,
+                                   Pageable pageable);
+
     @Query("SELECT d FROM DonHang d WHERE d.maNd = :maNd " +
            "AND (:trangThai IS NULL OR d.trangThai = :trangThai) " +
            "AND (:tuNgay IS NULL OR d.ngayTao >= :tuNgay) " +
