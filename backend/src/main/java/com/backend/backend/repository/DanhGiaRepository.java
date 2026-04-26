@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,4 +37,29 @@ public interface DanhGiaRepository extends JpaRepository<DanhGia, Long> {
     @Transactional
     @Query("DELETE FROM DanhGia d WHERE d.maNd = :maNd AND d.maSach = :maSach")
     void deleteByMaNdAndMaSach(@Param("maNd") Long maNd, @Param("maSach") Long maSach);
+
+    @Query(value = "SELECT d.* FROM danh_gia d " +
+                   "LEFT JOIN nguoi_dung nd ON d.ma_nd = nd.ma_nd " +
+                   "LEFT JOIN sach s ON d.ma_sach = s.ma_sach " +
+                   "WHERE (:tenSach IS NULL OR s.ten_sach LIKE CONCAT('%', :tenSach, '%')) " +
+                   "AND (:tenNguoiDung IS NULL OR nd.ho_ten LIKE CONCAT('%', :tenNguoiDung, '%')) " +
+                   "AND (:soSao IS NULL OR d.so_sao = :soSao) " +
+                   "AND (:tuNgay IS NULL OR d.ngay_tao >= :tuNgay) " +
+                   "AND (:denNgay IS NULL OR d.ngay_tao <= :denNgay) " +
+                   "ORDER BY d.ngay_tao DESC",
+           countQuery = "SELECT COUNT(d.ma_dg) FROM danh_gia d " +
+                        "LEFT JOIN nguoi_dung nd ON d.ma_nd = nd.ma_nd " +
+                        "LEFT JOIN sach s ON d.ma_sach = s.ma_sach " +
+                        "WHERE (:tenSach IS NULL OR s.ten_sach LIKE CONCAT('%', :tenSach, '%')) " +
+                        "AND (:tenNguoiDung IS NULL OR nd.ho_ten LIKE CONCAT('%', :tenNguoiDung, '%')) " +
+                        "AND (:soSao IS NULL OR d.so_sao = :soSao) " +
+                        "AND (:tuNgay IS NULL OR d.ngay_tao >= :tuNgay) " +
+                        "AND (:denNgay IS NULL OR d.ngay_tao <= :denNgay)",
+           nativeQuery = true)
+    Page<DanhGia> timDanhGiaAdmin(@Param("tenSach") String tenSach,
+                                   @Param("tenNguoiDung") String tenNguoiDung,
+                                   @Param("soSao") Integer soSao,
+                                   @Param("tuNgay") LocalDateTime tuNgay,
+                                   @Param("denNgay") LocalDateTime denNgay,
+                                   Pageable pageable);
 }
