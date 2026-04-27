@@ -132,4 +132,7 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
 
     @Query("SELECT s.maSach FROM Sach s WHERE s.daXoa = false")
     List<Long> findAllActiveIds();
+
+    @Query("SELECT COUNT(s) FROM Sach s WHERE s.daXoa = false")
+    long demTongSach();
 }

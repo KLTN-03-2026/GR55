@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface DonHangRepository extends JpaRepository<DonHang, Long> {
@@ -55,6 +56,43 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
                                    @Param("tuNgay") LocalDateTime tuNgay,
                                    @Param("denNgay") LocalDateTime denNgay,
                                    Pageable pageable);
+
+    @Query("SELECT COUNT(d) FROM DonHang d WHERE d.trangThai = 'da_thanh_toan'")
+    long demDonHangThanhCong();
+
+    @Query("SELECT SUM(d.tongTien) FROM DonHang d WHERE d.trangThai = 'da_thanh_toan'")
+    java.math.BigDecimal tongDoanhThu();
+
+    @Query(value = "SELECT DATE(ngay_tao) AS thoi_gian, SUM(tong_tien) AS doanh_thu, COUNT(*) AS so_luong " +
+                   "FROM don_hang WHERE trang_thai = 'da_thanh_toan' " +
+                   "AND ngay_tao BETWEEN :tuNgay AND :denNgay " +
+                   "GROUP BY DATE(ngay_tao) ORDER BY DATE(ngay_tao)",
+           nativeQuery = true)
+    List<Object[]> thongKeDoanhThuTheoNgay(@Param("tuNgay") LocalDateTime tuNgay,
+                                            @Param("denNgay") LocalDateTime denNgay);
+
+    @Query(value = "SELECT YEARWEEK(ngay_tao, 1) AS thoi_gian, SUM(tong_tien) AS doanh_thu, COUNT(*) AS so_luong " +
+                   "FROM don_hang WHERE trang_thai = 'da_thanh_toan' " +
+                   "AND ngay_tao BETWEEN :tuNgay AND :denNgay " +
+                   "GROUP BY YEARWEEK(ngay_tao, 1) ORDER BY YEARWEEK(ngay_tao, 1)",
+           nativeQuery = true)
+    List<Object[]> thongKeDoanhThuTheoTuan(@Param("tuNgay") LocalDateTime tuNgay,
+                                            @Param("denNgay") LocalDateTime denNgay);
+
+    @Query(value = "SELECT DATE_FORMAT(ngay_tao, '%Y-%m') AS thoi_gian, SUM(tong_tien) AS doanh_thu, COUNT(*) AS so_luong " +
+                   "FROM don_hang WHERE trang_thai = 'da_thanh_toan' " +
+                   "AND ngay_tao BETWEEN :tuNgay AND :denNgay " +
+                   "GROUP BY DATE_FORMAT(ngay_tao, '%Y-%m') ORDER BY DATE_FORMAT(ngay_tao, '%Y-%m')",
+           nativeQuery = true)
+    List<Object[]> thongKeDoanhThuTheoThang(@Param("tuNgay") LocalDateTime tuNgay,
+                                             @Param("denNgay") LocalDateTime denNgay);
+
+    @Query(value = "SELECT ma_don_hang, ho_ten, email, ngay_tao, tong_tien, trang_thai, phuong_thuc_thanh_toan " +
+                   "FROM don_hang WHERE ngay_tao BETWEEN :tuNgay AND :denNgay " +
+                   "ORDER BY ngay_tao DESC",
+           nativeQuery = true)
+    List<Object[]> layDonHangTheoDenNgay(@Param("tuNgay") LocalDateTime tuNgay,
+                                          @Param("denNgay") LocalDateTime denNgay);
 
     @Query("SELECT d FROM DonHang d WHERE d.maNd = :maNd " +
            "AND (:trangThai IS NULL OR d.trangThai = :trangThai) " +

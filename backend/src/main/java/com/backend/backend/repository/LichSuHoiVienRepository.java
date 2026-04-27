@@ -15,4 +15,8 @@ public interface LichSuHoiVienRepository extends JpaRepository<LichSuHoiVien, Lo
            "WHERE l.maNd = :maNd AND l.trangThai = 'hoat_dong' " +
            "AND l.ngayBatDau <= :now AND l.ngayKetThuc >= :now")
     boolean isHoiVien(@Param("maNd") Long maNd, @Param("now") LocalDateTime now);
+
+    @Query("SELECT COUNT(DISTINCT l.maNd) FROM LichSuHoiVien l " +
+           "WHERE l.trangThai = 'hoat_dong' AND l.ngayBatDau <= :now AND l.ngayKetThuc >= :now")
+    long demHoiVienHienTai(@Param("now") LocalDateTime now);
 }
