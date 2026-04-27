@@ -1,0 +1,188 @@
+.lich-su-don-hang-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b;
+}
+
+.tieu-de-trang {
+  font-size: 1.8rem;
+  color: #0f172a;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.bo-loc-don-hang {
+  display: flex;
+  gap: 1rem;
+  background: #f0f9ff; /* Cool Blue background */
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  align-items: flex-end;
+  border: 1px solid #e0f2fe;
+}
+
+.nhom-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.nhom-input label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #0284c7; /* Cool Blue text */
+}
+
+.nhom-input select,
+.nhom-input input {
+  padding: 0.6rem;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.nhom-input select:focus,
+.nhom-input input:focus {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+}
+
+.btn-loc {
+  background: #0284c7;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  height: 40px;
+  transition: background 0.3s;
+}
+
+.btn-loc:hover {
+  background: #0369a1;
+}
+
+.danh-sach-don-hang {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.card-don-hang {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-don-hang:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
+  border-color: #7dd3fc;
+}
+
+.thong-tin-chinh {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ma-don {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.ngay-tao {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.thong-tin-phu {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.tong-tien {
+  font-weight: bold;
+  color: #0284c7;
+  font-size: 1.1rem;
+}
+
+.badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.badge-xanh-la { background: #dcfce7; color: #166534; }
+.badge-vang { background: #fef08a; color: #854d0e; }
+.badge-do { background: #fee2e2; color: #991b1b; }
+.badge-xam { background: #f1f5f9; color: #475569; }
+
+.phan-trang {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.btn-phan-trang {
+  background: white;
+  border: 1px solid #cbd5e1;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-phan-trang:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-phan-trang:not(:disabled):hover {
+  background: #f0f9ff;
+  border-color: #7dd3fc;
+}
+
+.trang-thai-rong {
+  text-align: center;
+  padding: 3rem;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+/* Skeleton Loading */
+.skeleton-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeleton-item {
+  height: 80px;
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 12px;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
