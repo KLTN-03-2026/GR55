@@ -1,5 +1,98 @@
-/* --- Bổ sung vào CSS hiện tại của bạn --- */
+/* ===== WRAPPER ===== */
+.section_danh_gia_sach {
+  margin-top: 48px;
+}
 
+.tieu_de_lon {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 24px;
+}
+
+/* ===== TỔNG QUAN ĐIỂM ===== */
+.khung_tong_quan_danh_gia {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+
+.cot_diem_so {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+}
+
+.con_so_trung_binh {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1;
+}
+
+.sao_vang_lon {
+  font-size: 1.4rem;
+  color: #f59e0b;
+  margin: 6px 0;
+  letter-spacing: 2px;
+}
+
+.chu_phu {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.cot_bieu_do_sao {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hang_sao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nhan_sao {
+  font-size: 0.82rem;
+  color: #64748b;
+  width: 44px;
+  flex-shrink: 0;
+}
+
+.thanh_phan_bo_nen {
+  flex: 1;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.thanh_phan_bo_day {
+  height: 100%;
+  background: #f59e0b;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.so_luong_phu {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  width: 24px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ===== FORM VIẾT ĐÁNH GIÁ ===== */
 .khung_viet_danh_gia {
   margin-bottom: 30px;
 }
@@ -47,6 +140,8 @@ textarea {
   font-family: inherit;
   margin-bottom: 10px;
   outline: none;
+  box-sizing: border-box;
+  resize: vertical;
 }
 
 textarea:focus {
@@ -57,6 +152,31 @@ textarea:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.thanh_duoi_form span {
+  font-size: 0.82rem;
+  color: #94a3b8;
+}
+
+.thanh_duoi_form button {
+  padding: 8px 20px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.thanh_duoi_form button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.thanh_duoi_form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .nhom_nut_sua {
@@ -82,4 +202,232 @@ textarea:focus {
 .nhom_nut_sua .nut_huy {
   background: #f3f4f6;
   color: #4b5563;
+}
+
+/* ===== THANH ĐIỀU KHIỂN / SẮP XẾP ===== */
+.thanh_dieu_khien_dg {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.chu_label {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.nhom_nut_loc {
+  display: flex;
+  gap: 8px;
+}
+
+.nut_loc_dg {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nut_loc_dg:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.nut_loc_dg.dang_chon {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+  font-weight: 600;
+}
+
+/* ===== DANH SÁCH NHẬN XÉT ===== */
+.danh_sach_nhan_xet {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.the_nhan_xet {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: box-shadow 0.2s;
+}
+
+.the_nhan_xet:hover {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.06);
+}
+
+.the_nhan_xet.nhan_xet_cua_toi {
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.dong_dau_the {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.thong_tin_nguoi_dung {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.avatar_chu_cai {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ten_hien_thi {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.95rem;
+  display: block;
+}
+
+.nhan_so_huu {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.sao_va_ngay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.sao_nho {
+  color: #f59e0b;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.ngay_dang {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.nhom_nut_tac_vu {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.nut_sua_dg {
+  padding: 5px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+  color: #374151;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nut_sua_dg:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.nut_xoa_dg {
+  padding: 5px 14px;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  background: white;
+  color: #dc2626;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nut_xoa_dg:hover {
+  background: #fef2f2;
+}
+
+.noi_dung_text {
+  color: #374151;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* ===== PHÂN TRANG ===== */
+.thanh_phan_trang_dg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.thanh_phan_trang_dg button {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.thanh_phan_trang_dg button:hover:not(:disabled) {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.thanh_phan_trang_dg button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.so_trang_hien_tai {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .khung_tong_quan_danh_gia {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .cot_diem_so {
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+  }
 }

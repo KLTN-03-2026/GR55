@@ -16,6 +16,7 @@ public class SachBanChayResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class SachBanChayData {
         private Long ma_sach;

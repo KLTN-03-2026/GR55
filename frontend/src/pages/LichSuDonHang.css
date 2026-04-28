@@ -186,3 +186,18 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+.btn-tai-tt-nho {
+  padding: 4px 12px;
+  background: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.btn-tai-tt-nho:hover { background: #d97706; }

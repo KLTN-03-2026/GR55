@@ -16,6 +16,7 @@ public class NguoiDungMoiResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class NguoiDungMoiData {
         private String thoi_gian;

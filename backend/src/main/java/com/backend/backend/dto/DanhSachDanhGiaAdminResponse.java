@@ -22,6 +22,7 @@ public class DanhSachDanhGiaAdminResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class DanhGiaAdminData {
         private Long ma_dg;

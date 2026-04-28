@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Header.css';
-import { FiSearch, FiShoppingCart, FiUser, FiLogOut, FiBookOpen, FiX } from 'react-icons/fi';
+import { FiSearch, FiShoppingCart, FiUser, FiLogOut, FiBookOpen, FiX, FiPackage } from 'react-icons/fi';
 import { useQuery } from '@tanstack/react-query';
 
 export default function Header() {
@@ -199,6 +199,11 @@ export default function Header() {
                       <Link to="/thu_vien" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
                         <FiBookOpen className="item-icon" />
                         Thư viện của tôi
+                      </Link>
+
+                      <Link to="/lich_su_don_hang" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+                        <FiPackage className="item-icon" />
+                        Lịch sử đơn hàng
                       </Link>
 
                       <Link to="/tai_khoan" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>

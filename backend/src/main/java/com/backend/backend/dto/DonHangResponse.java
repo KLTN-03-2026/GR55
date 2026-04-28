@@ -23,6 +23,7 @@ public class DonHangResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class DonHangData {
         private Long id_dh;

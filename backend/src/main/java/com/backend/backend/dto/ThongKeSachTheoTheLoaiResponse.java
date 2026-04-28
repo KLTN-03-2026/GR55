@@ -16,6 +16,7 @@ public class ThongKeSachTheoTheLoaiResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class TheLoaiData {
         private String ten_the_loai;

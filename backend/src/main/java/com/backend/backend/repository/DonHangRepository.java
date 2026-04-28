@@ -4,6 +4,7 @@ import com.backend.backend.entity.DonHang;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -93,6 +94,11 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
            nativeQuery = true)
     List<Object[]> layDonHangTheoDenNgay(@Param("tuNgay") LocalDateTime tuNgay,
                                           @Param("denNgay") LocalDateTime denNgay);
+
+    @Modifying
+    @Query("UPDATE DonHang d SET d.trangThai = 'that_bai' " +
+           "WHERE d.trangThai = 'cho_thanh_toan' AND d.ngayTao < :deadline")
+    int huyDonHangQuaHan(@Param("deadline") LocalDateTime deadline);
 
     @Query("SELECT d FROM DonHang d WHERE d.maNd = :maNd " +
            "AND (:trangThai IS NULL OR d.trangThai = :trangThai) " +

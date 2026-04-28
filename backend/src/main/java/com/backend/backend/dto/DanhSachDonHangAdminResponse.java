@@ -23,6 +23,7 @@ public class DanhSachDonHangAdminResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class DonHangAdminData {
         private Long id_dh;

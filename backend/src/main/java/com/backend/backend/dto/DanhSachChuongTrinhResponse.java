@@ -23,6 +23,7 @@ public class DanhSachChuongTrinhResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class ChuongTrinhItem {
         private Long ma_ct;

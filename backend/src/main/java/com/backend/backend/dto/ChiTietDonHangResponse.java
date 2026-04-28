@@ -20,6 +20,7 @@ public class ChiTietDonHangResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class ChiTietData {
         private Long id_dh;
@@ -34,6 +35,7 @@ public class ChiTietDonHangResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class ThongTinKhachHang {
         private String ho_ten;
@@ -43,6 +45,7 @@ public class ChiTietDonHangResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class SachTrongDon {
         private Long ma_sach;

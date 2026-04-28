@@ -16,6 +16,7 @@ public class DoanhThuTheoThoiGianResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class DoanhThuData {
         private String thoi_gian;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -8,6 +8,7 @@ import './LichSuDonHang.css';
 
 const LichSuDonHang = () => {
   const { nguoiDung } = useAuth();
+  const navigate = useNavigate();
   
   const [bo_loc, dat_bo_loc] = useState({
     trang_thai: '',
@@ -51,6 +52,15 @@ const LichSuDonHang = () => {
       case 'cho_thanh_toan': return 'badge-vang';
       case 'that_bai': return 'badge-do';
       default: return 'badge-xam';
+    }
+  };
+
+  const layTenTrangThai = (trang_thai) => {
+    switch(trang_thai) {
+      case 'da_thanh_toan': return 'Đã thanh toán';
+      case 'cho_thanh_toan': return 'Chờ thanh toán';
+      case 'that_bai': return 'Thất bại';
+      default: return trang_thai;
     }
   };
 
@@ -101,8 +111,16 @@ const LichSuDonHang = () => {
                 <div className="thong-tin-phu">
                   <span className="tong-tien">{dinh_dang_gia(item.tong_tien)}</span>
                   <span className={`badge ${layMauTrangThai(item.trang_thai)}`}>
-                    {item.trang_thai}
+                    {layTenTrangThai(item.trang_thai)}
                   </span>
+                  {item.trang_thai === 'cho_thanh_toan' && (
+                    <button
+                      className="btn-tai-tt-nho"
+                      onClick={(e) => { e.preventDefault(); navigate(`/lich_su_don_hang/${item.id_dh}`); }}
+                    >
+                      💳 Thanh toán lại
+                    </button>
+                  )}
                 </div>
               </Link>
             ))}

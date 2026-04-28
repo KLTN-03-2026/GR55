@@ -191,7 +191,7 @@ public class QuanLyGiamGiaService {
         return new ChuongTrinhGiamGiaResponse(true, "Xóa chương trình giảm giá thành công", null);
     }
 
-    @Cacheable(value = "gia_sach_da_giam", key = "#maSach")
+    @Cacheable(value = "gia_sach_da_giam", key = "#maSach", unless = "#result == null")
     public BigDecimal tinhGiaDaGiam(Long maSach) {
         Sach sach = sachRepository.findById(maSach).orElse(null);
         if (sach == null) return null;

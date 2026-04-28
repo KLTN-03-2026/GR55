@@ -18,6 +18,7 @@ public class DanhGiaResponse {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class DanhGiaData {
         private Long ma_dg;

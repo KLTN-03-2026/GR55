@@ -2,6 +2,8 @@ package com.backend.backend.controller;
 
 import com.backend.backend.dto.ChiTietDonHangResponse;
 import com.backend.backend.dto.DonHangResponse;
+import com.backend.backend.dto.KiemTraTaiThanhToanResponse;
+import com.backend.backend.dto.TaoDonHangResponse;
 import com.backend.backend.service.LichSuDonHangService;
 import com.backend.backend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +37,25 @@ public class LichSuDonHangController {
             @PathVariable Long id_dh) {
         Long maNd = layMaNd(request);
         return ResponseEntity.ok(lichSuDonHangService.layChiTietDonHang(maNd, id_dh));
+    }
+
+    @GetMapping("/{id_dh}/kiem_tra_tai_thanh_toan")
+    public ResponseEntity<KiemTraTaiThanhToanResponse> kiemTraTaiThanhToan(
+            HttpServletRequest request,
+            @PathVariable Long id_dh) {
+        Long maNd = layMaNd(request);
+        return ResponseEntity.ok(lichSuDonHangService.kiemTraTaiThanhToan(maNd, id_dh));
+    }
+
+    @PostMapping("/{id_dh}/tai_thanh_toan")
+    public ResponseEntity<TaoDonHangResponse> taiThanhToan(
+            HttpServletRequest request,
+            @PathVariable Long id_dh) {
+        Long maNd = layMaNd(request);
+        TaoDonHangResponse ketQua = lichSuDonHangService.taiThanhToan(maNd, id_dh);
+        return ketQua.isSuccess()
+                ? ResponseEntity.ok(ketQua)
+                : ResponseEntity.badRequest().body(ketQua);
     }
 
     private Long layMaNd(HttpServletRequest request) {
