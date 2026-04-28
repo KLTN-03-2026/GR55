@@ -1,0 +1,96 @@
+/* Layout chung */
+.quan_ly_danh_gia {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+/* Thanh công cụ tìm kiếm */
+.thanh_cong_cu_admin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.thanh_cong_cu_admin input,
+.thanh_cong_cu_admin select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+}
+
+.thanh_cong_cu_admin button {
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Bảng dữ liệu */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Trạng thái */
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.xanh {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.badge.xam {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Nút thao tác */
+.nut_xoa {
+    color: #dc2626;
+    background: none;
+    border: 1px solid #fca5a5;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+.nut_xoa:hover {
+    background-color: #fef2f2;
+}
+
+/* Phân trang */
+.phan_trang_admin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}

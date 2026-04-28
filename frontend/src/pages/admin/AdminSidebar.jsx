@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FiGrid, FiFolder, FiUsers, FiGlobe, FiShoppingCart, FiLogOut } from 'react-icons/fi';
+import { FiGrid, FiFolder, FiUsers, FiGlobe, FiShoppingCart, FiLogOut, FiMessageSquare, FiTag } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
@@ -69,6 +69,12 @@ export default function AdminSidebar() {
                     </NavLink>
                     <NavLink to="/quan_tri/don_hang" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
                         <FiShoppingCart className="nav-icon" /> Đơn hàng
+                    </NavLink>
+                    <NavLink to="/quan_tri/danh_gia" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                        <FiMessageSquare className="nav-icon" /> Đánh giá
+                    </NavLink>
+                    <NavLink to="/quan_tri/khuyen_mai" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                        <FiTag className="nav-icon" /> Khuyến mãi
                     </NavLink>
                 </nav>
 

@@ -43,6 +43,7 @@ import QuanLySach from "./pages/admin/QuanLySach";
 import QuanLyNguoiDung from "./pages/admin/QuanLyNguoiDung";
 import LichSuDonHang from "./pages/LichSuDonHang";
 import ChiTietDonHang from "./pages/ChiTietDonHang";
+import QuanLyDanhGia from "./pages/admin/QuanLyDanhGia";
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -128,7 +129,7 @@ root.render(
             <Route path="/quan_tri/danh_muc" element={<AdminLayout><QuanLyDanhMuc /></AdminLayout>} />
             <Route path="/quan_tri/sach" element={<AdminLayout><QuanLySach /></AdminLayout>} />
             <Route path="/quan_tri/nguoi_dung" element={<AdminLayout><QuanLyNguoiDung /></AdminLayout>} />
-
+            <Route path='quan_tri/danh_gia' element={<AdminLayout><QuanLyDanhGia /></AdminLayout>} />
           </Routes>
 
           <ToastContainer
