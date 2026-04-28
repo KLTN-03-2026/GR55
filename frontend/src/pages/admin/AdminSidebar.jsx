@@ -73,8 +73,8 @@ export default function AdminSidebar() {
                     <NavLink to="/quan_tri/danh_gia" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
                         <FiMessageSquare className="nav-icon" /> Đánh giá
                     </NavLink>
-                    <NavLink to="/quan_tri/khuyen_mai" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-                        <FiTag className="nav-icon" /> Khuyến mãi
+                    <NavLink to="/quan_tri/giam_gia" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                        <FiTag className="nav-icon" /> Giảm giá
                     </NavLink>
                 </nav>
 
