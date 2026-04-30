@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FiGrid, FiFolder, FiUsers, FiGlobe, FiShoppingCart, FiLogOut, FiMessageSquare, FiTag } from 'react-icons/fi';
+import { FiGrid, FiFolder, FiUsers, FiGlobe, FiShoppingCart, FiLogOut, FiMessageSquare, FiTag, FiPieChart } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
@@ -38,6 +38,9 @@ export default function AdminSidebar() {
                 <nav className="sidebar-nav">
                     <NavLink to="/quan_tri" end className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
                         <FiGrid className="nav-icon" /> Tổng quan
+                    </NavLink>
+                    <NavLink to="/quan_tri/thong_ke"  className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                        <FiPieChart className="nav-icon" /> Thống kê
                     </NavLink>
 
                     {/* Khối menu có menu con (Accordion) */}

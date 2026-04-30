@@ -1,0 +1,72 @@
+.chi-tiet-don-hang {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  padding: 0;
+}
+
+.btn-back:hover {
+  text-decoration: underline;
+}
+
+.grid-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.card-info, .card-update-status, .card-books {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.card-info h3, .card-update-status h3, .card-books h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.1em;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.card-info p {
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.flex-update {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.select-status {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 200px;
+}
+
+.book-thumbnail {
+  width: 50px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.card-books {
+  margin-top: 20px;
+}
