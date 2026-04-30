@@ -25,6 +25,9 @@ public class LichSuHoiVien {
     @Column(name = "ma_nd", nullable = false)
     private Long maNd;
 
+    @Column(name = "ma_hv", nullable = false)
+    private Long maHv;
+
     @Column(name = "trang_thai", length = 20)
     private String trangThai = "hoat_dong";
 

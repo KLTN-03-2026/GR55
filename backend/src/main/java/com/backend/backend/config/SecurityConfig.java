@@ -55,6 +55,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/goi_y/**").permitAll()
                     .requestMatchers("/api/chatbot/**").permitAll()
                     .requestMatchers("/api/mua_sach/vnpay_callback", "/api/thanh_toan/vnpay_ipn").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/hoi_vien/goi", "/api/hoi_vien/vnpay_callback").permitAll()
                     .anyRequest().authenticated())
             .authenticationProvider(nhaXacThuc())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
