@@ -1,0 +1,109 @@
+.quan_ly_giam_gia {
+    padding: 20px;
+}
+
+.header_admin {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.nut_them_moi {
+    padding: 10px 20px;
+    background-color: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Modal Overlay */
+.modal_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal_content {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    width: 500px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nhom_input {
+    display: flex;
+    gap: 10px;
+}
+
+.nhom_input input {
+    flex: 1;
+}
+
+.modal_content input,
+.modal_content select,
+.modal_content textarea {
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    width: 100%;
+}
+
+/* Preview sách trong modal */
+.preview_sach {
+    background-color: #f9fafb;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #4b5563;
+    border-left: 4px solid #3498db;
+}
+
+/* Nút trong modal */
+.modal_actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.modal_actions button {
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid #d1d5db;
+}
+
+.nut_chinh {
+    background-color: #3498db;
+    color: white;
+    border: none !important;
+}
+
+.nut_chinh:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}

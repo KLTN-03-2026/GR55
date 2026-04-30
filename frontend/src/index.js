@@ -43,6 +43,11 @@ import QuanLySach from "./pages/admin/QuanLySach";
 import QuanLyNguoiDung from "./pages/admin/QuanLyNguoiDung";
 import LichSuDonHang from "./pages/LichSuDonHang";
 import ChiTietDonHang from "./pages/ChiTietDonHang";
+import QuanLyDanhGia from "./pages/admin/QuanLyDanhGia";
+import QuanLyGiamGia from "./pages/admin/QuanLyGiamGia";
+import QuanLyDonHang from "./pages/admin/QuanLyDonHang";
+import ChiTietDonHangAdmin from "./pages/admin/ChiTietDonHangAdmin";
+import ThongKe from "./pages/admin/ThongKe";
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -128,7 +133,11 @@ root.render(
             <Route path="/quan_tri/danh_muc" element={<AdminLayout><QuanLyDanhMuc /></AdminLayout>} />
             <Route path="/quan_tri/sach" element={<AdminLayout><QuanLySach /></AdminLayout>} />
             <Route path="/quan_tri/nguoi_dung" element={<AdminLayout><QuanLyNguoiDung /></AdminLayout>} />
-
+            <Route path="/quan_tri/danh_gia" element={<AdminLayout><QuanLyDanhGia /></AdminLayout>} />
+            <Route path="/quan_tri/giam_gia" element={<AdminLayout><QuanLyGiamGia /></AdminLayout>} />
+            <Route path="/quan_tri/don_hang" element={<AdminLayout><QuanLyDonHang /></AdminLayout>} />
+            <Route path="/quan_tri/don_hang/:id_dh" element={<AdminLayout><ChiTietDonHangAdmin /></AdminLayout>} />
+            <Route path="/quan_tri/thong_ke" element={<AdminLayout><ThongKe /></AdminLayout>} />
           </Routes>
 
           <ToastContainer
