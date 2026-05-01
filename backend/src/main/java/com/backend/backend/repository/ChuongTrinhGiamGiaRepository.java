@@ -9,12 +9,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ChuongTrinhGiamGiaRepository extends JpaRepository<ChuongTrinhGiamGia, Long> {
 
     Optional<ChuongTrinhGiamGia> findByTenChuongTrinh(String tenChuongTrinh);
+
+    @Query("SELECT c FROM ChuongTrinhGiamGia c WHERE c.hoatDong = true " +
+           "AND c.ngayBatDau <= :now AND c.ngayKetThuc >= :now ORDER BY c.ngayKetThuc ASC")
+    List<ChuongTrinhGiamGia> findDangHoatDong(@Param("now") LocalDateTime now);
 
     @Query("SELECT c FROM ChuongTrinhGiamGia c WHERE " +
            "(:ten IS NULL OR c.tenChuongTrinh LIKE %:ten%) " +

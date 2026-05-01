@@ -8,6 +8,7 @@ import com.backend.backend.entity.ChiTietDonHang;
 import com.backend.backend.entity.DonHang;
 import com.backend.backend.repository.ChiTietDonHangRepository;
 import com.backend.backend.repository.DonHangRepository;
+import com.backend.backend.repository.TienDoDocSachRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,7 @@ public class LichSuDonHangService {
 
     private final DonHangRepository donHangRepository;
     private final ChiTietDonHangRepository chiTietDonHangRepository;
+    private final TienDoDocSachRepository tienDoDocSachRepository;
     private final VnpayService vnpayService;
 
     @Cacheable(value = "lich_su_don_hang", key = "#maNd + '_' + #trangThai + '_' + #tuNgay + '_' + #denNgay + '_' + #trang + '_' + #kichThuoc")
@@ -206,5 +209,37 @@ public class LichSuDonHangService {
         String thanhToanUrl = vnpayService.taoUrlThanhToan(saved.getIdDh(), tongTienMoi, maDonHangMoi);
         return new TaoDonHangResponse(true, "Tạo đơn thanh toán lại thành công",
                 new TaoDonHangResponse.DonHangData(saved.getIdDh(), saved.getMaDonHang(), thanhToanUrl));
+    }
+
+    @Caching(evict = {
+        @CacheEvict(value = "lich_su_don_hang", allEntries = true),
+        @CacheEvict(value = "chi_tiet_don_hang", allEntries = true)
+    })
+    @Transactional
+    public Map<String, Object> huyDonHang(Long maNd, Long idDh) {
+        DonHang donHang = donHangRepository.findById(idDh)
+                .orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại"));
+
+        if (!donHang.getMaNd().equals(maNd))
+            throw new RuntimeException("Bạn không có quyền hủy đơn hàng này");
+
+        if (!"da_thanh_toan".equals(donHang.getTrangThai()))
+            return Map.of("success", false, "message", "Chỉ có thể hủy đơn hàng đã thanh toán");
+
+        if (donHang.getNgayTao().plusDays(3).isBefore(LocalDateTime.now()))
+            return Map.of("success", false, "message", "Đơn hàng đã quá 3 ngày kể từ khi mua, không thể hủy");
+
+        List<ChiTietDonHang> chiTietList = chiTietDonHangRepository.findByIdDhOrderByMaCtdhAsc(idDh);
+        List<Long> danhSachMaSach = chiTietList.stream()
+                .map(ChiTietDonHang::getMaSach)
+                .collect(Collectors.toList());
+
+        if (tienDoDocSachRepository.coSachDaDocQua5Trang(maNd, danhSachMaSach))
+            return Map.of("success", false, "message", "Bạn đã đọc quá 5 trang của một hoặc nhiều sách trong đơn, không thể hủy");
+
+        donHang.setTrangThai("da_huy");
+        donHangRepository.save(donHang);
+
+        return Map.of("success", true, "message", "Hủy đơn hàng thành công");
     }
 }

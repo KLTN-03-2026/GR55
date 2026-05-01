@@ -1,5 +1,6 @@
 package com.backend.backend.service;
 
+import com.backend.backend.dto.GiamGiaInfo;
 import com.backend.backend.dto.SachGoiYResponse;
 import com.backend.backend.entity.Sach;
 import com.backend.backend.repository.LichSuChatRepository;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 public class GoiYSachService {
 
     private final SachRepository sachRepository;
+    private final QuanLyGiamGiaService quanLyGiamGiaService;
     private final LichSuChatRepository lichSuChatRepository;
 
     @Caching(cacheable = {
@@ -78,14 +80,18 @@ public class GoiYSachService {
 
     private SachGoiYResponse xayDungResponse(String thongBao, List<Sach> sachs) {
         List<SachGoiYResponse.SachGoiYData> danhSach = sachs.stream()
-                .map(s -> new SachGoiYResponse.SachGoiYData(
-                        s.getMaSach(),
-                        s.getTenSach(),
-                        s.getTacGia(),
-                        s.getAnhBiaUrl(),
-                        s.getGia(),
-                        s.getDanhGiaTrungBinh() != null ? s.getDanhGiaTrungBinh().doubleValue() : 0.0
-                ))
+                .map(s -> {
+                    GiamGiaInfo info = quanLyGiamGiaService.layGiamGiaInfo(s.getMaSach());
+                    return new SachGoiYResponse.SachGoiYData(
+                            s.getMaSach(),
+                            s.getTenSach(),
+                            s.getTacGia(),
+                            s.getAnhBiaUrl(),
+                            s.getGia(),
+                            s.getDanhGiaTrungBinh() != null ? s.getDanhGiaTrungBinh().doubleValue() : 0.0,
+                            info != null ? info.getGia_sau_giam() : null,
+                            info != null ? info.getNhan_giam() : null);
+                })
                 .collect(Collectors.toList());
         return new SachGoiYResponse(true, thongBao, danhSach);
     }

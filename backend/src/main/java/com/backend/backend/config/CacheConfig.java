@@ -61,6 +61,8 @@ public class CacheConfig {
                 entry("chi_tiet_don_hang_admin", macDinh.entryTtl(Duration.ofMinutes(30))),
                 entry("chuong_trinh_giam_gia",   macDinh.entryTtl(Duration.ofHours(1))),
                 entry("gia_sach_da_giam",        macDinh.entryTtl(Duration.ofMinutes(30))),
+                entry("giam_gia_home",           macDinh.entryTtl(Duration.ofMinutes(5))),
+                entry("giam_gia_info_sach",      macDinh.entryTtl(Duration.ofMinutes(10))),
                 entry("thong_ke_tong_quan",      macDinh.entryTtl(Duration.ofMinutes(30))),
                 entry("thong_ke_doanh_thu",      macDinh.entryTtl(Duration.ofHours(1))),
                 entry("sach_ban_chay",           macDinh.entryTtl(Duration.ofHours(1))),

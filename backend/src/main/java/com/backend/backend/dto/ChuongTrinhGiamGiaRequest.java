@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -31,15 +30,4 @@ public class ChuongTrinhGiamGiaRequest {
     @NotNull(message = "Giá trị giảm không được để trống")
     @DecimalMin(value = "0.01", message = "Giá trị giảm phải lớn hơn 0")
     private BigDecimal gia_tri_giam;
-
-    private CachChonSach cach_chon_sach;
-
-    @Getter
-    @Setter
-    public static class CachChonSach {
-        private String loai; // "danh_sach", "danh_muc", "sach_moi_nhat", "sach_ban_chay", "tat_ca"
-        private List<Long> danh_sach_sach;
-        private List<Long> danh_sach_danh_muc;
-        private Integer so_luong;
-    }
 }

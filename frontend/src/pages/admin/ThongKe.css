@@ -176,3 +176,40 @@
 }
 
 @keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Bảng số liệu doanh thu */
+.btn-xem-bang {
+  margin-top: 12px;
+  padding: 6px 14px;
+  border: 1px solid #ced4da;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #495057;
+}
+
+.btn-xem-bang:hover { background: #f8f9fa; }
+
+.bang-so-lieu {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.bang-so-lieu th,
+.bang-so-lieu td {
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  text-align: left;
+}
+
+.bang-so-lieu th {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+.bang-so-lieu tfoot td {
+  background: #f1f5f9;
+}

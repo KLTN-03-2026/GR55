@@ -2,13 +2,10 @@ import { useState, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
+import TheCardSach from '../components/TheCardSach';
 import './TimKiem.css';
 
 const KICH_THUOC_TRANG = 12;
-
-function dinh_dang_gia(gia) {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(gia);
-}
 
 export default function TimKiem() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -209,37 +206,14 @@ export default function TimKiem() {
           {dang_tim_kiem ? (
             <div className="luoi_ket_qua">
               {Array.from({ length: KICH_THUOC_TRANG }).map((_, i) => (
-                <div key={i} className="the_sach_skeleton o_skeleton" />
+                <TheCardSach key={i} skeleton />
               ))}
             </div>
           ) : ket_qua?.danh_sach?.length > 0 ? (
             <>
               <div className="luoi_ket_qua">
                 {ket_qua.danh_sach.map((sach) => (
-                  <Link
-                    key={sach.ma_sach}
-                    to={`/sach/${sach.ma_sach}`}
-                    className="the_sach"
-                  >
-                    <div className="khung_anh_bia">
-                      <img
-                        src={sach.anh_bia_url}
-                        alt={sach.ten_sach}
-                        className="anh_bia"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="thong_tin_sach">
-                      <p className="ten_sach">{sach.ten_sach}</p>
-                      <p className="tac_gia">{sach.tac_gia}</p>
-                      <p className="gia_sach">
-                        {sach.gia > 0 ? dinh_dang_gia(sach.gia) : 'Miễn phí'}
-                      </p>
-                      {sach.danh_gia_trung_binh > 0 && (
-                        <p className="danh_gia">⭐ {sach.danh_gia_trung_binh.toFixed(1)}</p>
-                      )}
-                    </div>
-                  </Link>
+                  <TheCardSach key={sach.ma_sach} sach={sach} />
                 ))}
               </div>
 

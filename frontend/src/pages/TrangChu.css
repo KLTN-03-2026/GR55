@@ -141,6 +141,107 @@
   margin-top: 2px;
 }
 
+/* Section Giảm giá */
+.section_giam_gia {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.banner_giam_gia {
+  background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 60%, #f97316 100%);
+  padding: 16px 20px;
+  border-radius: 10px 10px 0 0;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.tieu_de_giam_gia {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-top: 6px;
+}
+
+.tieu_de_giam_gia h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.icon_lua {
+  font-size: 24px;
+}
+
+.danh_sach_tab_gg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tab_giam_gia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 110px;
+}
+
+.tab_giam_gia:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.tab_giam_gia.active {
+  background: #fff;
+  border-color: #fff;
+}
+
+.tab_gg_ten {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  text-align: left;
+}
+
+.tab_giam_gia.active .tab_gg_ten {
+  color: #dc2626;
+}
+
+.tab_gg_dem {
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #fef08a;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+.tab_giam_gia.active .tab_gg_dem {
+  color: #dc2626;
+  background: #fee2e2;
+}
+
+.tab_gg_so_sach {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tab_giam_gia.active .tab_gg_so_sach {
+  color: #9ca3af;
+}
+
 /* Nút quay lại trang danh sách [cite: 299-302] */
 .nut_quay_lai {
   background: none;

@@ -1,5 +1,6 @@
 package com.backend.backend.service;
 
+import com.backend.backend.dto.GiamGiaInfo;
 import com.backend.backend.dto.GoiYTimKiemResponse;
 import com.backend.backend.dto.SachTimKiemResponse;
 import com.backend.backend.dto.TimKiemRequest;
@@ -26,6 +27,7 @@ public class TimKiemService {
     private final SachRepository sachRepository;
     private final SachDanhMucRepository sachDanhMucRepository;
     private final DanhMucSachRepository danhMucSachRepository;
+    private final QuanLyGiamGiaService quanLyGiamGiaService;
 
     @Cacheable(value = "tim_kiem_sach",
                key = "#request.tu_khoa + '_' + #request.ma_danh_muc + '_' + #request.min_gia + '_' + #request.max_gia + '_' + #request.min_danh_gia + '_' + #request.sach_mien_phi + '_' + #request.sach_hoi_vien + '_' + #request.sap_xep + '_' + #request.trang + '_' + #request.kich_thuoc")
@@ -75,6 +77,7 @@ public class TimKiemService {
                             .filter(Objects::nonNull)
                             .collect(Collectors.toList());
 
+                    GiamGiaInfo info = quanLyGiamGiaService.layGiamGiaInfo(sach.getMaSach());
                     return new SachTimKiemResponse.SachTimKiemData(
                             sach.getMaSach(),
                             sach.getTenSach(),
@@ -82,7 +85,9 @@ public class TimKiemService {
                             sach.getAnhBiaUrl(),
                             sach.getGia(),
                             sach.getDanhGiaTrungBinh() != null ? sach.getDanhGiaTrungBinh().doubleValue() : 0.0,
-                            tenDanhMuc
+                            tenDanhMuc,
+                            info != null ? info.getGia_sau_giam() : null,
+                            info != null ? info.getNhan_giam() : null
                     );
                 })
                 .collect(Collectors.toList());

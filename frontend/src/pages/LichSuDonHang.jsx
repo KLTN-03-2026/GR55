@@ -51,6 +51,7 @@ const LichSuDonHang = () => {
       case 'da_thanh_toan': return 'badge-xanh-la';
       case 'cho_thanh_toan': return 'badge-vang';
       case 'that_bai': return 'badge-do';
+      case 'da_huy': return 'badge-xam';
       default: return 'badge-xam';
     }
   };
@@ -60,6 +61,7 @@ const LichSuDonHang = () => {
       case 'da_thanh_toan': return 'Đã thanh toán';
       case 'cho_thanh_toan': return 'Chờ thanh toán';
       case 'that_bai': return 'Thất bại';
+      case 'da_huy': return 'Đã hủy';
       default: return trang_thai;
     }
   };
@@ -80,6 +82,7 @@ const LichSuDonHang = () => {
             <option value="cho_thanh_toan">Chờ thanh toán</option>
             <option value="da_thanh_toan">Đã thanh toán</option>
             <option value="that_bai">Thất bại</option>
+            <option value="da_huy">Đã hủy</option>
           </select>
         </div>
         <div className="nhom-input">

@@ -28,5 +28,7 @@ public class SachLienQuanResponse {
         private Double danh_gia_trung_binh;
         private Integer luot_xem;
         private Integer so_luong_da_ban;
+        private BigDecimal gia_sau_giam;
+        private String nhan_giam;
     }
 }

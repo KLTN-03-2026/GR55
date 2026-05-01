@@ -38,5 +38,7 @@ public class SachTheoTheLoaiResponse {
         private String anh_bia_url;
         private BigDecimal gia;
         private Double danh_gia_trung_binh;
+        private BigDecimal gia_sau_giam;
+        private String nhan_giam;
     }
 }

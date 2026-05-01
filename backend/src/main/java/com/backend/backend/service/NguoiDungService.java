@@ -4,6 +4,7 @@ import com.backend.backend.dto.*;
 import com.backend.backend.entity.MaOtp;
 import com.backend.backend.entity.NguoiDung;
 import com.backend.backend.entity.VaiTro;
+import com.backend.backend.repository.DonHangRepository;
 import com.backend.backend.repository.MaOtpRepository;
 import com.backend.backend.repository.NguoiDungRepository;
 import com.backend.backend.repository.VaiTroRepository;
@@ -19,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.security.SecureRandom;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +30,7 @@ public class NguoiDungService {
     private final NguoiDungRepository nguoiDungRepository;
     private final VaiTroRepository vaiTroRepository;
     private final MaOtpRepository maOtpRepository;
+    private final DonHangRepository donHangRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final MailService mailService;
@@ -254,9 +255,18 @@ public class NguoiDungService {
         NguoiDung nguoiDung = nguoiDungRepository.findById(maNd)
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
 
-        return new ChiTietNguoiDungResponse(
-                chuyenDoiSangNguoiDungData(nguoiDung),
-                Collections.emptyList()); // TODO: bổ sung lịch sử đơn hàng khi hoàn thiện entity DonHang
+        List<ChiTietNguoiDungResponse.DonHangItem> lichSu = donHangRepository
+                .findTop10ByMaNdOrderByNgayTaoDesc(nguoiDung.getMaNguoiDung())
+                .stream()
+                .map(dh -> new ChiTietNguoiDungResponse.DonHangItem(
+                        dh.getIdDh(),
+                        dh.getMaDonHang(),
+                        dh.getNgayTao(),
+                        dh.getTongTien(),
+                        dh.getTrangThai()))
+                .collect(Collectors.toList());
+
+        return new ChiTietNguoiDungResponse(chuyenDoiSangNguoiDungData(nguoiDung), lichSu);
     }
 
     @Transactional

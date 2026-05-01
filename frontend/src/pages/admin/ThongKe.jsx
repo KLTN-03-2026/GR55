@@ -73,6 +73,9 @@ export default function ThongKe() {
     den_ngay: ngay_hom_nay(),
   });
 
+  // Bảng số liệu doanh thu
+  const [hien_bang_doanh_thu, dat_hien_bang_doanh_thu] = useState(false);
+
   // Refresh cache
   const [dang_refresh, dat_dang_refresh] = useState(false);
 
@@ -285,9 +288,37 @@ export default function ThongKe() {
             <button className="btn btn-primary" onClick={() => dat_loc_doanh_thu(form_doanh_thu)}>Xem</button>
             <button className="btn btn-outline" onClick={() => xuat_csv('doanh_thu', { ...loc_doanh_thu }, 'doanh_thu.csv')}>Xuất CSV</button>
           </div>
-          {dang_tai_doanh_thu ? <div className="spinner">Đang tải...</div> : 
+          {dang_tai_doanh_thu ? <div className="spinner">Đang tải...</div> :
             du_lieu_doanh_thu.length > 0 ? (
-              <div className="chart-container"><Bar data={bieu_do_doanh_thu} options={{ responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { ticks: { callback: val => dinh_dang_tien(val) } } } }} /></div>
+              <>
+                <div className="chart-container"><Bar data={bieu_do_doanh_thu} options={{ responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { ticks: { callback: val => dinh_dang_tien(val) } } } }} /></div>
+                <button className="btn-xem-bang" onClick={() => dat_hien_bang_doanh_thu(prev => !prev)}>
+                  {hien_bang_doanh_thu ? 'Ẩn bảng số liệu' : 'Xem bảng số liệu'}
+                </button>
+                {hien_bang_doanh_thu && (
+                  <table className="bang-so-lieu">
+                    <thead>
+                      <tr><th>Thời gian</th><th>Doanh thu</th><th>Số đơn</th></tr>
+                    </thead>
+                    <tbody>
+                      {du_lieu_doanh_thu.map((d, i) => (
+                        <tr key={i}>
+                          <td>{d.thoi_gian}</td>
+                          <td className="text-highlight">{dinh_dang_tien(d.doanh_thu)}</td>
+                          <td>{d.so_luong_don}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td><strong>Tổng</strong></td>
+                        <td className="text-highlight"><strong>{dinh_dang_tien(du_lieu_doanh_thu.reduce((s, d) => s + d.doanh_thu, 0))}</strong></td>
+                        <td><strong>{du_lieu_doanh_thu.reduce((s, d) => s + d.so_luong_don, 0)}</strong></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                )}
+              </>
             ) : <p className="empty-text">Không có dữ liệu trong khoảng thời gian này</p>
           }
         </div>

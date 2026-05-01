@@ -22,8 +22,10 @@ public class TrangChuService {
     private final DanhMucSachRepository danhMucSachRepository;
     private final TienDoDocSachRepository tienDoDocSachRepository;
     private final SachDanhMucRepository sachDanhMucRepository;
+    private final QuanLyGiamGiaService quanLyGiamGiaService;
 
     private SachHomeResponse chuyenDoiSachSangDto(Sach sach) {
+        GiamGiaInfo info = quanLyGiamGiaService.layGiamGiaInfo(sach.getMaSach());
         return new SachHomeResponse(
                 sach.getMaSach(),
                 sach.getTenSach(),
@@ -32,7 +34,9 @@ public class TrangChuService {
                 sach.getAnhBiaUrl(),
                 sach.getDanhGiaTrungBinh() != null ? sach.getDanhGiaTrungBinh().doubleValue() : 0.0,
                 sach.getLuotXem() != null ? sach.getLuotXem() : 0,
-                sach.getSoLuongDaBan() != null ? sach.getSoLuongDaBan() : 0);
+                sach.getSoLuongDaBan() != null ? sach.getSoLuongDaBan() : 0,
+                info != null ? info.getGia_sau_giam() : null,
+                info != null ? info.getNhan_giam() : null);
     }
 
     private DanhSachSachHomeResponse taoKetQuaPhanTrang(Page<Sach> page) {

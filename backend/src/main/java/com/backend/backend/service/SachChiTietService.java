@@ -109,15 +109,20 @@ public class SachChiTietService {
         Page<Sach> page = sachRepository.findSachCungTheLoai(maSach, danhSachMaDm, pageable);
 
         List<SachLienQuanResponse.SachLienQuanData> danhSach = page.getContent().stream()
-                .map(s -> new SachLienQuanResponse.SachLienQuanData(
-                        s.getMaSach(),
-                        s.getTenSach(),
-                        s.getTacGia(),
-                        s.getGia(),
-                        s.getAnhBiaUrl(),
-                        s.getDanhGiaTrungBinh() != null ? s.getDanhGiaTrungBinh().doubleValue() : 0.0,
-                        s.getLuotXem(),
-                        s.getSoLuongDaBan() != null ? s.getSoLuongDaBan() : 0))
+                .map(s -> {
+                    GiamGiaInfo info = quanLyGiamGiaService.layGiamGiaInfo(s.getMaSach());
+                    return new SachLienQuanResponse.SachLienQuanData(
+                            s.getMaSach(),
+                            s.getTenSach(),
+                            s.getTacGia(),
+                            s.getGia(),
+                            s.getAnhBiaUrl(),
+                            s.getDanhGiaTrungBinh() != null ? s.getDanhGiaTrungBinh().doubleValue() : 0.0,
+                            s.getLuotXem(),
+                            s.getSoLuongDaBan() != null ? s.getSoLuongDaBan() : 0,
+                            info != null ? info.getGia_sau_giam() : null,
+                            info != null ? info.getNhan_giam() : null);
+                })
                 .collect(Collectors.toList());
 
         return new SachLienQuanResponse(

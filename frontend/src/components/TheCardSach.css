@@ -61,6 +61,30 @@
   color: #2563eb;
 }
 
+.nhan_gia.da_giam {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.badge_giam {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #dc2626;
+  color: #fff;
+}
+
+.gia_goc_gach_ngang {
+  font-size: 11px;
+  color: #9ca3af;
+  text-decoration: line-through;
+  margin: 0;
+}
+
 .noi_dung_card {
   padding: 12px;
   flex: 1;

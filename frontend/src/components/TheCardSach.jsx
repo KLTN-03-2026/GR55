@@ -16,7 +16,6 @@ function dinh_dang_luot_xem(luot) {
 }
 
 export default function TheCardSach({ sach, skeleton = false }) {
-  // 1. Render Skeleton khi đang tải [cite: 72]
   if (skeleton) {
     return (
       <div className="the_card_sach the_card_skeleton">
@@ -30,7 +29,11 @@ export default function TheCardSach({ sach, skeleton = false }) {
     );
   }
 
-  // 2. Render Card thật [cite: 81]
+  const coGiamGia = sach.gia_sau_giam != null;
+  const giaGoc = sach.gia_goc ?? sach.gia;
+  const giaHienThi = coGiamGia ? sach.gia_sau_giam : sach.gia;
+  const laMienPhi = Number(giaHienThi) === 0;
+
   return (
     <Link to={`/sach/${sach.ma_sach}`} className="the_card_sach">
       <div className="khung_anh_bia">
@@ -44,24 +47,25 @@ export default function TheCardSach({ sach, skeleton = false }) {
         ) : (
           <div className="anh_bia_trong">?</div>
         )}
-        {/* Badge giá [cite: 88] */}
-        <span
-          className={`nhan_gia ${Number(sach.gia) === 0 ? "mien_phi" : "tra_phi"}`}
-        >
-          {Number(sach.gia) === 0 ? "Miễn phí" : dinh_dang_gia(sach.gia)}
+        {coGiamGia && (
+          <span className="badge_giam">{sach.nhan_giam}</span>
+        )}
+        <span className={`nhan_gia ${laMienPhi ? "mien_phi" : coGiamGia ? "da_giam" : "tra_phi"}`}>
+          {laMienPhi ? "Miễn phí" : dinh_dang_gia(giaHienThi)}
         </span>
       </div>
 
       <div className="noi_dung_card">
         <h3 className="ten_sach_card">{sach.ten_sach}</h3>
         <p className="tac_gia_card">{sach.tac_gia}</p>
+        {coGiamGia && (
+          <p className="gia_goc_gach_ngang">{dinh_dang_gia(giaGoc)}</p>
+        )}
         <div className="thong_tin_card">
-          {/* Đánh giá dùng text thay icon [cite: 97] */}
           <span className="danh_gia_card">
-            {" "}
             ★ {sach.danh_gia_trung_binh?.toFixed(1) || "0.0"}
           </span>
-          {Number(sach.gia) > 0 && (
+          {Number(giaHienThi) > 0 && (
             <span className="luot_xem_card">
               {dinh_dang_luot_xem(sach.so_luong_da_ban)} đã bán
             </span>

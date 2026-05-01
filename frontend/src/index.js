@@ -37,7 +37,6 @@ import DanhSachGoiY from "./pages/booklist/DanhSachGoiY";
 
 // Admin
 import AdminLayout from "./pages/admin/AdminLayout";
-import QuanTri from "./pages/QuanTri";
 import QuanLyDanhMuc from "./pages/admin/QuanLyDanhMuc";
 import QuanLySach from "./pages/admin/QuanLySach";
 import QuanLyNguoiDung from "./pages/admin/QuanLyNguoiDung";
@@ -129,7 +128,7 @@ root.render(
             } />
 
             {/* ADMIN */}
-            <Route path="/quan_tri" element={<AdminLayout><QuanTri /></AdminLayout>} />
+            <Route path="/quan_tri" element={<Navigate to="/quan_tri/thong_ke" replace />} />
             <Route path="/quan_tri/danh_muc" element={<AdminLayout><QuanLyDanhMuc /></AdminLayout>} />
             <Route path="/quan_tri/sach" element={<AdminLayout><QuanLySach /></AdminLayout>} />
             <Route path="/quan_tri/nguoi_dung" element={<AdminLayout><QuanLyNguoiDung /></AdminLayout>} />

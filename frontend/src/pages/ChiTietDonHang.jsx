@@ -12,6 +12,7 @@ const ChiTietDonHang = () => {
 
   const [modalData, setModalData] = useState(null);
   const [dangKiemTra, setDangKiemTra] = useState(false);
+  const [moModalHuy, setMoModalHuy] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ['chi_tiet_don_hang', id_dh],
@@ -20,6 +21,25 @@ const ChiTietDonHang = () => {
       return phan_hoi.data.data;
     },
     staleTime: 60 * 60 * 1000,
+  });
+
+  const { mutate: huyDonHang, isPending: dangHuy } = useMutation({
+    mutationFn: () => api.put(`/lich_su_don_hang/${id_dh}/huy`),
+    onSuccess: (res) => {
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setMoModalHuy(false);
+        queryClient.invalidateQueries({ queryKey: ['lich_su_don_hang'] });
+        queryClient.invalidateQueries({ queryKey: ['chi_tiet_don_hang', id_dh] });
+      } else {
+        toast.error(res.data.message);
+        setMoModalHuy(false);
+      }
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại');
+      setMoModalHuy(false);
+    },
   });
 
   const { mutate: taiThanhToan, isPending: dangTaiThanhToan } = useMutation({
@@ -60,6 +80,7 @@ const ChiTietDonHang = () => {
       case 'da_thanh_toan': return 'badge-xanh-la';
       case 'cho_thanh_toan': return 'badge-vang';
       case 'that_bai': return 'badge-do';
+      case 'da_huy': return 'badge-xam';
       default: return 'badge-xam';
     }
   };
@@ -69,6 +90,7 @@ const ChiTietDonHang = () => {
       case 'da_thanh_toan': return 'Đã thanh toán';
       case 'cho_thanh_toan': return 'Chờ thanh toán';
       case 'that_bai': return 'Thất bại';
+      case 'da_huy': return 'Đã hủy';
       default: return trang_thai;
     }
   };
@@ -77,6 +99,8 @@ const ChiTietDonHang = () => {
   if (!data) return null;
 
   const tatCaDaSoHuu = modalData && modalData.sach_chua_so_huu.length === 0;
+  const coTheHuy = data.trang_thai === 'da_thanh_toan' &&
+    new Date(data.ngay_tao) > new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
 
   return (
     <div className="chi-tiet-container">
@@ -86,6 +110,11 @@ const ChiTietDonHang = () => {
           {data.trang_thai === 'cho_thanh_toan' && (
             <button className="btn-tai-thanh-toan" onClick={moModal} disabled={dangKiemTra}>
               {dangKiemTra ? 'Đang kiểm tra...' : '💳 Thanh toán lại'}
+            </button>
+          )}
+          {coTheHuy && (
+            <button className="btn-huy-don" onClick={() => setMoModalHuy(true)}>
+              Hủy đơn
             </button>
           )}
           <button onClick={() => toast.info('Vui lòng liên hệ admin qua email hoặc hotline.')} className="btn-ho-tro">
@@ -132,6 +161,29 @@ const ChiTietDonHang = () => {
           ))}
         </div>
       </div>
+
+      {/* Modal xác nhận hủy đơn */}
+      {moModalHuy && (
+        <div className="modal-overlay-dh" onClick={(e) => e.target === e.currentTarget && setMoModalHuy(false)}>
+          <div className="modal-tai-thanh-toan">
+            <h3 className="modal-tieu-de">Xác nhận hủy đơn hàng</h3>
+            <p style={{ fontSize: '0.95rem', color: '#475569', lineHeight: 1.6, margin: '0 0 8px' }}>
+              Bạn có chắc chắn muốn hủy đơn <strong>{data.ma_don_hang}</strong> không?
+            </p>
+            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: '0 0 20px' }}>
+              Điều kiện hủy: trong vòng 3 ngày kể từ khi mua và chưa đọc quá 5 trang bất kỳ sách nào trong đơn.
+            </p>
+            <div className="nhom-nut-modal">
+              <button className="btn-huy-modal" onClick={() => setMoModalHuy(false)} disabled={dangHuy}>
+                Không
+              </button>
+              <button className="btn-xac-nhan-huy" onClick={() => huyDonHang()} disabled={dangHuy}>
+                {dangHuy ? 'Đang xử lý...' : 'Xác nhận hủy'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal xác nhận thanh toán lại */}
       {modalData && (

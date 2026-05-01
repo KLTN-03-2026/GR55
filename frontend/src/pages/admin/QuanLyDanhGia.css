@@ -1,96 +1,199 @@
-/* Layout chung */
-.quan_ly_danh_gia {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
+/* ===== Layout — giống chuẩn QuanLyDanhMuc ===== */
+*, *::before, *::after { box-sizing: border-box; }
+
+.trang_quan_ly {
+  min-height: 100vh;
+  background: #f0f4f8;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* Thanh công cụ tìm kiếm */
-.thanh_cong_cu_admin {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding: 16px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
+.noi_dung_chinh {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 24px;
 }
 
-.thanh_cong_cu_admin input,
-.thanh_cong_cu_admin select {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    outline: none;
+.tieu_de_trang {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin: 0 0 24px;
 }
 
-.thanh_cong_cu_admin button {
-    padding: 8px 16px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.the_noi_dung {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
-/* Bảng dữ liệu */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+/* ===== Thanh bộ lọc ===== */
+.thanh_cong_cu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-th,
-td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
+.thanh_loc_nhieu {
+  justify-content: flex-start;
 }
 
-th {
-    background-color: #f8f9fa;
-    color: #2c3e50;
-    font-weight: 600;
+.o_tim_kiem {
+  flex: 1;
+  min-width: 180px;
+  max-width: 260px;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1a202c;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fafafa;
 }
 
-/* Trạng thái */
-.badge {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
+.o_tim_kiem:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: #ffffff;
 }
 
-.badge.xanh {
-    background-color: #dcfce7;
-    color: #16a34a;
+.o_loc_phu {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1a202c;
+  background: #fafafa;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-.badge.xam {
-    background-color: #f3f4f6;
-    color: #6b7280;
+.o_loc_phu:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Nút thao tác */
+/* ===== Bảng ===== */
+.khung_bang { overflow-x: auto; }
+
+.bang_du_lieu {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.bang_du_lieu th {
+  background: #f8fafc;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.bang_du_lieu td {
+  padding: 13px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.bang_du_lieu tr:last-child td { border-bottom: none; }
+.bang_du_lieu tr:hover td { background: #fafafa; }
+
+.hang_trong {
+  text-align: center;
+  padding: 48px 16px;
+  color: #9ca3af;
+  font-size: 15px;
+}
+
+/* ===== Nút thao tác ===== */
+.nhom_nut_thao_tac { display: flex; gap: 8px; }
+
 .nut_xoa {
-    color: #dc2626;
-    background: none;
-    border: 1px solid #fca5a5;
-    padding: 4px 8px;
-    border-radius: 4px;
-    margin-left: 8px;
-    cursor: pointer;
+  padding: 6px 14px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.nut_xoa:hover { background: #fee2e2; }
+
+/* ===== Badge sao ===== */
+.nhan_sao { font-weight: 600; color: #d97706; }
+
+/* ===== Badge trạng thái hiển thị ===== */
+.nhan_hien_thi {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.nhan_hien_thi.hien { background: #dcfce7; color: #16a34a; }
+.nhan_hien_thi.an   { background: #f3f4f6; color: #6b7280; }
+
+/* ===== Nút ẩn/hiện ===== */
+.nut_an_hien {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.nut_an_hien.nut_hien { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+.nut_an_hien.nut_hien:hover { background: #dcfce7; }
+.nut_an_hien.nut_an  { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+.nut_an_hien.nut_an:hover  { background: #fef3c7; }
+
+/* ===== Phân trang ===== */
+.phan_trang {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid #f1f5f9;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.nut_xoa:hover {
-    background-color: #fef2f2;
-}
+.thong_tin_phan_trang { font-size: 13px; color: #6b7280; }
 
-/* Phân trang */
-.phan_trang_admin {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
+.nhom_nut_trang { display: flex; gap: 4px; }
+
+.nut_trang {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nut_trang:hover:not(:disabled) { background: #f0f4f8; border-color: #cbd5e1; }
+.nut_trang.hien_tai { background: #2563eb; border-color: #2563eb; color: #ffffff; font-weight: 600; }
+.nut_trang:disabled { color: #d1d5db; cursor: not-allowed; }
+
+@media (max-width: 640px) {
+  .noi_dung_chinh { padding: 20px 16px; }
+  .thanh_cong_cu { flex-direction: column; align-items: stretch; }
+  .o_tim_kiem { max-width: 100%; }
 }

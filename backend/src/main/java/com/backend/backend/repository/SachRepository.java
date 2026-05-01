@@ -135,4 +135,19 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
 
     @Query("SELECT COUNT(s) FROM Sach s WHERE s.daXoa = false")
     long demTongSach();
+
+    @Query("SELECT DISTINCT s FROM Sach s " +
+           "LEFT JOIN SachDanhMuc sd ON sd.maSach = s.maSach " +
+           "WHERE s.daXoa = false AND s.gia > 0 " +
+           "AND (:tuKhoa IS NULL OR (LOWER(s.tenSach) LIKE LOWER(CONCAT('%', :tuKhoa, '%')) " +
+           "     OR LOWER(s.tacGia) LIKE LOWER(CONCAT('%', :tuKhoa, '%')))) " +
+           "AND (:maDanhMuc IS NULL OR sd.maDm = :maDanhMuc) " +
+           "AND (:giaMin IS NULL OR s.gia >= :giaMin) " +
+           "AND (:giaMax IS NULL OR s.gia <= :giaMax) " +
+           "ORDER BY s.tenSach ASC")
+    Page<Sach> timKiemSachCoPhiChoGiamGia(@Param("tuKhoa") String tuKhoa,
+                                           @Param("maDanhMuc") Long maDanhMuc,
+                                           @Param("giaMin") BigDecimal giaMin,
+                                           @Param("giaMax") BigDecimal giaMax,
+                                           Pageable pageable);
 }

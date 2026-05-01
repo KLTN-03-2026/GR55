@@ -53,6 +53,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/tim_kiem/**").permitAll()
                     .requestMatchers("/api/the_loai/**").permitAll()
                     .requestMatchers("/api/goi_y/**").permitAll()
+                    .requestMatchers("/api/giam_gia/hien_thi").permitAll()
                     .requestMatchers("/api/chatbot/**").permitAll()
                     .requestMatchers("/api/mua_sach/vnpay_callback", "/api/thanh_toan/vnpay_ipn").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/hoi_vien/goi", "/api/hoi_vien/vnpay_callback").permitAll()

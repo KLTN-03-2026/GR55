@@ -1,15 +1,11 @@
 package com.backend.backend.service;
 
-import com.backend.backend.dto.ChuongTrinhGiamGiaRequest;
-import com.backend.backend.dto.ChuongTrinhGiamGiaResponse;
-import com.backend.backend.dto.DanhSachChuongTrinhResponse;
-import com.backend.backend.dto.SachResponse;
+import com.backend.backend.dto.*;
 import com.backend.backend.entity.ChuongTrinhGiamGia;
 import com.backend.backend.entity.ChuongTrinhGiamGiaSach;
 import com.backend.backend.entity.Sach;
 import com.backend.backend.repository.ChuongTrinhGiamGiaRepository;
 import com.backend.backend.repository.ChuongTrinhGiamGiaSachRepository;
-import com.backend.backend.repository.SachDanhMucRepository;
 import com.backend.backend.repository.SachRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -23,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +29,6 @@ public class QuanLyGiamGiaService {
     private final ChuongTrinhGiamGiaRepository chuongTrinhGiamGiaRepository;
     private final ChuongTrinhGiamGiaSachRepository chuongTrinhGiamGiaSachRepository;
     private final SachRepository sachRepository;
-    private final SachDanhMucRepository sachDanhMucRepository;
 
     @Cacheable(value = "chuong_trinh_giam_gia",
                key = "#ten + '_' + #hoatDong + '_' + #tuNgay + '_' + #denNgay + '_' + #trang + '_' + #kichThuoc")
@@ -53,119 +47,173 @@ public class QuanLyGiamGiaService {
 
         List<DanhSachChuongTrinhResponse.ChuongTrinhItem> danhSach = page.getContent().stream()
                 .map(ct -> new DanhSachChuongTrinhResponse.ChuongTrinhItem(
-                        ct.getMaCt(),
-                        ct.getTenChuongTrinh(),
-                        ct.getNgayBatDau(),
-                        ct.getNgayKetThuc(),
-                        ct.getLoaiGiam(),
-                        ct.getGiaTriGiam(),
-                        ct.getHoatDong(),
-                        (int) chuongTrinhGiamGiaSachRepository.countByMaCt(ct.getMaCt())
-                ))
+                        ct.getMaCt(), ct.getTenChuongTrinh(), ct.getNgayBatDau(), ct.getNgayKetThuc(),
+                        ct.getLoaiGiam(), ct.getGiaTriGiam(), ct.getHoatDong(),
+                        (int) chuongTrinhGiamGiaSachRepository.countByMaCt(ct.getMaCt())))
                 .collect(Collectors.toList());
 
-        return new DanhSachChuongTrinhResponse(
-                true, "Lấy danh sách chương trình giảm giá thành công",
+        return new DanhSachChuongTrinhResponse(true, "Lấy danh sách chương trình giảm giá thành công",
                 danhSach, page.getNumber() + 1, page.getTotalPages(), page.getTotalElements());
     }
 
-    public List<SachResponse.DuLieuSach> laySachTheoTieuChi(String loai, List<Long> danhMucIds, Integer soLuong) {
-        List<Long> sachIds = new ArrayList<>();
-        int limit = soLuong != null ? soLuong : 20;
+    public ChiTietChuongTrinhResponse layChiTietChuongTrinh(Long maCt) {
+        ChuongTrinhGiamGia ct = chuongTrinhGiamGiaRepository.findById(maCt)
+                .orElseThrow(() -> new RuntimeException("Chương trình không tồn tại"));
 
-        switch (loai) {
-            case "danh_muc":
-                if (danhMucIds != null && !danhMucIds.isEmpty())
-                    sachIds = sachDanhMucRepository.findSachIdsByDanhMucIds(danhMucIds);
-                break;
-            case "sach_moi_nhat":
-                sachIds = sachRepository.findSachMoiNhat(PageRequest.of(0, limit))
-                        .getContent().stream().map(Sach::getMaSach).collect(Collectors.toList());
-                break;
-            case "sach_ban_chay":
-                sachIds = sachRepository.findSachBanChay(PageRequest.of(0, limit))
-                        .getContent().stream().map(Sach::getMaSach).collect(Collectors.toList());
-                break;
-            case "tat_ca":
-                sachIds = sachRepository.findAllActiveIds();
-                break;
-        }
+        List<Long> sachIds = chuongTrinhGiamGiaSachRepository.findSachIdsByMaCt(maCt);
+        List<Sach> sachList = sachRepository.findAllById(sachIds);
 
-        return sachRepository.findAllById(sachIds).stream()
-                .filter(s -> !Boolean.TRUE.equals(s.getDaXoa()))
-                .map(s -> new SachResponse.DuLieuSach(
-                        s.getMaSach(), s.getTenSach(), s.getTacGia(), null,
-                        s.getGia(), s.getAnhBiaUrl(), null, null, null,
-                        s.getLuotXem(), s.getDanhGiaTrungBinh(), null, null, s.getNgayTao()))
+        List<ChiTietChuongTrinhResponse.SachTrongCt> sachItems = sachList.stream()
+                .map(sach -> new ChiTietChuongTrinhResponse.SachTrongCt(
+                        sach.getMaSach(), sach.getTenSach(), sach.getTacGia(), sach.getAnhBiaUrl(),
+                        sach.getGia(), tinhGiaSauGiam(sach.getGia(), ct)))
                 .collect(Collectors.toList());
+
+        return new ChiTietChuongTrinhResponse(true, "Lấy chi tiết chương trình thành công",
+                new ChiTietChuongTrinhResponse.ChiTietData(
+                        ct.getMaCt(), ct.getTenChuongTrinh(), ct.getNgayBatDau(), ct.getNgayKetThuc(),
+                        ct.getLoaiGiam(), ct.getGiaTriGiam(), ct.getHoatDong(),
+                        sachItems.size(), sachItems));
     }
 
     @Caching(evict = {
         @CacheEvict(value = "chuong_trinh_giam_gia", allEntries = true),
         @CacheEvict(value = "gia_sach_da_giam", allEntries = true),
-        @CacheEvict(value = "chi_tiet_sach", allEntries = true)
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true),
+        @CacheEvict(value = "giam_gia_home", allEntries = true),
+        @CacheEvict(value = "giam_gia_info_sach", allEntries = true)
     })
     @Transactional
     public ChuongTrinhGiamGiaResponse themChuongTrinh(ChuongTrinhGiamGiaRequest request) {
-        if (chuongTrinhGiamGiaRepository.findByTenChuongTrinh(request.getTen_chuong_trinh()).isPresent()) {
-            return new ChuongTrinhGiamGiaResponse(false, "Tên chương trình đã tồn tại", null);
-        }
+        String loi = kiemTraRequest(request, null);
+        if (loi != null) return new ChuongTrinhGiamGiaResponse(false, loi, null);
 
-        if (request.getNgay_bat_dau().isAfter(request.getNgay_ket_thuc())) {
-            return new ChuongTrinhGiamGiaResponse(false, "Ngày kết thúc phải sau ngày bắt đầu", null);
-        }
+        ChuongTrinhGiamGia ct = new ChuongTrinhGiamGia();
+        ct.setTenChuongTrinh(request.getTen_chuong_trinh());
+        ct.setNgayBatDau(request.getNgay_bat_dau());
+        ct.setNgayKetThuc(request.getNgay_ket_thuc());
+        ct.setLoaiGiam(request.getLoai_giam());
+        ct.setGiaTriGiam(request.getGia_tri_giam());
+        ct.setHoatDong(false);
 
-        if (request.getCach_chon_sach() == null) {
-            return new ChuongTrinhGiamGiaResponse(false, "Cách chọn sách không được để trống", null);
-        }
+        ChuongTrinhGiamGia saved = chuongTrinhGiamGiaRepository.save(ct);
 
-        List<Long> sachIds = laySachIdsTheoCachChon(request.getCach_chon_sach());
-        if (sachIds.isEmpty()) {
-            return new ChuongTrinhGiamGiaResponse(false, "Không có sách nào được chọn", null);
-        }
-
-        ChuongTrinhGiamGia chuongTrinh = new ChuongTrinhGiamGia();
-        chuongTrinh.setTenChuongTrinh(request.getTen_chuong_trinh());
-        chuongTrinh.setNgayBatDau(request.getNgay_bat_dau());
-        chuongTrinh.setNgayKetThuc(request.getNgay_ket_thuc());
-        chuongTrinh.setLoaiGiam(request.getLoai_giam());
-        chuongTrinh.setGiaTriGiam(request.getGia_tri_giam());
-        chuongTrinh.setHoatDong(true);
-
-        ChuongTrinhGiamGia saved = chuongTrinhGiamGiaRepository.save(chuongTrinh);
-
-        LocalDateTime now = LocalDateTime.now();
-        List<ChuongTrinhGiamGiaSach> danhSachLienKet = sachIds.stream().map(maSach -> {
-            ChuongTrinhGiamGiaSach ctSach = new ChuongTrinhGiamGiaSach();
-            ctSach.setMaCt(saved.getMaCt());
-            ctSach.setMaSach(maSach);
-            ctSach.setNgayTao(now);
-            return ctSach;
-        }).collect(Collectors.toList());
-        chuongTrinhGiamGiaSachRepository.saveAll(danhSachLienKet);
-
-        ChuongTrinhGiamGiaResponse.ChuongTrinhData data = new ChuongTrinhGiamGiaResponse.ChuongTrinhData(
-                saved.getMaCt(), saved.getTenChuongTrinh(),
-                saved.getNgayBatDau(), saved.getNgayKetThuc(),
-                saved.getLoaiGiam(), saved.getGiaTriGiam(),
-                saved.getHoatDong(), sachIds.size(), sachIds);
-
-        return new ChuongTrinhGiamGiaResponse(true, "Thêm chương trình giảm giá thành công", data);
+        return new ChuongTrinhGiamGiaResponse(true, "Tạo chương trình giảm giá thành công",
+                new ChuongTrinhGiamGiaResponse.ChuongTrinhData(
+                        saved.getMaCt(), saved.getTenChuongTrinh(), saved.getNgayBatDau(),
+                        saved.getNgayKetThuc(), saved.getLoaiGiam(), saved.getGiaTriGiam(),
+                        saved.getHoatDong(), 0, Collections.emptyList()));
     }
 
     @Caching(evict = {
         @CacheEvict(value = "chuong_trinh_giam_gia", allEntries = true),
         @CacheEvict(value = "gia_sach_da_giam", allEntries = true),
-        @CacheEvict(value = "chi_tiet_sach", allEntries = true)
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true),
+        @CacheEvict(value = "giam_gia_home", allEntries = true),
+        @CacheEvict(value = "giam_gia_info_sach", allEntries = true)
+    })
+    @Transactional
+    public ChuongTrinhGiamGiaResponse capNhatChuongTrinh(Long maCt, ChuongTrinhGiamGiaRequest request) {
+        ChuongTrinhGiamGia ct = chuongTrinhGiamGiaRepository.findById(maCt)
+                .orElseThrow(() -> new RuntimeException("Chương trình không tồn tại"));
+
+        String loi = kiemTraRequest(request, maCt);
+        if (loi != null) return new ChuongTrinhGiamGiaResponse(false, loi, null);
+
+        ct.setTenChuongTrinh(request.getTen_chuong_trinh());
+        ct.setNgayBatDau(request.getNgay_bat_dau());
+        ct.setNgayKetThuc(request.getNgay_ket_thuc());
+        ct.setLoaiGiam(request.getLoai_giam());
+        ct.setGiaTriGiam(request.getGia_tri_giam());
+        chuongTrinhGiamGiaRepository.save(ct);
+
+        return new ChuongTrinhGiamGiaResponse(true, "Cập nhật chương trình thành công", null);
+    }
+
+    public TimKiemSachGiamGiaResponse timKiemSachDeThem(String tuKhoa, Long maCt,
+                                                          Long maDanhMuc, BigDecimal giaMin, BigDecimal giaMax,
+                                                          int trang, int kichThuoc) {
+        String kw = (tuKhoa != null && !tuKhoa.isBlank()) ? tuKhoa.trim() : null;
+        Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
+        Page<Sach> page = sachRepository.timKiemSachCoPhiChoGiamGia(kw, maDanhMuc, giaMin, giaMax, pageable);
+
+        Set<Long> sachIdsInCt = maCt != null
+                ? new HashSet<>(chuongTrinhGiamGiaSachRepository.findSachIdsByMaCt(maCt))
+                : Collections.emptySet();
+
+        List<TimKiemSachGiamGiaResponse.SachItem> items = page.getContent().stream()
+                .map(s -> new TimKiemSachGiamGiaResponse.SachItem(
+                        s.getMaSach(), s.getTenSach(), s.getTacGia(), s.getAnhBiaUrl(),
+                        s.getGia(), sachIdsInCt.contains(s.getMaSach())))
+                .collect(Collectors.toList());
+
+        return new TimKiemSachGiamGiaResponse(true, "Tìm kiếm thành công",
+                items, trang, page.getTotalPages(), page.getTotalElements());
+    }
+
+    @Caching(evict = {
+        @CacheEvict(value = "chuong_trinh_giam_gia", allEntries = true),
+        @CacheEvict(value = "gia_sach_da_giam", allEntries = true),
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true),
+        @CacheEvict(value = "giam_gia_home", allEntries = true),
+        @CacheEvict(value = "giam_gia_info_sach", allEntries = true)
+    })
+    @Transactional
+    public ChuongTrinhGiamGiaResponse themSachVaoChuongTrinh(Long maCt, List<Long> sachIds) {
+        if (!chuongTrinhGiamGiaRepository.existsById(maCt))
+            return new ChuongTrinhGiamGiaResponse(false, "Chương trình không tồn tại", null);
+        if (sachIds == null || sachIds.isEmpty())
+            return new ChuongTrinhGiamGiaResponse(false, "Danh sách sách không được rỗng", null);
+
+        Set<Long> existing = new HashSet<>(chuongTrinhGiamGiaSachRepository.findSachIdsByMaCt(maCt));
+        List<Long> newIds = sachIds.stream().filter(id -> !existing.contains(id)).collect(Collectors.toList());
+
+        if (newIds.isEmpty())
+            return new ChuongTrinhGiamGiaResponse(false, "Tất cả sách đã có trong chương trình", null);
+
+        LocalDateTime now = LocalDateTime.now();
+        List<ChuongTrinhGiamGiaSach> links = newIds.stream().map(maSach -> {
+            ChuongTrinhGiamGiaSach link = new ChuongTrinhGiamGiaSach();
+            link.setMaCt(maCt);
+            link.setMaSach(maSach);
+            link.setNgayTao(now);
+            return link;
+        }).collect(Collectors.toList());
+        chuongTrinhGiamGiaSachRepository.saveAll(links);
+
+        return new ChuongTrinhGiamGiaResponse(true,
+                "Đã thêm " + newIds.size() + " sách vào chương trình", null);
+    }
+
+    @Caching(evict = {
+        @CacheEvict(value = "chuong_trinh_giam_gia", allEntries = true),
+        @CacheEvict(value = "gia_sach_da_giam", allEntries = true),
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true),
+        @CacheEvict(value = "giam_gia_home", allEntries = true),
+        @CacheEvict(value = "giam_gia_info_sach", allEntries = true)
+    })
+    @Transactional
+    public ChuongTrinhGiamGiaResponse xoaSachKhoiChuongTrinh(Long maCt, Long maSach) {
+        if (!chuongTrinhGiamGiaRepository.existsById(maCt))
+            return new ChuongTrinhGiamGiaResponse(false, "Chương trình không tồn tại", null);
+
+        chuongTrinhGiamGiaSachRepository.deleteByMaCtAndMaSach(maCt, maSach);
+        return new ChuongTrinhGiamGiaResponse(true, "Đã xóa sách khỏi chương trình", null);
+    }
+
+    @Caching(evict = {
+        @CacheEvict(value = "chuong_trinh_giam_gia", allEntries = true),
+        @CacheEvict(value = "gia_sach_da_giam", allEntries = true),
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true),
+        @CacheEvict(value = "giam_gia_home", allEntries = true),
+        @CacheEvict(value = "giam_gia_info_sach", allEntries = true)
     })
     @Transactional
     public ChuongTrinhGiamGiaResponse capNhatTrangThai(Long maCt, Boolean hoatDong) {
-        ChuongTrinhGiamGia chuongTrinh = chuongTrinhGiamGiaRepository.findById(maCt)
+        ChuongTrinhGiamGia ct = chuongTrinhGiamGiaRepository.findById(maCt)
                 .orElseThrow(() -> new RuntimeException("Chương trình không tồn tại"));
-
-        chuongTrinh.setHoatDong(hoatDong);
-        chuongTrinhGiamGiaRepository.save(chuongTrinh);
-
+        ct.setHoatDong(hoatDong);
+        chuongTrinhGiamGiaRepository.save(ct);
         return new ChuongTrinhGiamGiaResponse(true,
                 hoatDong ? "Kích hoạt chương trình thành công" : "Vô hiệu hóa chương trình thành công", null);
     }
@@ -173,21 +221,20 @@ public class QuanLyGiamGiaService {
     @Caching(evict = {
         @CacheEvict(value = "chuong_trinh_giam_gia", allEntries = true),
         @CacheEvict(value = "gia_sach_da_giam", allEntries = true),
-        @CacheEvict(value = "chi_tiet_sach", allEntries = true)
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true),
+        @CacheEvict(value = "giam_gia_home", allEntries = true),
+        @CacheEvict(value = "giam_gia_info_sach", allEntries = true)
     })
     @Transactional
     public ChuongTrinhGiamGiaResponse xoaChuongTrinh(Long maCt) {
-        ChuongTrinhGiamGia chuongTrinh = chuongTrinhGiamGiaRepository.findById(maCt)
+        ChuongTrinhGiamGia ct = chuongTrinhGiamGiaRepository.findById(maCt)
                 .orElseThrow(() -> new RuntimeException("Chương trình không tồn tại"));
 
-        if (Boolean.TRUE.equals(chuongTrinh.getHoatDong())
-                && chuongTrinh.getNgayKetThuc().isAfter(LocalDateTime.now())) {
+        if (Boolean.TRUE.equals(ct.getHoatDong()) && ct.getNgayKetThuc().isAfter(LocalDateTime.now()))
             return new ChuongTrinhGiamGiaResponse(false, "Không thể xóa chương trình đang hoạt động", null);
-        }
 
         chuongTrinhGiamGiaSachRepository.deleteByMaCt(maCt);
-        chuongTrinhGiamGiaRepository.delete(chuongTrinh);
-
+        chuongTrinhGiamGiaRepository.delete(ct);
         return new ChuongTrinhGiamGiaResponse(true, "Xóa chương trình giảm giá thành công", null);
     }
 
@@ -203,8 +250,7 @@ public class QuanLyGiamGiaService {
         double tienGiamCaoNhat = 0;
         LocalDateTime now = LocalDateTime.now();
 
-        List<ChuongTrinhGiamGia> danhSachCt = chuongTrinhGiamGiaRepository.findAllById(maCtIds);
-        for (ChuongTrinhGiamGia ct : danhSachCt) {
+        for (ChuongTrinhGiamGia ct : chuongTrinhGiamGiaRepository.findAllById(maCtIds)) {
             if (!Boolean.TRUE.equals(ct.getHoatDong())
                     || ct.getNgayBatDau().isAfter(now) || ct.getNgayKetThuc().isBefore(now)) continue;
 
@@ -214,37 +260,73 @@ public class QuanLyGiamGiaService {
 
             if (tienGiamThucTe > tienGiamCaoNhat) {
                 tienGiamCaoNhat = tienGiamThucTe;
-                if ("phan_tram".equals(ct.getLoaiGiam())) {
-                    giaGiam = sach.getGia().multiply(BigDecimal.valueOf(1 - ct.getGiaTriGiam().doubleValue() / 100));
-                } else {
-                    giaGiam = sach.getGia().subtract(ct.getGiaTriGiam());
-                    if (giaGiam.compareTo(BigDecimal.ZERO) < 0) giaGiam = BigDecimal.ZERO;
-                }
+                giaGiam = tinhGiaSauGiam(sach.getGia(), ct);
             }
         }
-
         return giaGiam;
     }
 
-    private List<Long> laySachIdsTheoCachChon(ChuongTrinhGiamGiaRequest.CachChonSach cachChon) {
-        int limit = cachChon.getSo_luong() != null ? cachChon.getSo_luong() : 20;
-        switch (cachChon.getLoai()) {
-            case "danh_sach":
-                return cachChon.getDanh_sach_sach() != null ? cachChon.getDanh_sach_sach() : new ArrayList<>();
-            case "danh_muc":
-                return cachChon.getDanh_sach_danh_muc() != null
-                        ? sachDanhMucRepository.findSachIdsByDanhMucIds(cachChon.getDanh_sach_danh_muc())
-                        : new ArrayList<>();
-            case "sach_moi_nhat":
-                return sachRepository.findSachMoiNhat(PageRequest.of(0, limit))
-                        .getContent().stream().map(Sach::getMaSach).collect(Collectors.toList());
-            case "sach_ban_chay":
-                return sachRepository.findSachBanChay(PageRequest.of(0, limit))
-                        .getContent().stream().map(Sach::getMaSach).collect(Collectors.toList());
-            case "tat_ca":
-                return sachRepository.findAllActiveIds();
-            default:
-                return new ArrayList<>();
+    @Cacheable(value = "giam_gia_info_sach", key = "#maSach", unless = "#result == null")
+    public GiamGiaInfo layGiamGiaInfo(Long maSach) {
+        Sach sach = sachRepository.findById(maSach).orElse(null);
+        if (sach == null) return null;
+
+        List<Long> maCtIds = chuongTrinhGiamGiaSachRepository.findMaCtsByMaSach(maSach);
+        if (maCtIds.isEmpty()) return null;
+
+        GiamGiaInfo best = null;
+        double tienGiamCaoNhat = 0;
+        LocalDateTime now = LocalDateTime.now();
+
+        for (ChuongTrinhGiamGia ct : chuongTrinhGiamGiaRepository.findAllById(maCtIds)) {
+            if (!Boolean.TRUE.equals(ct.getHoatDong())
+                    || ct.getNgayBatDau().isAfter(now) || ct.getNgayKetThuc().isBefore(now)) continue;
+
+            double tienGiam = "phan_tram".equals(ct.getLoaiGiam())
+                    ? sach.getGia().doubleValue() * ct.getGiaTriGiam().doubleValue() / 100
+                    : ct.getGiaTriGiam().doubleValue();
+
+            if (tienGiam > tienGiamCaoNhat) {
+                tienGiamCaoNhat = tienGiam;
+                best = new GiamGiaInfo(tinhGiaSauGiam(sach.getGia(), ct), taoNhanGiam(ct));
+            }
         }
+        return best;
+    }
+
+    private String taoNhanGiam(ChuongTrinhGiamGia ct) {
+        if ("phan_tram".equals(ct.getLoaiGiam())) {
+            return "-" + ct.getGiaTriGiam().stripTrailingZeros().toPlainString() + "%";
+        }
+        return "-" + java.text.NumberFormat.getNumberInstance(java.util.Locale.forLanguageTag("vi-VN"))
+                                           .format(ct.getGiaTriGiam().longValue()) + "đ";
+    }
+
+    private String kiemTraRequest(ChuongTrinhGiamGiaRequest req, Long maCtHienTai) {
+        if (!List.of("phan_tram", "tien_co_dinh").contains(req.getLoai_giam()))
+            return "Loại giảm không hợp lệ (phan_tram hoặc tien_co_dinh)";
+
+        if ("phan_tram".equals(req.getLoai_giam())) {
+            BigDecimal val = req.getGia_tri_giam();
+            if (val.compareTo(BigDecimal.ONE) < 0 || val.compareTo(BigDecimal.valueOf(99)) > 0)
+                return "Phần trăm giảm phải từ 1 đến 99";
+        }
+
+        if (req.getNgay_bat_dau().isAfter(req.getNgay_ket_thuc()))
+            return "Ngày kết thúc phải sau ngày bắt đầu";
+
+        Optional<ChuongTrinhGiamGia> existing = chuongTrinhGiamGiaRepository.findByTenChuongTrinh(req.getTen_chuong_trinh());
+        if (existing.isPresent() && !existing.get().getMaCt().equals(maCtHienTai))
+            return "Tên chương trình đã tồn tại";
+
+        return null;
+    }
+
+    private BigDecimal tinhGiaSauGiam(BigDecimal gia, ChuongTrinhGiamGia ct) {
+        if ("phan_tram".equals(ct.getLoaiGiam())) {
+            return gia.multiply(BigDecimal.valueOf(1 - ct.getGiaTriGiam().doubleValue() / 100));
+        }
+        BigDecimal result = gia.subtract(ct.getGiaTriGiam());
+        return result.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : result;
     }
 }

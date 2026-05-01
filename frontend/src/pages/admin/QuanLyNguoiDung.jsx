@@ -204,7 +204,7 @@ export default function QuanLyNguoiDung() {
                 onChange={(e) => dat_tu_khoa_tim(e.target.value)}
               />
               <select
-                className="o_loc_danh_muc"
+                className="o_loc"
                 value={vai_tro_loc}
                 onChange={(e) => dat_vai_tro_loc(e.target.value)}
               >
@@ -213,7 +213,7 @@ export default function QuanLyNguoiDung() {
                 <option value="quan_tri">Quản trị viên</option>
               </select>
               <select
-                className="o_loc_danh_muc"
+                className="o_loc"
                 value={trang_thai_loc}
                 onChange={(e) => dat_trang_thai_loc(e.target.value)}
               >
@@ -285,14 +285,14 @@ export default function QuanLyNguoiDung() {
                       <td>{nd.email}</td>
                       <td>{nd.so_dien_thoai || "—"}</td>
                       <td>
-                        <span className={`nhan_vai_tro ${nd.vai_tro}`}>
+                        <span className={`nhan_vai_tro_${nd.vai_tro}`}>
                           {nd.vai_tro === "thanh_vien"
                             ? "Thành viên"
                             : "Quản trị viên"}
                         </span>
                       </td>
                       <td>
-                        <span className={`nhan_trang_thai ${nd.trang_thai}`}>
+                        <span className={`nhan_trang_thai_${nd.trang_thai}`}>
                           {nd.trang_thai === "hoat_dong"
                             ? "Hoạt động"
                             : "Bị khóa"}
@@ -467,13 +467,13 @@ export default function QuanLyNguoiDung() {
                   </div>
                   <div className="hang_thong_tin">
                     <span className="nhan_thong_tin">Vai trò</span>
-                    <span className={`nhan_vai_tro ${nguoi_dung_chi_tiet.thong_tin?.vai_tro}`}>
+                    <span className={`nhan_vai_tro_${nguoi_dung_chi_tiet.thong_tin?.vai_tro}`}>
                       {nguoi_dung_chi_tiet.thong_tin?.vai_tro === "quan_tri" ? "Quản trị viên" : "Thành viên"}
                     </span>
                   </div>
                   <div className="hang_thong_tin">
                     <span className="nhan_thong_tin">Trạng thái</span>
-                    <span className={`nhan_trang_thai ${nguoi_dung_chi_tiet.thong_tin?.trang_thai}`}>
+                    <span className={`nhan_trang_thai_${nguoi_dung_chi_tiet.thong_tin?.trang_thai}`}>
                       {nguoi_dung_chi_tiet.thong_tin?.trang_thai === "hoat_dong" ? "Hoạt động" : "Bị khóa"}
                     </span>
                   </div>
@@ -489,13 +489,34 @@ export default function QuanLyNguoiDung() {
 
                 {/* Lịch sử đơn hàng */}
                 <div className="phan_lich_su_don_hang">
-                  <h3 className="tieu_de_phan">Lịch sử đơn hàng</h3>
+                  <h3 className="tieu_de_phan">Lịch sử đơn hàng (10 gần nhất)</h3>
                   {nguoi_dung_chi_tiet.lich_su_don_hang?.length > 0 ? (
-                    <ul className="danh_sach_don_hang">
-                      {nguoi_dung_chi_tiet.lich_su_don_hang.map((dh, i) => (
-                        <li key={i}>{JSON.stringify(dh)}</li>
-                      ))}
-                    </ul>
+                    <table className="bang_lich_su_dh">
+                      <thead>
+                        <tr>
+                          <th>Mã đơn</th>
+                          <th>Ngày mua</th>
+                          <th>Tổng tiền</th>
+                          <th>Trạng thái</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {nguoi_dung_chi_tiet.lich_su_don_hang.map((dh) => (
+                          <tr key={dh.id_dh}>
+                            <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{dh.ma_don_hang}</td>
+                            <td>{new Date(dh.ngay_tao).toLocaleDateString('vi-VN')}</td>
+                            <td style={{ fontWeight: 600, color: '#dc2626' }}>
+                              {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(dh.tong_tien)}
+                            </td>
+                            <td>
+                              <span className={`nhan_trang_thai_dh ${dh.trang_thai}`}>
+                                {{ cho_thanh_toan: 'Chờ TT', da_thanh_toan: 'Đã TT', that_bai: 'Thất bại', da_huy: 'Đã hủy' }[dh.trang_thai] || dh.trang_thai}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   ) : (
                     <p className="chua_co_du_lieu">Người dùng chưa có đơn hàng nào</p>
                   )}

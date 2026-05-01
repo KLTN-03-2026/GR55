@@ -1,5 +1,6 @@
 package com.backend.backend.service;
 
+import com.backend.backend.dto.GiamGiaInfo;
 import com.backend.backend.dto.LocTheoTheLoaiRequest;
 import com.backend.backend.dto.SachTheoTheLoaiResponse;
 import com.backend.backend.entity.DanhMucSach;
@@ -26,6 +27,7 @@ public class LocSachTheoTheLoaiService {
 
     private final SachRepository sachRepository;
     private final DanhMucSachRepository danhMucSachRepository;
+    private final QuanLyGiamGiaService quanLyGiamGiaService;
 
     @Cacheable(value = "sach_theo_the_loai",
                key = "#request.ma_the_loai + '_' + #request.min_gia + '_' + #request.max_gia + '_' + #request.min_danh_gia + '_' + #request.sach_mien_phi + '_' + #request.sach_hoi_vien + '_' + #request.sap_xep + '_' + #request.trang + '_' + #request.kich_thuoc")
@@ -54,14 +56,18 @@ public class LocSachTheoTheLoaiService {
         long tongSoSach = danhMucSachRepository.countSachByDanhMuc(request.getMa_the_loai());
 
         List<SachTheoTheLoaiResponse.SachData> danhSach = page.getContent().stream()
-                .map(sach -> new SachTheoTheLoaiResponse.SachData(
-                        sach.getMaSach(),
-                        sach.getTenSach(),
-                        sach.getTacGia(),
-                        sach.getAnhBiaUrl(),
-                        sach.getGia(),
-                        sach.getDanhGiaTrungBinh() != null ? sach.getDanhGiaTrungBinh().doubleValue() : 0.0
-                ))
+                .map(sach -> {
+                    GiamGiaInfo info = quanLyGiamGiaService.layGiamGiaInfo(sach.getMaSach());
+                    return new SachTheoTheLoaiResponse.SachData(
+                            sach.getMaSach(),
+                            sach.getTenSach(),
+                            sach.getTacGia(),
+                            sach.getAnhBiaUrl(),
+                            sach.getGia(),
+                            sach.getDanhGiaTrungBinh() != null ? sach.getDanhGiaTrungBinh().doubleValue() : 0.0,
+                            info != null ? info.getGia_sau_giam() : null,
+                            info != null ? info.getNhan_giam() : null);
+                })
                 .collect(Collectors.toList());
 
         SachTheoTheLoaiResponse.ThongTinTheLoai thongTin = new SachTheoTheLoaiResponse.ThongTinTheLoai(

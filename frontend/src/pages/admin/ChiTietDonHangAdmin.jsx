@@ -10,15 +10,13 @@ export default function ChiTietDonHangAdmin() {
 
   const [don_hang, dat_don_hang] = useState(null);
   const [dang_tai, dat_dang_tai] = useState(true);
-  const [trang_thai_moi, dat_trang_thai_moi] = useState('');
-  const [dang_cap_nhat, dat_dang_cap_nhat] = useState(false);
-
+  const [mo_modal_huy, dat_mo_modal_huy] = useState(false);
+  const [dang_huy, dat_dang_huy] = useState(false);
   useEffect(() => {
     async function tai_chi_tiet() {
       try {
         const phan_hoi = await api.get(`/admin/don_hang/${id_dh}`);
         dat_don_hang(phan_hoi.data.data);
-        dat_trang_thai_moi(phan_hoi.data.data.trang_thai);
       } catch {
         toast.error('Không thể tải chi tiết đơn hàng');
       } finally {
@@ -28,20 +26,21 @@ export default function ChiTietDonHangAdmin() {
     tai_chi_tiet();
   }, [id_dh]);
 
-  async function cap_nhat_trang_thai() {
-    dat_dang_cap_nhat(true);
-    try {
-      await api.put(`/admin/don_hang/${id_dh}/trang_thai`, { trang_thai: trang_thai_moi });
-      toast.success('Cập nhật trạng thái thành công');
-      dat_don_hang(prev => ({ ...prev, trang_thai: trang_thai_moi }));
-    } catch {
-      toast.error('Có lỗi xảy ra. Vui lòng thử lại.');
-    } finally {
-      dat_dang_cap_nhat(false);
-    }
-  }
-
   const formatTien = (tien) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(tien);
+
+  const huy_don_hang = async () => {
+    dat_dang_huy(true);
+    try {
+      await api.put(`/admin/don_hang/${id_dh}/trang_thai`, { trang_thai: 'da_huy' });
+      toast.success('Hủy đơn hàng thành công');
+      dat_don_hang(prev => ({ ...prev, trang_thai: 'da_huy' }));
+      dat_mo_modal_huy(false);
+    } catch {
+      toast.error('Có lỗi xảy ra, vui lòng thử lại');
+    } finally {
+      dat_dang_huy(false);
+    }
+  };
 
   const renderBadge = (trang_thai) => {
     switch (trang_thai) {
@@ -58,9 +57,16 @@ export default function ChiTietDonHangAdmin() {
 
   return (
     <div className="chi-tiet-don-hang">
-      <button className="btn-back" onClick={() => dieu_huong('/quan_tri/don_hang')}>
-        &larr; Quay lại danh sách
-      </button>
+      <div className="header-chi-tiet-admin">
+        <button className="btn-back" onClick={() => dieu_huong('/quan_tri/don_hang')}>
+          &larr; Quay lại danh sách
+        </button>
+        {don_hang.trang_thai === 'da_thanh_toan' && (
+          <button className="btn-huy-admin" onClick={() => dat_mo_modal_huy(true)}>
+            Hủy đơn hàng
+          </button>
+        )}
+      </div>
 
       <div className="grid-info">
         <div className="card-info">
@@ -77,30 +83,6 @@ export default function ChiTietDonHangAdmin() {
           <p><strong>Họ tên:</strong> {don_hang.khach_hang?.ho_ten}</p>
           <p><strong>Email:</strong> {don_hang.khach_hang?.email}</p>
           <p><strong>Số điện thoại:</strong> {don_hang.khach_hang?.so_dien_thoai}</p>
-        </div>
-      </div>
-
-      <div className="card-update-status">
-        <h3>Cập nhật trạng thái</h3>
-        <div className="flex-update">
-          <select 
-            value={trang_thai_moi} 
-            onChange={(e) => dat_trang_thai_moi(e.target.value)}
-            disabled={dang_cap_nhat}
-            className="select-status"
-          >
-            <option value="cho_thanh_toan">Chờ thanh toán</option>
-            <option value="da_thanh_toan">Đã thanh toán</option>
-            <option value="that_bai">Thất bại</option>
-            <option value="da_huy">Đã hủy</option>
-          </select>
-          <button 
-            className="btn btn-primary" 
-            onClick={cap_nhat_trang_thai}
-            disabled={dang_cap_nhat || trang_thai_moi === don_hang.trang_thai}
-          >
-            {dang_cap_nhat ? 'Đang cập nhật...' : 'Cập nhật'}
-          </button>
         </div>
       </div>
 
@@ -131,6 +113,27 @@ export default function ChiTietDonHangAdmin() {
           </tbody>
         </table>
       </div>
+      {mo_modal_huy && (
+        <div className="modal-overlay-admin" onClick={(e) => e.target === e.currentTarget && dat_mo_modal_huy(false)}>
+          <div className="modal-box-admin">
+            <h3 className="modal-tieu-de-admin">Xác nhận hủy đơn hàng</h3>
+            <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.6, margin: '0 0 6px' }}>
+              Bạn có chắc chắn muốn hủy đơn <strong>{don_hang.ma_don_hang}</strong> không?
+            </p>
+            <p style={{ fontSize: 13, color: '#94a3b8', margin: '0 0 20px' }}>
+              Hành động này không thể hoàn tác. Đơn hàng sẽ chuyển sang trạng thái <strong>Đã hủy</strong>.
+            </p>
+            <div className="modal-nut-admin">
+              <button className="btn-modal-dong" onClick={() => dat_mo_modal_huy(false)} disabled={dang_huy}>
+                Không
+              </button>
+              <button className="btn-modal-xac-nhan-huy" onClick={huy_don_hang} disabled={dang_huy}>
+                {dang_huy ? 'Đang xử lý...' : 'Xác nhận hủy'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

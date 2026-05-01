@@ -3,125 +3,213 @@
     height: 100vh;
     width: 100vw;
     overflow: hidden;
-    background-color: #f4f6f9;
+    background-color: #f0f2f5;
 }
 
-/* --- ĐỔI NỀN SIDEBAR THÀNH XANH ĐEN --- */
+/* ── SIDEBAR ── */
 .admin-sidebar {
-    width: 260px;
-    background-color: #2A3F54; /* Màu Xanh Đen Slate */
-    color: #ffffff;
+    width: 248px;
+    background: linear-gradient(180deg, #1a2942 0%, #243650 100%);
+    color: #fff;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    transition: width 0.3s ease;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.15);
 }
 
-.sidebar-header {
-    height: 60px;
+/* Brand / Logo */
+.sidebar-brand {
     display: flex;
     align-items: center;
-    padding: 0 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 10px;
+    padding: 20px 20px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-.menu-icon { font-size: 28px; cursor: pointer; }
+.brand-icon { font-size: 24px; }
 
+.brand-name {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: #fff;
+}
+
+.brand-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(26,187,156,0.25);
+    color: #1ABB9C;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid rgba(26,187,156,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Nav */
 .sidebar-nav {
     flex: 1;
     overflow-y: auto;
-    padding: 15px 0;
+    padding: 12px 0 8px;
 }
 
-.sidebar-nav::-webkit-scrollbar { width: 4px; }
-.sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+.sidebar-nav::-webkit-scrollbar { width: 3px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
 
+/* Section labels */
+.nav-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.35);
+    padding: 14px 20px 6px;
+}
+
+/* Nav items */
 .nav-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 20px;
-    color: #e0e0e0;
+    gap: 11px;
+    padding: 10px 20px;
+    color: rgba(255,255,255,0.72);
     text-decoration: none;
-    font-size: 15px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
-    border-right: 4px solid transparent; /* Chuẩn bị viền cho hiệu ứng hover */
+    transition: all 0.18s ease;
+    margin: 1px 10px;
+    border-radius: 8px;
 }
 
-/* --- THÊM HIỆU ỨNG VẠCH XANH NGỌC KHI HOVER / ACTIVE --- */
-.nav-item:hover, .nav-item.active {
-    background-color: #213345; 
-    color: #ffffff;
-    border-right: 4px solid #1ABB9C; 
+.nav-item:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
 }
 
-.group-title { 
-    justify-content: space-between; 
-    border-right: none !important; 
+.nav-item.active {
+    background: rgba(26,187,156,0.18);
+    color: #1ABB9C;
 }
-.group-title .arrow { transition: transform 0.3s; }
-.group-title .arrow.open { transform: rotate(90deg); }
 
-/* --- ĐỔI NỀN MENU CON --- */
+.nav-icon { font-size: 16px; flex-shrink: 0; }
+
+/* Group title */
+.group-title {
+    justify-content: space-between;
+}
+
+.nav-item-left {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.arrow-icon {
+    font-size: 14px;
+    transition: transform 0.25s ease;
+    opacity: 0.6;
+}
+
+.arrow-icon.open { transform: rotate(180deg); }
+
+/* Sub menu */
 .sub-menu {
-    background-color: #213345; /* Xanh đen nhạt hơn nền chính */
-    padding: 5px 0;
+    margin: 2px 10px 4px 10px;
+    border-left: 2px solid rgba(26,187,156,0.3);
+    margin-left: 29px;
+    padding: 2px 0;
 }
 
 .sub-item {
     display: block;
-    padding: 10px 20px 10px 45px;
-    color: #cccccc;
+    padding: 8px 12px 8px 16px;
+    color: rgba(255,255,255,0.55);
     text-decoration: none;
-    font-size: 14px;
-    transition: color 0.2s;
+    font-size: 13.5px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    margin: 1px 0;
 }
 
-/* --- CHỮ MENU CON ĐỔI MÀU XANH NGỌC --- */
-.sub-item:hover, .sub-item.active { 
-    color: #1ABB9C; 
-    font-weight: bold; 
+.sub-item:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.07);
 }
 
-/* --- ĐỔI NỀN FOOTER CHỨA USER --- */
+.sub-item.active {
+    color: #1ABB9C;
+    font-weight: 600;
+    background: rgba(26,187,156,0.1);
+}
+
+/* Footer */
 .sidebar-footer {
-    padding: 15px 20px;
+    padding: 14px 16px;
     display: flex;
     align-items: center;
-    gap: 15px;
-    background-color: #172D44; /* Màu xanh đen đậm nhất ở đáy */
+    gap: 10px;
+    background: rgba(0,0,0,0.2);
+    border-top: 1px solid rgba(255,255,255,0.07);
 }
 
 .user-avatar {
-    width: 35px; height: 35px;
-    background: #1ABB9C;
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, #1ABB9C, #16a085);
     border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 14px;
     flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-role {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
 }
 
 .logout-btn {
     margin-left: auto;
     background: none;
     border: none;
-    color: #cccccc;
+    color: rgba(255,255,255,0.45);
     cursor: pointer;
-    font-size: 18px;
+    font-size: 17px;
     display: flex;
     align-items: center;
     padding: 6px;
-    border-radius: 6px;
+    border-radius: 7px;
     transition: color 0.2s, background 0.2s;
+    flex-shrink: 0;
 }
 
 .logout-btn:hover {
     color: #ff6b6b;
-    background: rgba(255, 107, 107, 0.1);
+    background: rgba(255, 107, 107, 0.12);
 }
 
+/* Main content area */
 .admin-main {
     flex: 1;
     display: flex;
@@ -130,7 +218,7 @@
 }
 
 .admin-content {
-    padding: 20px;
+    padding: 24px;
     flex: 1;
 }
 /* MODAL XÁC NHẬN ĐĂNG XUẤT */

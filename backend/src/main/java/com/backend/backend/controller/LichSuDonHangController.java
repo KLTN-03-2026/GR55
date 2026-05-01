@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/lich_su_don_hang")
 @RequiredArgsConstructor
@@ -54,6 +56,17 @@ public class LichSuDonHangController {
         Long maNd = layMaNd(request);
         TaoDonHangResponse ketQua = lichSuDonHangService.taiThanhToan(maNd, id_dh);
         return ketQua.isSuccess()
+                ? ResponseEntity.ok(ketQua)
+                : ResponseEntity.badRequest().body(ketQua);
+    }
+
+    @PutMapping("/{id_dh}/huy")
+    public ResponseEntity<Map<String, Object>> huyDonHang(
+            HttpServletRequest request,
+            @PathVariable Long id_dh) {
+        Long maNd = layMaNd(request);
+        Map<String, Object> ketQua = lichSuDonHangService.huyDonHang(maNd, id_dh);
+        return (Boolean) ketQua.get("success")
                 ? ResponseEntity.ok(ketQua)
                 : ResponseEntity.badRequest().body(ketQua);
     }

@@ -95,6 +95,8 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
     List<Object[]> layDonHangTheoDenNgay(@Param("tuNgay") LocalDateTime tuNgay,
                                           @Param("denNgay") LocalDateTime denNgay);
 
+    List<DonHang> findTop10ByMaNdOrderByNgayTaoDesc(Long maNd);
+
     @Modifying
     @Query("UPDATE DonHang d SET d.trangThai = 'that_bai' " +
            "WHERE d.trangThai = 'cho_thanh_toan' AND d.ngayTao < :deadline")

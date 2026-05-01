@@ -35,4 +35,9 @@ public interface ChuongTrinhGiamGiaSachRepository extends JpaRepository<ChuongTr
 
     @Query("SELECT COUNT(c) FROM ChuongTrinhGiamGiaSach c WHERE c.maCt = :maCt")
     long countByMaCt(@Param("maCt") Long maCt);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM ChuongTrinhGiamGiaSach c WHERE c.maCt = :maCt AND c.maSach = :maSach")
+    void deleteByMaCtAndMaSach(@Param("maCt") Long maCt, @Param("maSach") Long maSach);
 }
