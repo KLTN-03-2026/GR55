@@ -1,0 +1,84 @@
+.trang_ket_qua {
+    max-width: 480px;
+    margin: 80px auto;
+    padding: 48px 32px;
+    text-align: center;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+}
+
+/* Icon */
+.icon_ket_qua {
+    font-size: 64px;
+    margin-bottom: 16px;
+    line-height: 1;
+}
+
+.icon_ket_qua.thanh_cong {
+    color: #27ae60;
+}
+
+.icon_ket_qua.that_bai {
+    color: #e74c3c;
+}
+
+/* Tiêu đề */
+.tieu_de_ket_qua {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+}
+
+/* Mô tả */
+.mo_ta_ket_qua {
+    color: #555;
+    font-size: 1rem;
+    margin-bottom: 32px;
+    line-height: 1.6;
+}
+
+/* Nút chính */
+.nut_chinh_ket_qua {
+    display: block;
+    padding: 14px 0;
+    background: #4f6ef7;
+    color: #fff;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    margin-bottom: 12px;
+    transition: background 0.2s;
+}
+
+.nut_chinh_ket_qua:hover {
+    background: #3a56d4;
+}
+
+/* Nút phụ */
+.nut_phu_ket_qua {
+    display: block;
+    padding: 12px 0;
+    color: #4f6ef7;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.nut_phu_ket_qua:hover {
+    opacity: 0.75;
+}
+
+@media (max-width: 540px) {
+    .trang_ket_qua {
+        margin: 32px 16px;
+        padding: 36px 20px;
+    }
+
+    .tieu_de_ket_qua {
+        font-size: 1.4rem;
+    }
+}
