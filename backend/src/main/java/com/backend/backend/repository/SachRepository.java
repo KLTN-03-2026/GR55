@@ -150,4 +150,10 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
                                            @Param("giaMin") BigDecimal giaMin,
                                            @Param("giaMax") BigDecimal giaMax,
                                            Pageable pageable);
+
+    @Query("SELECT s FROM Sach s WHERE s.daXoa = false " +
+           "AND (:tuKhoa IS NULL OR LOWER(s.tenSach) LIKE LOWER(CONCAT('%', :tuKhoa, '%')) " +
+           "     OR LOWER(s.tacGia) LIKE LOWER(CONCAT('%', :tuKhoa, '%'))) " +
+           "ORDER BY s.tenSach ASC")
+    Page<Sach> timKiemSachChoGoiHoiVien(@Param("tuKhoa") String tuKhoa, Pageable pageable);
 }

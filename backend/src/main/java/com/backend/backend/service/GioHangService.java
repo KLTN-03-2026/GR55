@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +22,7 @@ public class GioHangService {
 
     private final GioHangRepository gioHangRepository;
     private final SachRepository sachRepository;
+    private final GiamGiaPublicService giamGiaPublicService;
 
     @Transactional
     public GioHangResponse themVaoGio(Long maNd, ThemVaoGioRequest yeuCau) {
@@ -74,6 +76,12 @@ public class GioHangService {
                 .filter(s -> !Boolean.TRUE.equals(s.getDaXoa()))
                 .collect(Collectors.toMap(Sach::getMaSach, s -> s));
 
+        // Tính giá giảm cho từng sách
+        Set<Long> sachIdSet = sachMap.keySet();
+        Map<Long, BigDecimal> giaGocMap = sachMap.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getGia()));
+        Map<Long, BigDecimal> giaSauGiamMap = giamGiaPublicService.layGiaSauGiamBatch(sachIdSet, giaGocMap);
+
         List<GioHangResponse.GioHangItem> danhSachItem = danhSachGio.stream()
                 .map(item -> {
                     Sach sach = sachMap.get(item.getMaSach());
@@ -83,14 +91,15 @@ public class GioHangService {
                             sach.getTenSach(),
                             sach.getTacGia(),
                             sach.getAnhBiaUrl(),
-                            sach.getGia()
+                            sach.getGia(),
+                            giaSauGiamMap.getOrDefault(sach.getMaSach(), null)
                     );
                 })
                 .filter(item -> item != null)
                 .collect(Collectors.toList());
 
         BigDecimal tongTien = danhSachItem.stream()
-                .map(GioHangResponse.GioHangItem::getDon_gia)
+                .map(item -> item.getGia_giam() != null ? item.getGia_giam() : item.getDon_gia())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return new GioHangResponse(true, "Lấy giỏ hàng thành công",

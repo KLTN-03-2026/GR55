@@ -2,11 +2,13 @@ package com.backend.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class SachGiamGiaHomepageResponse {
     private boolean thanh_cong;
@@ -14,6 +16,7 @@ public class SachGiamGiaHomepageResponse {
     private List<SachGiamGiaItem> danh_sach_sach;
 
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class ChuongTrinhItem {
         private Long ma_ct;
@@ -26,6 +29,7 @@ public class SachGiamGiaHomepageResponse {
     }
 
     @Data
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class SachGiamGiaItem {
         private Long ma_sach;

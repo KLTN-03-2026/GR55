@@ -213,6 +213,23 @@
   margin: 0;
 }
 
+.xn_gia_khu_vuc {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.xn_gia_goc {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+.xn_gia_giam {
+  font-size: 0.92rem;
+}
+
 /* ── Form thông tin ──────────────────────────────────────────── */
 
 .xn_form {

@@ -200,6 +200,19 @@
   margin-top: 4px;
 }
 
+.gia_khu_vuc {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.gia_goc_item {
+  font-size: 0.82rem;
+  color: var(--gh-muted);
+  text-decoration: line-through;
+}
+
 .gia_item {
   font-size: 1rem;
   font-weight: 700;

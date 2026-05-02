@@ -1,10 +1,22 @@
+import { useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import './KetQuaThanhToan.css';
 
 function KetQuaThanhToan() {
   const [searchParams] = useSearchParams();
   const thanh_cong = searchParams.get('thanh_cong') === 'true';
   const id_dh = searchParams.get('id_dh');
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (thanh_cong) {
+      queryClient.invalidateQueries({ queryKey: ['chi_tiet_sach'] });
+      queryClient.invalidateQueries({ queryKey: ['gio_hang'] });
+      queryClient.invalidateQueries({ queryKey: ['so_luong_gio_hang'] });
+      queryClient.invalidateQueries({ queryKey: ['thu_vien'] });
+    }
+  }, [thanh_cong, queryClient]);
 
   return (
     <div className="trang_ket_qua">

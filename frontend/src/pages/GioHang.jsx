@@ -125,7 +125,14 @@ function GioHang() {
                   {item.ten_sach}
                 </Link>
                 <p className="tac_gia_item">{item.tac_gia}</p>
-                <p className="gia_item">{dinh_dang_gia(item.don_gia)}</p>
+                {item.gia_giam ? (
+                  <div className="gia_khu_vuc">
+                    <span className="gia_goc_item">{dinh_dang_gia(item.don_gia)}</span>
+                    <span className="gia_item">{dinh_dang_gia(item.gia_giam)}</span>
+                  </div>
+                ) : (
+                  <p className="gia_item">{dinh_dang_gia(item.don_gia)}</p>
+                )}
               </div>
 
               <button

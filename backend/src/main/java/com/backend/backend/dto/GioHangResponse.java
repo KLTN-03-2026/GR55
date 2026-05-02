@@ -33,5 +33,6 @@ public class GioHangResponse {
         private String tac_gia;
         private String anh_bia_url;
         private BigDecimal don_gia;
+        private BigDecimal gia_giam; // null nếu không có giảm giá
     }
 }

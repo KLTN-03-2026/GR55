@@ -20,8 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -34,6 +36,7 @@ public class MuaSachService {
     private final SachRepository sachRepository;
     private final VnpayService vnpayService;
     private final GiaoDichThanhToanRepository giaoDichThanhToanRepository;
+    private final GiamGiaPublicService giamGiaPublicService;
 
     @Transactional
     public TaoDonHangResponse taoDonHang(Long maNd, TaoDonHangRequest request) {
@@ -58,10 +61,18 @@ public class MuaSachService {
             return new TaoDonHangResponse(false, "Một số sách trong giỏ hàng không tồn tại", null);
         }
 
-        // Tính tổng tiền
+        // Tính giá giảm cho từng sách
+        Set<Long> sachIdSet = new HashSet<>(sachMap.keySet());
+        Map<Long, BigDecimal> giaGocMap = new HashMap<>();
+        sachMap.forEach((id, sach) -> giaGocMap.put(id, sach.getGia()));
+        Map<Long, BigDecimal> giaSauGiamMap = giamGiaPublicService.layGiaSauGiamBatch(sachIdSet, giaGocMap);
+
+        // Tính tổng tiền (áp dụng giá giảm nếu có)
         BigDecimal tongTien = BigDecimal.ZERO;
         for (GioHang item : gioHangList) {
-            tongTien = tongTien.add(sachMap.get(item.getMaSach()).getGia());
+            Sach sach = sachMap.get(item.getMaSach());
+            BigDecimal donGia = giaSauGiamMap.getOrDefault(sach.getMaSach(), sach.getGia());
+            tongTien = tongTien.add(donGia);
         }
 
         String maDonHang = "DH" + System.currentTimeMillis()
@@ -78,16 +89,17 @@ public class MuaSachService {
         donHang.setTrangThai("cho_thanh_toan");
         DonHang saved = donHangRepository.save(donHang);
 
-        // Lưu snapshot từng sách vào chi tiết đơn hàng
+        // Lưu snapshot từng sách vào chi tiết đơn hàng (dùng giá đã giảm nếu có)
         for (GioHang item : gioHangList) {
             Sach sach = sachMap.get(item.getMaSach());
+            BigDecimal donGia = giaSauGiamMap.getOrDefault(sach.getMaSach(), sach.getGia());
             ChiTietDonHang chiTiet = new ChiTietDonHang();
             chiTiet.setIdDh(saved.getIdDh());
             chiTiet.setMaSach(sach.getMaSach());
             chiTiet.setTenSach(sach.getTenSach());
             chiTiet.setTacGia(sach.getTacGia());
             chiTiet.setAnhBiaUrl(sach.getAnhBiaUrl());
-            chiTiet.setDonGia(sach.getGia());
+            chiTiet.setDonGia(donGia);
             chiTietDonHangRepository.save(chiTiet);
         }
 
@@ -100,7 +112,8 @@ public class MuaSachService {
 
     @Caching(evict = {
         @CacheEvict(value = "lich_su_don_hang", allEntries = true),
-        @CacheEvict(value = "chi_tiet_don_hang", allEntries = true)
+        @CacheEvict(value = "chi_tiet_don_hang", allEntries = true),
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true)
     })
     @Transactional
     public void xuLyThanhToanThanhCong(Long idDh, String maGiaoDichNgoai) {

@@ -165,7 +165,7 @@ export default function QuenMatKhau() {
     <div className="trang_quen_mat_khau">
       <div className="hop_quen_mat_khau">
         <div className="logo_khu_vuc">
-          <div className="logo_ten">Book<span>Nest</span></div>
+          <div className="logo_ten">Book Nest</div>
         </div>
 
         {/* Thanh tiến trình */}

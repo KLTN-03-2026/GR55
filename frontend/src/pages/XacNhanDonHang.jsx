@@ -96,7 +96,14 @@ function XacNhanDonHang() {
                   <div className="xn_thong_tin_sach">
                     <p className="xn_ten_sach">{item.ten_sach}</p>
                     <p className="xn_tac_gia">{item.tac_gia}</p>
-                    <p className="xn_gia">{dinh_dang_gia(item.don_gia)}</p>
+                    {item.gia_giam ? (
+                      <div className="xn_gia_khu_vuc">
+                        <span className="xn_gia_goc">{dinh_dang_gia(item.don_gia)}</span>
+                        <span className="xn_gia xn_gia_giam">{dinh_dang_gia(item.gia_giam)}</span>
+                      </div>
+                    ) : (
+                      <p className="xn_gia">{dinh_dang_gia(item.don_gia)}</p>
+                    )}
                   </div>
                 </div>
               ))}

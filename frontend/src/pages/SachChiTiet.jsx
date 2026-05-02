@@ -37,7 +37,7 @@ export default function SachChiTiet() {
       });
       return phan_hoi.data.du_lieu;
     },
-    staleTime: 10 * 60 * 1000,
+    staleTime: 0,
     enabled: !!ma_sach,
   });
 
@@ -61,10 +61,23 @@ export default function SachChiTiet() {
         queryClient.invalidateQueries({ queryKey: ["so_luong_gio_hang"] });
         queryClient.invalidateQueries({ queryKey: ["gio_hang"] });
       } else {
-        toast.info(phan_hoi.data.thong_bao); // Hiển thị "Sách đã có trong giỏ hàng"
+        toast.info(phan_hoi.data.thong_bao);
       }
     },
     onError: () => toast.error("Có lỗi xảy ra. Vui lòng thử lại."),
+  });
+
+  const { mutate: mua_ngay, isPending: dang_mua } = useMutation({
+    mutationFn: () => api.post("/gio_hang", { ma_sach: chi_tiet.ma_sach }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["so_luong_gio_hang"] });
+      queryClient.invalidateQueries({ queryKey: ["gio_hang"] });
+      dieu_huong("/thanh_toan/xac_nhan");
+    },
+    onError: () => {
+      // Sách đã trong giỏ hoặc lỗi khác — vẫn chuyển đến thanh toán
+      dieu_huong("/thanh_toan/xac_nhan");
+    },
   });
 
   async function xu_ly_yeu_thich() {
@@ -285,15 +298,16 @@ export default function SachChiTiet() {
               <div className="nhom_mua_gio">
                 <button
                   className="nut_chinh nut_mua"
+                  disabled={dang_mua}
                   onClick={() => {
                     if (!da_dang_nhap) {
                       dieu_huong("/dang_nhap");
                       return;
                     }
-                    // Logic mở modal thanh toán (nếu có) sẽ nằm ở đây
+                    mua_ngay();
                   }}
                 >
-                  Mua ngay — {dinh_dang_gia(chi_tiet.gia_giam ?? chi_tiet.gia)}
+                  {dang_mua ? "Đang xử lý..." : `Mua ngay — ${dinh_dang_gia(chi_tiet.gia_giam ?? chi_tiet.gia)}`}
                 </button>
 
                 <button

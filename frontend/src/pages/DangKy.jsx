@@ -122,12 +122,10 @@ export default function DangKy() {
     <div className="trang_dang_ky">
       <div className="hop_dang_ky">
         <div className="logo_khu_vuc">
-          <div className="logo_ten">
-            Book<span>Nest</span>
-          </div>
+          <div className="logo_ten">Book Nest</div>
         </div>
 
-        <h1 className="tieu_de_dang_ky">Tạo tài khoản</h1>
+        <h1 className="tieu_de_dang_ky">Đăng ký tài khoản</h1>
 
         {loi_server && (
           <div className="thong_bao_server_loi">{loi_server}</div>
@@ -183,6 +181,7 @@ export default function DangKy() {
           </button>
         </form>
 
+        <hr className="phan_cach" />
         <div className="khu_vuc_lien_ket">
           <Link to="/dang_nhap" className="lien_ket">
             Đã có tài khoản? Đăng nhập

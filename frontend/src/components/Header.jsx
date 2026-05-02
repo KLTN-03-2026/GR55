@@ -223,8 +223,7 @@ export default function Header() {
                 </>
               ) : (
                 <div className="auth-buttons">
-                  <Link to="/dang_nhap" className="btn-login">Đăng nhập</Link>
-                  <Link to="/dang_ky" className="btn-signup">Đăng ký</Link>
+                  <Link to="/dang_nhap" className="btn-signup">Đăng nhập</Link>
                 </div>
               )}
             </div>

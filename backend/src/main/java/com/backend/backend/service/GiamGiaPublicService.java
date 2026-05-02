@@ -117,6 +117,32 @@ public class GiamGiaPublicService {
                 sach.getGia(), giaSauGiam, nhanGiam, danhGia, sach.getSoLuongDaBan());
     }
 
+    public Map<Long, BigDecimal> layGiaSauGiamBatch(Set<Long> sachIds, Map<Long, BigDecimal> giaGocMap) {
+        if (sachIds == null || sachIds.isEmpty()) return Collections.emptyMap();
+        LocalDateTime now = LocalDateTime.now();
+        List<ChuongTrinhGiamGia> programs = chuongTrinhGiamGiaRepository.findDangHoatDong(now);
+        if (programs.isEmpty()) return Collections.emptyMap();
+
+        Map<Long, BigDecimal> giaSauGiamMap = new HashMap<>();
+        Map<Long, Double> bestTienGiamMap = new HashMap<>();
+
+        for (ChuongTrinhGiamGia ct : programs) {
+            List<Long> ctSachIds = chuongTrinhGiamGiaSachRepository.findSachIdsByMaCt(ct.getMaCt());
+            for (Long maSach : ctSachIds) {
+                if (!sachIds.contains(maSach)) continue;
+                BigDecimal giaGoc = giaGocMap.get(maSach);
+                if (giaGoc == null || giaGoc.compareTo(BigDecimal.ZERO) == 0) continue;
+                BigDecimal giaSauGiam = tinhGiaSauGiam(giaGoc, ct);
+                double tienGiam = giaGoc.subtract(giaSauGiam).doubleValue();
+                if (!bestTienGiamMap.containsKey(maSach) || tienGiam > bestTienGiamMap.get(maSach)) {
+                    bestTienGiamMap.put(maSach, tienGiam);
+                    giaSauGiamMap.put(maSach, giaSauGiam);
+                }
+            }
+        }
+        return giaSauGiamMap;
+    }
+
     private BigDecimal tinhGiaSauGiam(BigDecimal gia, ChuongTrinhGiamGia ct) {
         if ("phan_tram".equals(ct.getLoaiGiam())) {
             return gia.multiply(BigDecimal.valueOf(1 - ct.getGiaTriGiam().doubleValue() / 100))
