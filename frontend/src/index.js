@@ -49,6 +49,7 @@ import ChiTietDonHangAdmin from "./pages/admin/ChiTietDonHangAdmin";
 import ThongKe from "./pages/admin/ThongKe";
 import GoiHoiVien from "./pages/GoiHoiVien";
 import KetQuaHoiVien from "./pages/KetQuaHoiVien";
+import QuanLyGoiHoiVien from "./pages/admin/QuanLyGoiHoiVien";
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -146,6 +147,7 @@ root.render(
             <Route path="/quan_tri/don_hang/:id_dh" element={<AdminLayout><ChiTietDonHangAdmin /></AdminLayout>} />
             <Route path="/quan_tri/thong_ke" element={<AdminLayout><ThongKe /></AdminLayout>} />
             <Route path="/hoi_vien" element={<AdminLayout><GoiHoiVien /></AdminLayout>} />
+            <Route path="/quan_tri/goi_hoi_vien" element={<AdminLayout><QuanLyGoiHoiVien /></AdminLayout>} />
           </Routes>
 
           <ToastContainer

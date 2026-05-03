@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
-import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api';
+import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import './GoiHoiVien.css';
 
 const QUYEN_LOI_CO_DINH = [

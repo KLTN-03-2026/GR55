@@ -76,6 +76,9 @@ export default function AdminSidebar() {
                                 <NavLink to="/quan_tri/giam_gia" className={({ isActive }) => isActive ? "sub-item active" : "sub-item"}>
                                     Giảm giá
                                 </NavLink>
+                                <NavLink to="/quan_tri/goi_hoi_vien" className={({ isActive }) => isActive ? "sub-item active" : "sub-item"}>
+                                    Gói hội viên
+                                </NavLink>
                             </div>
                         )}
                     </div>
