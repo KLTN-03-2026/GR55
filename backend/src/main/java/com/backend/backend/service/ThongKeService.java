@@ -22,6 +22,7 @@ public class ThongKeService {
     private final ChiTietDonHangRepository chiTietDonHangRepository;
     private final DanhMucSachRepository danhMucSachRepository;
     private final LichSuHoiVienRepository lichSuHoiVienRepository;
+    private final DanhGiaRepository danhGiaRepository;
 
     @Cacheable(value = "thong_ke_tong_quan")
     public ThongKeTongQuanResponse thongKeTongQuan() {
@@ -29,7 +30,8 @@ public class ThongKeService {
         long tongSach = sachRepository.demTongSach();
         long tongDonHang = donHangRepository.demDonHangThanhCong();
         BigDecimal bd = donHangRepository.tongDoanhThu();
-        double tongDoanhThu = bd != null ? bd.doubleValue() : 0.0;
+        double tongDoanhThu = (bd != null ? bd.doubleValue() : 0.0)
+                            + lichSuHoiVienRepository.tongDoanhThuHoiVien();
         long tongHoiVien = lichSuHoiVienRepository.demHoiVienHienTai(LocalDateTime.now());
 
         return new ThongKeTongQuanResponse(tongNguoiDung, tongSach, tongDonHang, tongDoanhThu, tongHoiVien);
@@ -100,6 +102,45 @@ public class ThongKeService {
         }
 
         return new NguoiDungMoiResponse(data);
+    }
+
+    public ThongKeDonHangResponse thongKeDonHang(String tuNgay, String denNgay) {
+        LocalDateTime startDate = LocalDateTime.parse(tuNgay + "T00:00:00");
+        LocalDateTime endDate = LocalDateTime.parse(denNgay + "T23:59:59");
+
+        List<Object[]> results = donHangRepository.thongKeDonHangTheoTrangThai(startDate, endDate);
+
+        long daThanhToan = 0, choThanhToan = 0, thatBai = 0;
+        double doanhThu = 0;
+
+        for (Object[] row : results) {
+            String trangThai = (String) row[0];
+            long soLuong = ((Number) row[1]).longValue();
+            double tongTien = ((Number) row[2]).doubleValue();
+            switch (trangThai) {
+                case "da_thanh_toan" -> { daThanhToan = soLuong; doanhThu = tongTien; }
+                case "cho_thanh_toan" -> choThanhToan = soLuong;
+                case "that_bai" -> thatBai = soLuong;
+            }
+        }
+
+        long tongDon = daThanhToan + choThanhToan + thatBai;
+        double tyLe = tongDon > 0 ? (daThanhToan * 100.0 / tongDon) : 0;
+
+        List<Object[]> danhSachRaw = donHangRepository.layDonHangTheoDenNgay(startDate, endDate);
+        List<ThongKeDonHangResponse.DonHangItem> danhSach = new ArrayList<>();
+        for (Object[] row : danhSachRaw) {
+            danhSach.add(new ThongKeDonHangResponse.DonHangItem(
+                    row[0] != null ? row[0].toString() : "",
+                    row[1] != null ? row[1].toString() : "",
+                    row[2] != null ? row[2].toString() : "",
+                    row[3] != null ? row[3].toString().replace(" ", "T").replaceAll("\\.0$", "") : "",
+                    row[4] != null ? ((Number) row[4]).doubleValue() : 0,
+                    row[5] != null ? row[5].toString() : ""
+            ));
+        }
+
+        return new ThongKeDonHangResponse(tongDon, daThanhToan, choThanhToan, thatBai, doanhThu, tyLe, danhSach);
     }
 
     public byte[] xuatCsvDoanhThu(String tuNgay, String denNgay, String loai) {
@@ -182,5 +223,88 @@ public class ThongKeService {
         }
 
         return new ThongKeSachTheoTheLoaiResponse(data);
+    }
+
+    public ThongKeHoiVienResponse thongKeHoiVien() {
+        long hoiVienHoatDong = lichSuHoiVienRepository.demHoiVienHienTai(LocalDateTime.now());
+        long tongNguoiDung = nguoiDungRepository.demTongNguoiDung();
+        double tyLe = tongNguoiDung > 0 ? hoiVienHoatDong * 100.0 / tongNguoiDung : 0;
+        double tongDoanhThu = lichSuHoiVienRepository.tongDoanhThuHoiVien();
+
+        List<Object[]> goiRaw = lichSuHoiVienRepository.thongKeTheoGoi();
+        List<ThongKeHoiVienResponse.GoiThongKe> theoGoi = new ArrayList<>();
+        for (Object[] row : goiRaw) {
+            theoGoi.add(new ThongKeHoiVienResponse.GoiThongKe(
+                    str(row[0]),
+                    row[1] != null ? ((Number) row[1]).doubleValue() : 0,
+                    row[2] != null ? ((Number) row[2]).intValue() : 0,
+                    row[3] != null ? ((Number) row[3]).longValue() : 0,
+                    row[4] != null ? ((Number) row[4]).longValue() : 0,
+                    row[5] != null ? ((Number) row[5]).doubleValue() : 0
+            ));
+        }
+        return new ThongKeHoiVienResponse(hoiVienHoatDong, tongNguoiDung, tyLe, tongDoanhThu, theoGoi);
+    }
+
+    public ThongKeDanhGiaResponse thongKeDanhGia() {
+        List<Object[]> tongQuanList = danhGiaRepository.tongQuanDanhGia();
+        Object[] tongQuan = tongQuanList.isEmpty() ? new Object[]{0L, 0.0} : tongQuanList.get(0);
+        long tongDanhGia = tongQuan[0] != null ? ((Number) tongQuan[0]).longValue() : 0;
+        double diemTb = tongQuan[1] != null ? ((Number) tongQuan[1]).doubleValue() : 0;
+        Double tyLeRaw = danhGiaRepository.tyLeNguoiMuaDanhGia();
+        double tyLe = tyLeRaw != null ? tyLeRaw : 0;
+
+        List<Object[]> phanBoRaw = danhGiaRepository.thongKePhanBoSaoToanHeThong();
+        List<ThongKeDanhGiaResponse.PhanBoSao> phanBo = new ArrayList<>();
+        for (Object[] row : phanBoRaw) {
+            long soLuong = row[1] != null ? ((Number) row[1]).longValue() : 0;
+            double tlSao = tongDanhGia > 0 ? soLuong * 100.0 / tongDanhGia : 0;
+            phanBo.add(new ThongKeDanhGiaResponse.PhanBoSao(
+                    row[0] != null ? ((Number) row[0]).intValue() : 0,
+                    soLuong,
+                    Math.round(tlSao * 10.0) / 10.0
+            ));
+        }
+
+        List<ThongKeDanhGiaResponse.SachDanhGia> cao = mapSachDanhGia(danhGiaRepository.topSachDanhGiaCao());
+        List<ThongKeDanhGiaResponse.SachDanhGia> thap = mapSachDanhGia(danhGiaRepository.topSachDanhGiaThap());
+
+        return new ThongKeDanhGiaResponse(tongDanhGia, Math.round(diemTb * 100.0) / 100.0, tyLe, phanBo, cao, thap);
+    }
+
+    private List<ThongKeDanhGiaResponse.SachDanhGia> mapSachDanhGia(List<Object[]> rows) {
+        List<ThongKeDanhGiaResponse.SachDanhGia> list = new ArrayList<>();
+        for (Object[] row : rows) {
+            list.add(new ThongKeDanhGiaResponse.SachDanhGia(
+                    row[0] != null ? ((Number) row[0]).longValue() : 0,
+                    str(row[1]), str(row[2]),
+                    row[3] != null ? ((Number) row[3]).doubleValue() : 0,
+                    row[4] != null ? ((Number) row[4]).longValue() : 0
+            ));
+        }
+        return list;
+    }
+
+    public ThongKeHieuSuatSachResponse thongKeHieuSuatSach() {
+        return new ThongKeHieuSuatSachResponse(
+                mapHieuSuat(sachRepository.topSachTheoLuotXem()),
+                mapHieuSuat(sachRepository.sachNhieuViewItBan())
+        );
+    }
+
+    private List<ThongKeHieuSuatSachResponse.HieuSuatSach> mapHieuSuat(List<Object[]> rows) {
+        List<ThongKeHieuSuatSachResponse.HieuSuatSach> list = new ArrayList<>();
+        for (Object[] row : rows) {
+            list.add(new ThongKeHieuSuatSachResponse.HieuSuatSach(
+                    row[0] != null ? ((Number) row[0]).longValue() : 0,
+                    str(row[1]), str(row[2]),
+                    row[3] != null ? ((Number) row[3]).doubleValue() : 0,
+                    row[4] != null ? ((Number) row[4]).intValue() : 0,
+                    row[5] != null ? ((Number) row[5]).intValue() : 0,
+                    row[6] != null ? ((Number) row[6]).doubleValue() : 0,
+                    row[7] != null ? ((Number) row[7]).doubleValue() : 0
+            ));
+        }
+        return list;
     }
 }

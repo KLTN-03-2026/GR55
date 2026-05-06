@@ -14,6 +14,7 @@ public class ChatResponse {
     private boolean thanhCong;
     private String phanHoi;
     private List<SachData> sachGoiY;
+    private String tuKhoaTimKiem;
 
     public ChatResponse(boolean thanhCong, String phanHoi) {
         this.thanhCong = thanhCong;

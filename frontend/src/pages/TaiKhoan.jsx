@@ -32,7 +32,7 @@ function FormThongTin({ thong_tin, dang_tai, dang_luu_tt, loi_server_tt, loi_tt,
             placeholder="Nhập họ và tên đầy đủ" maxLength={50}
           />
         )}
-        <span className="thong_bao_loi">{loi_tt.ho_ten}</span>
+        {loi_tt.ho_ten && <span className="loi_o_nhap">{loi_tt.ho_ten}</span>}
       </div>
       <div className="nhom_truong">
         <label className="nhan_truong">Số điện thoại <span className="dau_bat_buoc">*</span></label>
@@ -45,7 +45,7 @@ function FormThongTin({ thong_tin, dang_tai, dang_luu_tt, loi_server_tt, loi_tt,
             placeholder="0xxxxxxxxx" maxLength={10}
           />
         )}
-        <span className="thong_bao_loi">{loi_tt.so_dien_thoai}</span>
+        {loi_tt.so_dien_thoai && <span className="loi_o_nhap">{loi_tt.so_dien_thoai}</span>}
       </div>
       <button type="submit" className="nut_luu_thong_tin" disabled={dang_luu_tt || dang_tai}>
         {dang_luu_tt ? "Đang lưu..." : "Cập nhật thông tin"}
@@ -99,7 +99,7 @@ function FormMatKhau({ dang_luu_mk, loi_server_mk, loi_mk, gia_tri_mk, dat_gia_t
               {hien_mat_khau[truong.key] ? <FiEyeOff /> : <FiEye />}
             </button>
           </div>
-          <span className="thong_bao_loi">{loi_mk[truong.ten]}</span>
+          {loi_mk[truong.ten] && <span className="loi_o_nhap">{loi_mk[truong.ten]}</span>}
         </div>
       ))}
       <button type="submit" className="nut_luu_thong_tin" disabled={dang_luu_mk}>

@@ -40,4 +40,7 @@ public interface ChuongTrinhGiamGiaSachRepository extends JpaRepository<ChuongTr
     @Transactional
     @Query("DELETE FROM ChuongTrinhGiamGiaSach c WHERE c.maCt = :maCt AND c.maSach = :maSach")
     void deleteByMaCtAndMaSach(@Param("maCt") Long maCt, @Param("maSach") Long maSach);
+
+    @Query("SELECT DISTINCT c.maSach FROM ChuongTrinhGiamGiaSach c WHERE c.maSach IN :sachIds")
+    List<Long> findSachIdsTrongBatKyCt(@Param("sachIds") List<Long> sachIds);
 }

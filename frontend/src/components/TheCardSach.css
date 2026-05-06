@@ -45,10 +45,10 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .nhan_gia.mien_phi {
@@ -70,12 +70,30 @@
   position: absolute;
   top: 8px;
   left: 8px;
-  padding: 2px 7px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 700;
   background: #dc2626;
   color: #fff;
+  letter-spacing: 0.3px;
+}
+
+.badge_hoi_vien {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  background: #7c3aed;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+
+.badge_hoi_vien.voi_giam {
+  top: 38px;
 }
 
 .gia_goc_gach_ngang {

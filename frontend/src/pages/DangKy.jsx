@@ -65,8 +65,8 @@ export default function DangKy() {
     const { name, value } = su_kien.target;
     dat_du_lieu(truoc => ({ ...truoc, [name]: value }));
 
-    const thong_bao_loi = kiem_tra_truong(name, value);
-    dat_loi(truoc => ({ ...truoc, [name]: thong_bao_loi }));
+    const loi_o_nhap = kiem_tra_truong(name, value);
+    dat_loi(truoc => ({ ...truoc, [name]: loi_o_nhap }));
 
     if (name === 'mat_khau' && du_lieu.xac_nhan_mat_khau) {
       const loi_xac_nhan = du_lieu.xac_nhan_mat_khau !== value ? 'Xác nhận mật khẩu không khớp' : '';
@@ -168,7 +168,7 @@ export default function DangKy() {
                   autoComplete="off"
                 />
               )}
-              <span className="thong_bao_loi">{loi[ten] || ''}</span>
+              <span className="loi_o_nhap">{loi[ten] || ''}</span>
             </div>
           ))}
 

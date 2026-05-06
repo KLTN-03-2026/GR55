@@ -7,6 +7,7 @@ import com.backend.backend.dto.TimKiemSachGiamGiaResponse;
 import com.backend.backend.entity.GoiHoiVien;
 import com.backend.backend.entity.GoiHoiVienSach;
 import com.backend.backend.entity.Sach;
+import com.backend.backend.repository.ChuongTrinhGiamGiaSachRepository;
 import com.backend.backend.repository.GoiHoiVienRepository;
 import com.backend.backend.repository.GoiHoiVienSachRepository;
 import com.backend.backend.repository.LichSuHoiVienRepository;
@@ -31,6 +32,7 @@ public class QuanLyGoiHoiVienService {
 
     private final GoiHoiVienRepository goiHoiVienRepository;
     private final GoiHoiVienSachRepository goiHoiVienSachRepository;
+    private final ChuongTrinhGiamGiaSachRepository chuongTrinhGiamGiaSachRepository;
     private final LichSuHoiVienRepository lichSuHoiVienRepository;
     private final SachRepository sachRepository;
 
@@ -45,7 +47,6 @@ public class QuanLyGoiHoiVienService {
                 .map(GoiHoiVien::getMaHv)
                 .collect(Collectors.toList());
 
-        // Batch load số lượng sách và người dùng — tránh N+1
         Map<Long, Integer> soSachMap = new HashMap<>();
         Map<Long, Integer> soNguoiDungMap = new HashMap<>();
         if (!maHvIds.isEmpty()) {
@@ -79,25 +80,32 @@ public class QuanLyGoiHoiVienService {
 
         List<Long> sachIds = goiHoiVienSachRepository.findSachIdsByMaHv(maHv);
 
+        List<GoiHoiVienAdminResponse.SachItem> sachItems = sachIds.isEmpty()
+                ? Collections.emptyList()
+                : sachRepository.findAllById(sachIds).stream()
+                    .map(s -> new GoiHoiVienAdminResponse.SachItem(
+                            s.getMaSach(), s.getTenSach(), s.getTacGia(), s.getAnhBiaUrl(), s.getGia()))
+                    .collect(Collectors.toList());
+
         return new GoiHoiVienAdminResponse(true, "Lấy chi tiết thành công",
                 new GoiHoiVienAdminResponse.GoiHoiVienData(
                         goi.getMaHv(), goi.getTenGoi(), goi.getGia(), goi.getThoiHanThang(),
-                        goi.getMoTa(), goi.getHoatDong(), sachIds.size(), sachIds));
+                        goi.getMoTa(), goi.getHoatDong(), sachIds.size(), sachItems));
     }
 
     public TimKiemSachGiamGiaResponse timKiemSachDeChon(String tuKhoa, Long maHv, int trang, int kichThuoc) {
         String kw = (tuKhoa != null && !tuKhoa.isBlank()) ? tuKhoa.trim() : null;
         Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
-        Page<Sach> page = sachRepository.timKiemSachChoGoiHoiVien(kw, pageable);
+        Page<Sach> page = sachRepository.timKiemSachChoGoiHoiVien(kw, maHv, pageable);
 
-        Set<Long> sachTrongGoi = maHv != null
+        Set<Long> sachTrongGoiHienTai = maHv != null
                 ? new HashSet<>(goiHoiVienSachRepository.findSachIdsByMaHv(maHv))
                 : Collections.emptySet();
 
         List<TimKiemSachGiamGiaResponse.SachItem> items = page.getContent().stream()
                 .map(s -> new TimKiemSachGiamGiaResponse.SachItem(
                         s.getMaSach(), s.getTenSach(), s.getTacGia(), s.getAnhBiaUrl(),
-                        s.getGia(), sachTrongGoi.contains(s.getMaSach())))
+                        s.getGia(), sachTrongGoiHienTai.contains(s.getMaSach())))
                 .collect(Collectors.toList());
 
         return new TimKiemSachGiamGiaResponse(
@@ -108,7 +116,14 @@ public class QuanLyGoiHoiVienService {
     @Caching(evict = {
         @CacheEvict(value = "goi_hoi_vien_admin", allEntries = true),
         @CacheEvict(value = "goi_hoi_vien", allEntries = true),
-        @CacheEvict(value = "sach_hoi_vien", allEntries = true)
+        @CacheEvict(value = "sach_hoi_vien", allEntries = true),
+        @CacheEvict(value = "sach_noi_bat", allEntries = true),
+        @CacheEvict(value = "sach_mien_phi", allEntries = true),
+        @CacheEvict(value = "sach_goi_y", allEntries = true),
+        @CacheEvict(value = "tim_kiem_sach", allEntries = true),
+        @CacheEvict(value = "sach_theo_the_loai", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_khach", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_thanh_vien", allEntries = true)
     })
     @Transactional
     public GoiHoiVienAdminResponse themGoi(GoiHoiVienAdminRequest request) {
@@ -124,18 +139,23 @@ public class QuanLyGoiHoiVienService {
         goi.setHoatDong(request.getHoat_dong() != null ? request.getHoat_dong() : true);
         GoiHoiVien saved = goiHoiVienRepository.save(goi);
 
-        List<Long> sachIds = luuDanhSachSach(saved.getMaHv(), request.getDanh_sach_sach());
-
         return new GoiHoiVienAdminResponse(true, "Thêm gói thành công",
                 new GoiHoiVienAdminResponse.GoiHoiVienData(
                         saved.getMaHv(), saved.getTenGoi(), saved.getGia(), saved.getThoiHanThang(),
-                        saved.getMoTa(), saved.getHoatDong(), sachIds.size(), sachIds));
+                        saved.getMoTa(), saved.getHoatDong(), 0, Collections.emptyList()));
     }
 
     @Caching(evict = {
         @CacheEvict(value = "goi_hoi_vien_admin", allEntries = true),
         @CacheEvict(value = "goi_hoi_vien", allEntries = true),
-        @CacheEvict(value = "sach_hoi_vien", allEntries = true)
+        @CacheEvict(value = "sach_hoi_vien", allEntries = true),
+        @CacheEvict(value = "sach_noi_bat", allEntries = true),
+        @CacheEvict(value = "sach_mien_phi", allEntries = true),
+        @CacheEvict(value = "sach_goi_y", allEntries = true),
+        @CacheEvict(value = "tim_kiem_sach", allEntries = true),
+        @CacheEvict(value = "sach_theo_the_loai", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_khach", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_thanh_vien", allEntries = true)
     })
     @Transactional
     public GoiHoiVienAdminResponse suaGoi(Long maHv, GoiHoiVienAdminRequest request) {
@@ -156,19 +176,104 @@ public class QuanLyGoiHoiVienService {
         goi.setHoatDong(request.getHoat_dong() != null ? request.getHoat_dong() : goi.getHoatDong());
         goiHoiVienRepository.save(goi);
 
-        goiHoiVienSachRepository.deleteByMaHv(maHv);
-        List<Long> sachIds = luuDanhSachSach(maHv, request.getDanh_sach_sach());
-
         return new GoiHoiVienAdminResponse(true, "Cập nhật gói thành công",
                 new GoiHoiVienAdminResponse.GoiHoiVienData(
                         goi.getMaHv(), goi.getTenGoi(), goi.getGia(), goi.getThoiHanThang(),
-                        goi.getMoTa(), goi.getHoatDong(), sachIds.size(), sachIds));
+                        goi.getMoTa(), goi.getHoatDong(), 0, Collections.emptyList()));
     }
 
     @Caching(evict = {
         @CacheEvict(value = "goi_hoi_vien_admin", allEntries = true),
         @CacheEvict(value = "goi_hoi_vien", allEntries = true),
-        @CacheEvict(value = "sach_hoi_vien", allEntries = true)
+        @CacheEvict(value = "sach_hoi_vien", allEntries = true),
+        @CacheEvict(value = "sach_noi_bat", allEntries = true),
+        @CacheEvict(value = "sach_mien_phi", allEntries = true),
+        @CacheEvict(value = "sach_goi_y", allEntries = true),
+        @CacheEvict(value = "tim_kiem_sach", allEntries = true),
+        @CacheEvict(value = "sach_theo_the_loai", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_khach", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_thanh_vien", allEntries = true)
+    })
+    @Transactional
+    public GoiHoiVienAdminResponse themSachVaoGoi(Long maHv, List<Long> sachIds) {
+        goiHoiVienRepository.findById(maHv)
+                .orElseThrow(() -> new RuntimeException("Gói hội viên không tồn tại"));
+
+        if (sachIds == null || sachIds.isEmpty()) {
+            return new GoiHoiVienAdminResponse(false, "Danh sách sách không được rỗng", null);
+        }
+
+        Set<Long> existing = new HashSet<>(goiHoiVienSachRepository.findSachIdsByMaHv(maHv));
+
+        // Sách đang trong gói hội viên KHÁC không được thêm vào gói này
+        Set<Long> sachTrongBatKyGoi = new HashSet<>(goiHoiVienSachRepository.findSachIdsTrongBatKyGoi(sachIds));
+        // Sách đang trong chương trình giảm giá không được thêm vào gói hội viên
+        Set<Long> sachCoGiamGia = new HashSet<>(chuongTrinhGiamGiaSachRepository.findSachIdsTrongBatKyCt(sachIds));
+
+        List<GoiHoiVienSach> newLinks = new ArrayList<>();
+        int boQuaDa = 0, boQuaGoiKhac = 0, boQuaGiamGia = 0;
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Long maSach : sachIds) {
+            if (existing.contains(maSach)) { boQuaDa++; continue; }
+            if (sachTrongBatKyGoi.contains(maSach)) { boQuaGoiKhac++; continue; }
+            if (sachCoGiamGia.contains(maSach)) { boQuaGiamGia++; continue; }
+            GoiHoiVienSach gs = new GoiHoiVienSach();
+            gs.setMaHv(maHv);
+            gs.setMaSach(maSach);
+            gs.setNgayTao(now);
+            newLinks.add(gs);
+        }
+
+        if (newLinks.isEmpty()) {
+            String msg = boQuaGoiKhac > 0
+                    ? boQuaGoiKhac + " sách đang thuộc gói hội viên khác"
+                    : boQuaGiamGia > 0
+                    ? boQuaGiamGia + " sách đang có chương trình giảm giá"
+                    : "Tất cả sách đã có trong gói";
+            return new GoiHoiVienAdminResponse(false, "Không thể thêm: " + msg, null);
+        }
+
+        goiHoiVienSachRepository.saveAll(newLinks);
+
+        StringBuilder msg = new StringBuilder("Đã thêm " + newLinks.size() + " sách");
+        if (boQuaGoiKhac > 0) msg.append(", bỏ qua ").append(boQuaGoiKhac).append(" sách đang trong gói khác");
+        if (boQuaGiamGia > 0) msg.append(", bỏ qua ").append(boQuaGiamGia).append(" sách đang giảm giá");
+        if (boQuaDa > 0) msg.append(", bỏ qua ").append(boQuaDa).append(" sách đã có");
+        return new GoiHoiVienAdminResponse(true, msg.toString(), null);
+    }
+
+    @Caching(evict = {
+        @CacheEvict(value = "goi_hoi_vien_admin", allEntries = true),
+        @CacheEvict(value = "goi_hoi_vien", allEntries = true),
+        @CacheEvict(value = "sach_hoi_vien", allEntries = true),
+        @CacheEvict(value = "sach_noi_bat", allEntries = true),
+        @CacheEvict(value = "sach_mien_phi", allEntries = true),
+        @CacheEvict(value = "sach_goi_y", allEntries = true),
+        @CacheEvict(value = "tim_kiem_sach", allEntries = true),
+        @CacheEvict(value = "sach_theo_the_loai", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_khach", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_thanh_vien", allEntries = true)
+    })
+    @Transactional
+    public GoiHoiVienAdminResponse xoaSachKhoiGoi(Long maHv, Long maSach) {
+        goiHoiVienRepository.findById(maHv)
+                .orElseThrow(() -> new RuntimeException("Gói hội viên không tồn tại"));
+        goiHoiVienSachRepository.deleteByMaHvAndMaSach(maHv, maSach);
+        return new GoiHoiVienAdminResponse(true, "Đã xóa sách khỏi gói", null);
+    }
+
+    @Caching(evict = {
+        @CacheEvict(value = "goi_hoi_vien_admin", allEntries = true),
+        @CacheEvict(value = "goi_hoi_vien", allEntries = true),
+        @CacheEvict(value = "sach_hoi_vien", allEntries = true),
+        @CacheEvict(value = "sach_noi_bat", allEntries = true),
+        @CacheEvict(value = "sach_mien_phi", allEntries = true),
+        @CacheEvict(value = "sach_goi_y", allEntries = true),
+        @CacheEvict(value = "tim_kiem_sach", allEntries = true),
+        @CacheEvict(value = "sach_theo_the_loai", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_khach", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_thanh_vien", allEntries = true)
     })
     @Transactional
     public GoiHoiVienAdminResponse xoaGoi(Long maHv) {
@@ -188,7 +293,15 @@ public class QuanLyGoiHoiVienService {
 
     @Caching(evict = {
         @CacheEvict(value = "goi_hoi_vien_admin", allEntries = true),
-        @CacheEvict(value = "goi_hoi_vien", allEntries = true)
+        @CacheEvict(value = "goi_hoi_vien", allEntries = true),
+        @CacheEvict(value = "sach_hoi_vien", allEntries = true),
+        @CacheEvict(value = "sach_noi_bat", allEntries = true),
+        @CacheEvict(value = "sach_mien_phi", allEntries = true),
+        @CacheEvict(value = "sach_goi_y", allEntries = true),
+        @CacheEvict(value = "tim_kiem_sach", allEntries = true),
+        @CacheEvict(value = "sach_theo_the_loai", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_khach", allEntries = true),
+        @CacheEvict(value = "goi_y_sach_thanh_vien", allEntries = true)
     })
     @Transactional
     public GoiHoiVienAdminResponse capNhatTrangThai(Long maHv, Boolean hoatDong) {
@@ -198,19 +311,5 @@ public class QuanLyGoiHoiVienService {
         goiHoiVienRepository.save(goi);
         return new GoiHoiVienAdminResponse(true,
                 hoatDong ? "Kích hoạt gói thành công" : "Vô hiệu hóa gói thành công", null);
-    }
-
-    private List<Long> luuDanhSachSach(Long maHv, List<Long> sachIds) {
-        if (sachIds == null || sachIds.isEmpty()) return Collections.emptyList();
-        LocalDateTime now = LocalDateTime.now();
-        List<GoiHoiVienSach> links = sachIds.stream().map(maSach -> {
-            GoiHoiVienSach gs = new GoiHoiVienSach();
-            gs.setMaHv(maHv);
-            gs.setMaSach(maSach);
-            gs.setNgayTao(now);
-            return gs;
-        }).collect(Collectors.toList());
-        goiHoiVienSachRepository.saveAll(links);
-        return sachIds;
     }
 }

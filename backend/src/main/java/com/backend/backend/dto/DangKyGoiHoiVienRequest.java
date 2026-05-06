@@ -8,4 +8,6 @@ public class DangKyGoiHoiVienRequest {
 
     @NotNull(message = "Vui lòng chọn gói hội viên")
     private Long ma_goi;
+
+    private boolean dungQr = false;
 }

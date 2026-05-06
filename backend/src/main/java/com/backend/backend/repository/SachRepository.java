@@ -26,9 +26,12 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
     Page<Sach> findSachMienPhi(Pageable pageable);
 
     @Query(value = "SELECT s.* FROM sach s WHERE s.da_xoa = false AND s.ma_sach IN " +
-                   "(SELECT g.ma_sach FROM goi_hoi_vien_sach g) ORDER BY RAND()",
+                   "(SELECT g.ma_sach FROM goi_hoi_vien_sach g " +
+                   " JOIN goi_hoi_vien gv ON g.ma_hv = gv.ma_hv WHERE gv.hoat_dong = true) " +
+                   "ORDER BY RAND()",
            countQuery = "SELECT COUNT(*) FROM sach s WHERE s.da_xoa = false AND s.ma_sach IN " +
-                        "(SELECT g.ma_sach FROM goi_hoi_vien_sach g)",
+                        "(SELECT g.ma_sach FROM goi_hoi_vien_sach g " +
+                        " JOIN goi_hoi_vien gv ON g.ma_hv = gv.ma_hv WHERE gv.hoat_dong = true)",
            nativeQuery = true)
     Page<Sach> findSachHoiVien(Pageable pageable);
 
@@ -144,6 +147,7 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
            "AND (:maDanhMuc IS NULL OR sd.maDm = :maDanhMuc) " +
            "AND (:giaMin IS NULL OR s.gia >= :giaMin) " +
            "AND (:giaMax IS NULL OR s.gia <= :giaMax) " +
+           "AND s.maSach NOT IN (SELECT g.maSach FROM GoiHoiVienSach g) " +
            "ORDER BY s.tenSach ASC")
     Page<Sach> timKiemSachCoPhiChoGiamGia(@Param("tuKhoa") String tuKhoa,
                                            @Param("maDanhMuc") Long maDanhMuc,
@@ -151,9 +155,39 @@ public interface SachRepository extends JpaRepository<Sach, Long> {
                                            @Param("giaMax") BigDecimal giaMax,
                                            Pageable pageable);
 
-    @Query("SELECT s FROM Sach s WHERE s.daXoa = false " +
+    @Query("SELECT s FROM Sach s WHERE s.daXoa = false AND s.gia > 0 " +
            "AND (:tuKhoa IS NULL OR LOWER(s.tenSach) LIKE LOWER(CONCAT('%', :tuKhoa, '%')) " +
            "     OR LOWER(s.tacGia) LIKE LOWER(CONCAT('%', :tuKhoa, '%'))) " +
+           "AND s.maSach NOT IN (SELECT c.maSach FROM ChuongTrinhGiamGiaSach c) " +
+           "AND (s.maSach NOT IN (SELECT g.maSach FROM GoiHoiVienSach g) " +
+           "     OR (:maHv IS NOT NULL AND s.maSach IN " +
+           "         (SELECT g2.maSach FROM GoiHoiVienSach g2 WHERE g2.maHv = :maHv))) " +
            "ORDER BY s.tenSach ASC")
-    Page<Sach> timKiemSachChoGoiHoiVien(@Param("tuKhoa") String tuKhoa, Pageable pageable);
+    Page<Sach> timKiemSachChoGoiHoiVien(@Param("tuKhoa") String tuKhoa,
+                                         @Param("maHv") Long maHv,
+                                         Pageable pageable);
+
+    @Query(value = "SELECT s.ma_sach, s.ten_sach, s.tac_gia, s.gia, s.luot_xem, s.so_luong_da_ban, " +
+                   "COALESCE(SUM(ct.don_gia), 0) AS doanh_thu, " +
+                   "CASE WHEN s.luot_xem > 0 THEN ROUND(s.so_luong_da_ban * 100.0 / s.luot_xem, 1) ELSE 0 END AS ty_le " +
+                   "FROM sach s " +
+                   "LEFT JOIN chi_tiet_don_hang ct ON s.ma_sach = ct.ma_sach " +
+                   "LEFT JOIN don_hang dh ON ct.id_dh = dh.id_dh AND dh.trang_thai = 'da_thanh_toan' " +
+                   "WHERE s.da_xoa = false " +
+                   "GROUP BY s.ma_sach, s.ten_sach, s.tac_gia, s.gia, s.luot_xem, s.so_luong_da_ban " +
+                   "ORDER BY s.luot_xem DESC LIMIT 10",
+           nativeQuery = true)
+    List<Object[]> topSachTheoLuotXem();
+
+    @Query(value = "SELECT s.ma_sach, s.ten_sach, s.tac_gia, s.gia, s.luot_xem, s.so_luong_da_ban, " +
+                   "COALESCE(SUM(ct.don_gia), 0) AS doanh_thu, " +
+                   "CASE WHEN s.luot_xem > 0 THEN ROUND(s.so_luong_da_ban * 100.0 / s.luot_xem, 1) ELSE 0 END AS ty_le " +
+                   "FROM sach s " +
+                   "LEFT JOIN chi_tiet_don_hang ct ON s.ma_sach = ct.ma_sach " +
+                   "LEFT JOIN don_hang dh ON ct.id_dh = dh.id_dh AND dh.trang_thai = 'da_thanh_toan' " +
+                   "WHERE s.da_xoa = false AND s.gia > 0 AND s.luot_xem >= 5 " +
+                   "GROUP BY s.ma_sach, s.ten_sach, s.tac_gia, s.gia, s.luot_xem, s.so_luong_da_ban " +
+                   "HAVING ty_le < 10 ORDER BY s.luot_xem DESC LIMIT 10",
+           nativeQuery = true)
+    List<Object[]> sachNhieuViewItBan();
 }

@@ -1,0 +1,32 @@
+.quan_ly_goi_hoi_vien {
+    padding: 20px;
+}
+
+/* Textarea trong modal form */
+.truong_nhap_textarea {
+    padding: 9px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.15s;
+}
+.truong_nhap_textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Checkbox label trong form */
+.label_checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    font-weight: 500;
+}

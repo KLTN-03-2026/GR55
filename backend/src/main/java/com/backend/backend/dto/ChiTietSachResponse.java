@@ -26,6 +26,7 @@ public class ChiTietSachResponse {
         private String mo_ta;
         private BigDecimal gia;
         private BigDecimal gia_giam;
+        private String nhan_giam;
         private Double danh_gia_trung_binh;
         private Integer so_luot_danh_gia;
         private String anh_bia_url;

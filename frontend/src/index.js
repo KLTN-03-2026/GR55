@@ -47,6 +47,9 @@ import QuanLyGiamGia from "./pages/admin/QuanLyGiamGia";
 import QuanLyDonHang from "./pages/admin/QuanLyDonHang";
 import ChiTietDonHangAdmin from "./pages/admin/ChiTietDonHangAdmin";
 import ThongKe from "./pages/admin/ThongKe";
+import GoiHoiVien from "./pages/GoiHoiVien";
+import KetQuaHoiVien from "./pages/KetQuaHoiVien";
+import QuanLyGoiHoiVien from "./pages/admin/QuanLyGoiHoiVien";
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -127,6 +130,12 @@ root.render(
               </ProtectedRoute>
             } />
 
+            <Route path="/hoi_vien/ket_qua" element={
+              <ProtectedRoute vai_tro_duoc_phep={["thanh_vien", "quan_tri"]}>
+                <App><KetQuaHoiVien /></App>
+              </ProtectedRoute>
+
+            } />
             {/* ADMIN */}
             <Route path="/quan_tri" element={<Navigate to="/quan_tri/thong_ke" replace />} />
             <Route path="/quan_tri/danh_muc" element={<AdminLayout><QuanLyDanhMuc /></AdminLayout>} />
@@ -137,6 +146,8 @@ root.render(
             <Route path="/quan_tri/don_hang" element={<AdminLayout><QuanLyDonHang /></AdminLayout>} />
             <Route path="/quan_tri/don_hang/:id_dh" element={<AdminLayout><ChiTietDonHangAdmin /></AdminLayout>} />
             <Route path="/quan_tri/thong_ke" element={<AdminLayout><ThongKe /></AdminLayout>} />
+            <Route path="/hoi_vien" element={<App><GoiHoiVien /></App>} />
+            <Route path="/quan_tri/goi_hoi_vien" element={<AdminLayout><QuanLyGoiHoiVien /></AdminLayout>} />
           </Routes>
 
           <ToastContainer

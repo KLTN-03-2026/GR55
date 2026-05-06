@@ -148,6 +148,9 @@ export default function ThuVien() {
                             <div key={sach.ma_sach} className="the_sach_thu_vien">
                                 <Link to={`/sach/${sach.ma_sach}`} className="anh_bia_wrap">
                                     <img src={sach.anh_bia_url} alt={sach.ten_sach} />
+                                    <span className={`nhan_gia ${Number(sach.gia) === 0 ? 'mien_phi' : 'tra_phi'}`}>
+                                        {Number(sach.gia) === 0 ? 'Miễn phí' : dinh_dang_gia(sach.gia)}
+                                    </span>
                                 </Link>
                                 <div className="noi_dung_the">
                                     <div className="meta_sach">
@@ -177,6 +180,9 @@ export default function ThuVien() {
                             <div key={sach.ma_sach} className="the_sach_thu_vien">
                                 <Link to={`/sach/${sach.ma_sach}`} className="anh_bia_wrap">
                                     <img src={sach.anh_bia_url} alt={sach.ten_sach} />
+                                    <span className={`nhan_gia ${Number(sach.gia) === 0 ? 'mien_phi' : 'tra_phi'}`}>
+                                        {Number(sach.gia) === 0 ? 'Miễn phí' : dinh_dang_gia(sach.gia)}
+                                    </span>
                                 </Link>
                                 <div className="noi_dung_the">
                                     <div className="meta_sach">

@@ -33,12 +33,13 @@ public class VnpayService {
     @Value("${vnpay.vnp_ReturnUrl}")
     private String vnpReturnUrl;
 
-    public String taoUrlThanhToan(Long idDh, BigDecimal tongTien, String maDonHang) {
+    public String taoUrlThanhToan(Long idDh, BigDecimal tongTien, String maDonHang, boolean dungQr) {
         Map<String, String> thamSo = new TreeMap<>();
         thamSo.put("vnp_Version", "2.1.0");
         thamSo.put("vnp_Command", "pay");
         thamSo.put("vnp_TmnCode", vnpTmnCode);
         thamSo.put("vnp_Amount", tongTien.multiply(BigDecimal.valueOf(100)).toBigInteger().toString());
+        if (dungQr) thamSo.put("vnp_BankCode", "VNPAYQR");
         thamSo.put("vnp_CurrCode", "VND");
         thamSo.put("vnp_TxnRef", idDh.toString());
         thamSo.put("vnp_OrderInfo", "Thanh toan don hang " + maDonHang);
@@ -102,7 +103,7 @@ public class VnpayService {
                 .orElse(false);
     }
 
-    public String taoUrlThanhToanHoiVien(Long maNd, Long maHv, BigDecimal gia) {
+    public String taoUrlThanhToanHoiVien(Long maNd, Long maHv, BigDecimal gia, boolean dungQr) {
         // Format: HV{maNd}P{maHv}T{timestamp_5digits} — dễ parse tại callback
         String txnRef = "HV" + maNd + "P" + maHv + "T" + (System.currentTimeMillis() % 100000);
         String returnUrlHoiVien = vnpReturnUrl.replaceAll("/api/mua_sach/vnpay_callback.*", "/api/hoi_vien/vnpay_callback");
@@ -112,6 +113,7 @@ public class VnpayService {
         thamSo.put("vnp_Command", "pay");
         thamSo.put("vnp_TmnCode", vnpTmnCode);
         thamSo.put("vnp_Amount", gia.multiply(BigDecimal.valueOf(100)).toBigInteger().toString());
+        if (dungQr) thamSo.put("vnp_BankCode", "VNPAYQR");
         thamSo.put("vnp_CurrCode", "VND");
         thamSo.put("vnp_TxnRef", txnRef);
         thamSo.put("vnp_OrderInfo", "Nang cap hoi vien BookNest");

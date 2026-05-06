@@ -32,4 +32,17 @@ public interface GoiHoiVienSachRepository extends JpaRepository<GoiHoiVienSach, 
     @Transactional
     @Query("DELETE FROM GoiHoiVienSach g WHERE g.maHv = :maHv")
     void deleteByMaHv(@Param("maHv") Long maHv);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM GoiHoiVienSach g WHERE g.maHv = :maHv AND g.maSach = :maSach")
+    void deleteByMaHvAndMaSach(@Param("maHv") Long maHv, @Param("maSach") Long maSach);
+
+    @Query("SELECT DISTINCT g.maSach FROM GoiHoiVienSach g WHERE g.maSach IN :sachIds")
+    List<Long> findSachIdsTrongBatKyGoi(@Param("sachIds") List<Long> sachIds);
+
+    @Query("SELECT DISTINCT g.maSach FROM GoiHoiVienSach g " +
+           "JOIN GoiHoiVien gv ON g.maHv = gv.maHv " +
+           "WHERE gv.hoatDong = true AND g.maSach IN :sachIds")
+    List<Long> findActiveSachIdsIn(@Param("sachIds") List<Long> sachIds);
 }

@@ -160,12 +160,14 @@
 .anh_bia_wrap {
   display: block;
   position: relative;
+  aspect-ratio: 3/4;
   overflow: hidden;
+  background: #f3f4f6;
 }
 
 .anh_bia_wrap img {
   width: 100%;
-  aspect-ratio: 3/4;
+  height: 100%;
   object-fit: cover;
   display: block;
   transition: transform 0.3s;

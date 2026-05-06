@@ -19,4 +19,5 @@ public class SachHomeResponse {
     private Integer so_luong_da_ban;
     private BigDecimal gia_sau_giam;
     private String nhan_giam;
+    private boolean thuoc_goi_hoi_vien;
 }

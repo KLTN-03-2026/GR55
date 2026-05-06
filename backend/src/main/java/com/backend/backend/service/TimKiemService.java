@@ -6,6 +6,7 @@ import com.backend.backend.dto.SachTimKiemResponse;
 import com.backend.backend.dto.TimKiemRequest;
 import com.backend.backend.entity.DanhMucSach;
 import com.backend.backend.repository.DanhMucSachRepository;
+import com.backend.backend.repository.GoiHoiVienSachRepository;
 import com.backend.backend.repository.SachDanhMucRepository;
 import com.backend.backend.repository.SachRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class TimKiemService {
     private final SachDanhMucRepository sachDanhMucRepository;
     private final DanhMucSachRepository danhMucSachRepository;
     private final QuanLyGiamGiaService quanLyGiamGiaService;
+    private final GoiHoiVienSachRepository goiHoiVienSachRepository;
 
     @Cacheable(value = "tim_kiem_sach",
                key = "#request.tu_khoa + '_' + #request.ma_danh_muc + '_' + #request.min_gia + '_' + #request.max_gia + '_' + #request.min_danh_gia + '_' + #request.sach_mien_phi + '_' + #request.sach_hoi_vien + '_' + #request.sap_xep + '_' + #request.trang + '_' + #request.kich_thuoc")
@@ -68,6 +70,10 @@ public class TimKiemService {
         Map<Long, String> dmTenMap = danhMucSachRepository.findAllById(allDmIds).stream()
                 .collect(Collectors.toMap(DanhMucSach::getMaDm, DanhMucSach::getTenDanhMuc));
 
+        Set<Long> hoiVienIds = sachIds.isEmpty()
+                ? Collections.emptySet()
+                : new HashSet<>(goiHoiVienSachRepository.findActiveSachIdsIn(sachIds));
+
         List<SachTimKiemResponse.SachTimKiemData> danhSach = page.getContent().stream()
                 .map(sach -> {
                     List<String> tenDanhMuc = sachToDmIds
@@ -87,7 +93,8 @@ public class TimKiemService {
                             sach.getDanhGiaTrungBinh() != null ? sach.getDanhGiaTrungBinh().doubleValue() : 0.0,
                             tenDanhMuc,
                             info != null ? info.getGia_sau_giam() : null,
-                            info != null ? info.getNhan_giam() : null
+                            info != null ? info.getNhan_giam() : null,
+                            hoiVienIds.contains(sach.getMaSach())
                     );
                 })
                 .collect(Collectors.toList());
