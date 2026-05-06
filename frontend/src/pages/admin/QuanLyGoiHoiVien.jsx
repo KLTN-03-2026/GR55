@@ -1,468 +1,506 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
+import { dinh_dang_gia } from '../../utils/dinh_dang';
 import './QuanLyGoiHoiVien.css';
 
-const QuanLyGoiHoiVien = () => {
-    // === STATE ===
+const FORM_TRONG = { ten_goi: '', gia: '', thoi_han_thang: '', mo_ta: '', hoat_dong: true };
+
+function kiemTraForm(f) {
+    if (!f.ten_goi.trim()) return 'Tên gói không được để trống';
+    const gia = parseFloat(f.gia);
+    if (f.gia === '' || isNaN(gia) || gia < 0) return 'Giá phải lớn hơn hoặc bằng 0';
+    const han = parseInt(f.thoi_han_thang);
+    if (f.thoi_han_thang === '' || isNaN(han) || han < 1) return 'Thời hạn phải ít nhất 1 tháng';
+    return null;
+}
+
+export default function QuanLyGoiHoiVien() {
     // Danh sách
     const [danh_sach, dat_danh_sach] = useState([]);
-    const [dang_tai, dat_dang_tai] = useState(false);
-    const [tim_kiem, dat_tim_kiem] = useState('');
+    const [tong_trang, dat_tong_trang] = useState(1);
     const [trang, dat_trang] = useState(1);
-    const [tong_so_trang, dat_tong_so_trang] = useState(1);
+    const [tim_kiem, dat_tim_kiem] = useState('');
 
-    // Modal thêm / sửa (2 bước)
-    const [hien_modal, dat_hien_modal] = useState(false);
-    const [buoc, dat_buoc] = useState(1);
-    const [goi_dang_sua, dat_goi_dang_sua] = useState(null);
-    const [form, dat_form] = useState({
-        ten_goi: '', gia: '', thoi_han_thang: '', mo_ta: '', hoat_dong: true
-    });
-    const [sach_da_chon, dat_sach_da_chon] = useState([]);
+    // Modal form (tạo / sửa)
+    const [mo_form, dat_mo_form] = useState(false);
+    const [ma_hv_sua, dat_ma_hv_sua] = useState(null);
+    const [form, dat_form] = useState(FORM_TRONG);
+    const [dang_luu, dat_dang_luu] = useState(false);
 
-    // Bước 2 — tìm sách
-    const [ds_sach_tim, dat_ds_sach_tim] = useState([]);
-    const [tu_khoa_sach, dat_tu_khoa_sach] = useState('');
+    // Modal chọn sách
+    const [mo_chon_sach, dat_mo_chon_sach] = useState(false);
+    const [ma_hv_chon, dat_ma_hv_chon] = useState(null);
+    const [ten_goi_chon, dat_ten_goi_chon] = useState('');
+    const [tu_khoa, dat_tu_khoa] = useState('');
+    const [sach_list, dat_sach_list] = useState([]);
     const [trang_sach, dat_trang_sach] = useState(1);
     const [tong_trang_sach, dat_tong_trang_sach] = useState(1);
-    const [dang_tai_sach, dat_dang_tai_sach] = useState(false);
-
-    // Toggle trạng thái
-    const [dang_toggle, dat_dang_toggle] = useState(new Set());
+    const [dang_tim, dat_dang_tim] = useState(false);
+    const [da_chon, dat_da_chon] = useState(new Set());
+    const [dang_them, dat_dang_them] = useState(false);
 
     // Modal chi tiết
     const [chi_tiet, dat_chi_tiet] = useState(null);
-    const [hien_chi_tiet, dat_hien_chi_tiet] = useState(false);
+    const [dang_tai_ct, dat_dang_tai_ct] = useState(false);
 
-    // Modal xác nhận xóa
-    const [hien_xoa, dat_hien_xoa] = useState(false);
-    const [ma_xoa, dat_ma_xoa] = useState(null);
-    const [dang_xoa, dat_dang_xoa] = useState(false);
-
-    // === HÀM XỬ LÝ ===
-    const tai_danh_sach = useCallback(async (trang_hien_tai, tu_khoa) => {
-        dat_dang_tai(true);
+    // ===== Danh sách =====
+    const tai_danh_sach = useCallback(async (t = 1) => {
         try {
             const res = await api.get('/admin/goi_hoi_vien', {
-                params: { ten: tu_khoa || undefined, trang: trang_hien_tai, kich_thuoc: 10 }
+                params: { trang: t, kich_thuoc: 10, ten: tim_kiem || undefined }
             });
             if (res.data.thanh_cong) {
                 dat_danh_sach(res.data.danh_sach);
-                dat_tong_so_trang(res.data.tong_so_trang);
+                dat_tong_trang(res.data.tong_so_trang || 1);
+                dat_trang(t);
             }
-        } catch {
-            toast.error('Không thể tải danh sách gói hội viên');
-        } finally {
-            dat_dang_tai(false);
-        }
-    }, []);
+        } catch { toast.error('Lỗi tải danh sách'); }
+    }, [tim_kiem]);
 
-    useEffect(() => {
-        tai_danh_sach(trang, tim_kiem);
-    }, [trang, tim_kiem, tai_danh_sach]);
+    useEffect(() => { tai_danh_sach(1); }, [tai_danh_sach]);
 
-    async function toggle_trang_thai(ma_hv, hoat_dong_hien_tai) {
-        const moi = !hoat_dong_hien_tai;
-        dat_dang_toggle(prev => new Set([...prev, ma_hv]));
+    // ===== Form tạo / sửa =====
+    function mo_form_tao() {
+        dat_form(FORM_TRONG);
+        dat_ma_hv_sua(null);
+        dat_mo_form(true);
+    }
+
+    function mo_form_sua(goi) {
+        dat_form({
+            ten_goi: goi.ten_goi,
+            gia: String(goi.gia),
+            thoi_han_thang: String(goi.thoi_han_thang),
+            mo_ta: goi.mo_ta || '',
+            hoat_dong: goi.hoat_dong,
+        });
+        dat_ma_hv_sua(goi.ma_hv);
+        dat_mo_form(true);
+    }
+
+    async function luu_form() {
+        const loi = kiemTraForm(form);
+        if (loi) { toast.error(loi); return; }
+        dat_dang_luu(true);
         try {
-            const res = await api.put(`/admin/goi_hoi_vien/${ma_hv}/trang_thai`, null, {
-                params: { hoat_dong: moi }
-            });
-            if (res.data.thanh_cong) {
-                dat_danh_sach(prev =>
-                    prev.map(g => g.ma_hv === ma_hv ? { ...g, hoat_dong: moi } : g)
-                );
-                toast.success(res.data.thong_bao);
+            const payload = {
+                ten_goi: form.ten_goi.trim(),
+                gia: parseFloat(form.gia),
+                thoi_han_thang: parseInt(form.thoi_han_thang),
+                mo_ta: form.mo_ta.trim() || null,
+                hoat_dong: form.hoat_dong,
+            };
+            if (ma_hv_sua) {
+                const res = await api.put(`/admin/goi_hoi_vien/${ma_hv_sua}`, payload);
+                if (!res.data.thanh_cong) { toast.error(res.data.thong_bao); return; }
+                toast.success('Cập nhật gói thành công');
+                dat_mo_form(false);
+                tai_danh_sach(trang);
+                if (chi_tiet?.ma_hv === ma_hv_sua) tai_chi_tiet(ma_hv_sua);
             } else {
-                toast.error(res.data.thong_bao);
+                const res = await api.post('/admin/goi_hoi_vien', payload);
+                if (!res.data.thanh_cong) { toast.error(res.data.thong_bao); return; }
+                const { ma_hv: ma_hv_moi, ten_goi: ten_goi_moi } = res.data.du_lieu;
+                toast.success('Tạo gói thành công! Hãy thêm sách.');
+                dat_mo_form(false);
+                tai_danh_sach(1);
+                mo_chon_sach_modal(ma_hv_moi, ten_goi_moi);
             }
-        } catch {
-            toast.error('Không thể cập nhật trạng thái');
+        } catch (err) {
+            toast.error(err.response?.data?.thong_bao || err.response?.data?.message || 'Có lỗi xảy ra');
         } finally {
-            dat_dang_toggle(prev => {
-                const s = new Set(prev);
-                s.delete(ma_hv);
-                return s;
-            });
+            dat_dang_luu(false);
         }
     }
 
-    function mo_them() {
-        dat_goi_dang_sua(null);
-        dat_form({ ten_goi: '', gia: '', thoi_han_thang: '', mo_ta: '', hoat_dong: true });
-        dat_sach_da_chon([]);
-        dat_buoc(1);
-        dat_hien_modal(true);
+    // ===== Bước 2: Chọn sách =====
+    function mo_chon_sach_modal(maHv, tenGoi) {
+        dat_ma_hv_chon(maHv);
+        dat_ten_goi_chon(tenGoi);
+        dat_tu_khoa('');
+        dat_da_chon(new Set());
+        dat_trang_sach(1);
+        dat_mo_chon_sach(true);
     }
 
-    async function mo_sua(ma_hv) {
-        try {
-            const res = await api.get(`/admin/goi_hoi_vien/${ma_hv}`);
-            if (res.data.thanh_cong) {
-                const d = res.data.du_lieu;
-                dat_goi_dang_sua(d);
-                dat_form({
-                    ten_goi: d.ten_goi,
-                    gia: d.gia,
-                    thoi_han_thang: d.thoi_han_thang,
-                    mo_ta: d.mo_ta || '',
-                    hoat_dong: d.hoat_dong
-                });
-                dat_sach_da_chon([]);
-                dat_buoc(1);
-                dat_hien_modal(true);
-            }
-        } catch {
-            toast.error('Không thể lấy chi tiết gói');
-        }
-    }
-
-    const tai_sach_tim = useCallback(async (trang_hien_tai, tu_khoa, ma_hv_filter) => {
-        dat_dang_tai_sach(true);
+    const tai_sach = useCallback(async (t = 1, kw = '') => {
+        if (!ma_hv_chon) return;
+        dat_dang_tim(true);
         try {
             const res = await api.get('/admin/goi_hoi_vien/sach', {
-                params: {
-                    tu_khoa: tu_khoa || undefined,
-                    ma_hv: ma_hv_filter || undefined,
-                    trang: trang_hien_tai,
-                    kich_thuoc: 20
-                }
+                params: { tu_khoa: kw || undefined, ma_hv: ma_hv_chon, trang: t, kich_thuoc: 12 }
             });
             if (res.data.success) {
-                dat_ds_sach_tim(res.data.danh_sach);
+                dat_sach_list(res.data.danh_sach || []);
+                dat_trang_sach(res.data.trang_hien_tai);
                 dat_tong_trang_sach(res.data.tong_so_trang);
-                
-                if (trang_hien_tai === 1 && ma_hv_filter) {
-                    const pre = res.data.danh_sach
-                        .filter(s => s.trong_chuong_trinh)
-                        .map(s => ({
-                            ma_sach: s.ma_sach, ten_sach: s.ten_sach,
-                            tac_gia: s.tac_gia, anh_bia_url: s.anh_bia_url, gia: s.gia
-                        }));
-                    dat_sach_da_chon(pre);
-                }
             }
-        } catch {
-            toast.error('Không thể tải danh sách sách');
-        } finally {
-            dat_dang_tai_sach(false);
-        }
-    }, []);
+        } catch { dat_sach_list([]); }
+        finally { dat_dang_tim(false); }
+    }, [ma_hv_chon]);
 
     useEffect(() => {
-        if (buoc === 2) tai_sach_tim(trang_sach, tu_khoa_sach, goi_dang_sua?.ma_hv);
-    }, [trang_sach, tu_khoa_sach, buoc, goi_dang_sua, tai_sach_tim]);
+        if (mo_chon_sach) tai_sach(1, tu_khoa);
+    }, [mo_chon_sach, tai_sach, tu_khoa]);
 
-    function chuyen_buoc_2() {
-        if (!form.ten_goi.trim() || !form.gia || !form.thoi_han_thang) {
-            toast.error('Vui lòng nhập đầy đủ thông tin bắt buộc (Tên, Giá, Thời hạn)');
-            return;
-        }
-        dat_tu_khoa_sach('');
-        dat_trang_sach(1);
-        dat_buoc(2);
-        tai_sach_tim(1, '', goi_dang_sua?.ma_hv);
-    }
-
-    function toggle_chon_sach(sach_item) {
-        dat_sach_da_chon(prev => {
-            const da_co = prev.some(s => s.ma_sach === sach_item.ma_sach);
-            if (da_co) return prev.filter(s => s.ma_sach !== sach_item.ma_sach);
-            return [...prev, {
-                ma_sach: sach_item.ma_sach, ten_sach: sach_item.ten_sach,
-                tac_gia: sach_item.tac_gia, anh_bia_url: sach_item.anh_bia_url, gia: sach_item.gia
-            }];
+    function toggle_chon(ma_sach) {
+        dat_da_chon(prev => {
+            const next = new Set(prev);
+            next.has(ma_sach) ? next.delete(ma_sach) : next.add(ma_sach);
+            return next;
         });
     }
 
-    const la_da_chon = (ma_sach) => sach_da_chon.some(s => s.ma_sach === ma_sach);
-
-    async function luu_goi() {
-        const payload = {
-            ten_goi: form.ten_goi.trim(),
-            gia: Number(form.gia),
-            thoi_han_thang: Number(form.thoi_han_thang),
-            mo_ta: form.mo_ta.trim() || null,
-            hoat_dong: form.hoat_dong,
-            danh_sach_sach: sach_da_chon.map(s => s.ma_sach)
-        };
+    async function them_sach_da_chon() {
+        if (da_chon.size === 0) return;
+        dat_dang_them(true);
         try {
-            let res;
-            if (goi_dang_sua) {
-                res = await api.put(`/admin/goi_hoi_vien/${goi_dang_sua.ma_hv}`, payload);
-            } else {
-                res = await api.post('/admin/goi_hoi_vien', payload);
-            }
+            const res = await api.post(`/admin/goi_hoi_vien/${ma_hv_chon}/sach`, [...da_chon]);
             if (res.data.thanh_cong) {
                 toast.success(res.data.thong_bao);
-                dat_hien_modal(false);
-                tai_danh_sach(trang, tim_kiem);
+                dat_da_chon(new Set());
+                tai_sach(trang_sach, tu_khoa);
+                tai_danh_sach(trang);
             } else {
                 toast.error(res.data.thong_bao);
             }
-        } catch {
-            toast.error('Có lỗi xảy ra. Vui lòng thử lại.');
-        }
+        } catch { toast.error('Có lỗi xảy ra'); }
+        finally { dat_dang_them(false); }
     }
 
-    async function xem_chi_tiet(ma_hv) {
+    function dong_chon_sach() {
+        dat_mo_chon_sach(false);
+        dat_sach_list([]);
+        dat_da_chon(new Set());
+        if (chi_tiet?.ma_hv === ma_hv_chon) tai_chi_tiet(ma_hv_chon);
+    }
+
+    // ===== Chi tiết =====
+    async function tai_chi_tiet(maHv) {
+        dat_dang_tai_ct(true);
         try {
-            const res = await api.get(`/admin/goi_hoi_vien/${ma_hv}`);
+            const res = await api.get(`/admin/goi_hoi_vien/${maHv}`);
+            if (res.data.thanh_cong) dat_chi_tiet(res.data.du_lieu);
+        } catch { toast.error('Lỗi tải chi tiết'); }
+        finally { dat_dang_tai_ct(false); }
+    }
+
+    async function xoa_sach_khoi_goi(maHv, maSach) {
+        try {
+            await api.delete(`/admin/goi_hoi_vien/${maHv}/sach/${maSach}`);
+            tai_chi_tiet(maHv);
+            tai_danh_sach(trang);
+        } catch { toast.error('Có lỗi xảy ra'); }
+    }
+
+    // ===== Bật/Tắt & Xóa =====
+    async function bat_tat(maHv, hoatDong) {
+        try {
+            const res = await api.put(`/admin/goi_hoi_vien/${maHv}/trang_thai`, null, {
+                params: { hoat_dong: !hoatDong }
+            });
             if (res.data.thanh_cong) {
-                dat_chi_tiet(res.data.du_lieu);
-                dat_hien_chi_tiet(true);
+                toast.success(!hoatDong ? 'Đã kích hoạt gói' : 'Đã vô hiệu hóa gói');
+                tai_danh_sach(trang);
+                if (chi_tiet?.ma_hv === maHv) tai_chi_tiet(maHv);
             }
-        } catch {
-            toast.error('Không thể tải chi tiết gói');
-        }
+        } catch { toast.error('Có lỗi xảy ra'); }
     }
 
-    async function xac_nhan_xoa() {
-        dat_dang_xoa(true);
+    async function xoa_goi(maHv) {
+        if (!window.confirm('Bạn có chắc muốn xóa gói này không?')) return;
         try {
-            const res = await api.delete(`/admin/goi_hoi_vien/${ma_xoa}`);
+            const res = await api.delete(`/admin/goi_hoi_vien/${maHv}`);
             if (res.data.thanh_cong) {
                 toast.success(res.data.thong_bao);
-                dat_hien_xoa(false);
-                tai_danh_sach(trang, tim_kiem);
+                if (chi_tiet?.ma_hv === maHv) dat_chi_tiet(null);
+                tai_danh_sach(trang);
             } else {
                 toast.error(res.data.thong_bao);
             }
-        } catch {
-            toast.error('Có lỗi xảy ra khi xóa');
-        } finally {
-            dat_dang_xoa(false);
-        }
+        } catch { toast.error('Có lỗi xảy ra'); }
     }
 
-    // === RENDER ===
+    // ===== Render =====
     return (
-        <div className="quan-ly-goi-hoi-vien">
-            <div className="page-header">
-                <h2>Quản lý gói hội viên</h2>
-                <button className="btn-them" onClick={mo_them}>+ Thêm gói mới</button>
+        <div className="quan_ly_goi_hoi_vien">
+            {/* Header */}
+            <div className="header_admin">
+                <h2>Gói hội viên</h2>
+                <button className="nut_them_moi" onClick={mo_form_tao}>+ Thêm gói mới</button>
             </div>
 
-            <div className="search-bar">
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm gói hội viên..."
+            {/* Bộ lọc */}
+            <div className="bo_loc_giam_gia">
+                <input type="text" placeholder="Tìm theo tên gói..."
                     value={tim_kiem}
-                    onChange={(e) => {
-                        dat_trang(1);
-                        dat_tim_kiem(e.target.value);
-                    }}
-                />
+                    onChange={e => { dat_tim_kiem(e.target.value); dat_trang(1); }} />
             </div>
 
-            <div className="table-container">
-                {dang_tai ? (
-                    <div className="spinner">Đang tải...</div>
-                ) : (
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Tên gói</th>
-                                <th>Giá</th>
-                                <th>Thời hạn</th>
-                                <th>Số sách</th>
-                                <th>Người dùng</th>
-                                <th>Trạng thái</th>
-                                <th>Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {danh_sach.map((goi, idx) => (
-                                <tr key={goi.ma_hv}>
-                                    <td>{(trang - 1) * 10 + idx + 1}</td>
-                                    <td>{goi.ten_goi}</td>
-                                    <td>{Intl.NumberFormat('vi-VN').format(goi.gia)} ₫</td>
-                                    <td>{goi.thoi_han_thang} tháng</td>
-                                    <td>{goi.so_luong_sach}</td>
-                                    <td>{goi.so_nguoi_dung}</td>
-                                    <td>
-                                        <label className="toggle-switch">
-                                            <input
-                                                type="checkbox"
-                                                checked={goi.hoat_dong}
-                                                disabled={dang_toggle.has(goi.ma_hv)}
-                                                onChange={() => toggle_trang_thai(goi.ma_hv, goi.hoat_dong)}
-                                            />
-                                            <span className="slider round"></span>
-                                        </label>
-                                    </td>
-                                    <td className="actions">
-                                        <button className="btn-xem" onClick={() => xem_chi_tiet(goi.ma_hv)}>Chi tiết</button>
-                                        <button className="btn-sua" onClick={() => mo_sua(goi.ma_hv)}>Sửa</button>
-                                        <button className="btn-xoa" onClick={() => { dat_ma_xoa(goi.ma_hv); dat_hien_xoa(true); }}>Xóa</button>
-                                    </td>
-                                </tr>
-                            ))}
-                            {danh_sach.length === 0 && (
-                                <tr>
-                                    <td colSpan="8" style={{ textAlign: 'center' }}>Không tìm thấy gói hội viên nào.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                )}
-            </div>
+            {/* Bảng */}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tên gói</th>
+                        <th>Giá</th>
+                        <th>Thời hạn</th>
+                        <th>Số sách</th>
+                        <th>Người dùng</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {danh_sach.map(goi => (
+                        <tr key={goi.ma_hv}>
+                            <td>{goi.ten_goi}</td>
+                            <td>{dinh_dang_gia(goi.gia)}</td>
+                            <td>{goi.thoi_han_thang} tháng</td>
+                            <td>{goi.so_luong_sach}</td>
+                            <td>{goi.so_nguoi_dung}</td>
+                            <td>
+                                <span className={`badge ${goi.hoat_dong ? 'xanh' : 'xam'}`}>
+                                    {goi.hoat_dong ? 'Đang bật' : 'Đã tắt'}
+                                </span>
+                            </td>
+                            <td>
+                                <div className="nhom_nut_thao_tac">
+                                    <button className="nut_chi_tiet"
+                                        onClick={() => { dat_chi_tiet(null); tai_chi_tiet(goi.ma_hv); }}>
+                                        Chi tiết
+                                    </button>
+                                    <button className="nut_sua" onClick={() => mo_form_sua(goi)}>Sửa</button>
+                                    <button className="nut_them_sach_ct"
+                                        onClick={() => mo_chon_sach_modal(goi.ma_hv, goi.ten_goi)}>
+                                        + Sách
+                                    </button>
+                                    <button className={`nut_trang_thai ${goi.hoat_dong ? 'nut_tat' : 'nut_bat'}`}
+                                        onClick={() => bat_tat(goi.ma_hv, goi.hoat_dong)}>
+                                        {goi.hoat_dong ? 'Tắt' : 'Bật'}
+                                    </button>
+                                    <button className="nut_xoa" onClick={() => xoa_goi(goi.ma_hv)}>Xóa</button>
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                    {danh_sach.length === 0 && (
+                        <tr><td colSpan={7} className="trong_bang">Chưa có gói hội viên nào</td></tr>
+                    )}
+                </tbody>
+            </table>
 
-            {tong_so_trang > 1 && (
-                <div className="pagination">
-                    <button disabled={trang === 1} onClick={() => dat_trang(t => t - 1)}>Trước</button>
-                    <span>Trang {trang} / {tong_so_trang}</span>
-                    <button disabled={trang === tong_so_trang} onClick={() => dat_trang(t => t + 1)}>Sau</button>
+            {/* Phân trang */}
+            {tong_trang > 1 && (
+                <div className="phan_trang">
+                    <button onClick={() => tai_danh_sach(trang - 1)} disabled={trang === 1}>‹</button>
+                    <span>Trang {trang} / {tong_trang}</span>
+                    <button onClick={() => tai_danh_sach(trang + 1)} disabled={trang === tong_trang}>›</button>
                 </div>
             )}
 
-            {/* MODAL THÊM / SỬA (2 BƯỚC) */}
-            {hien_modal && (
-                <div className="modal-overlay">
-                    <div className={`modal-content ${buoc === 2 ? 'modal-lg' : ''}`}>
-                        <div className="modal-header">
-                            <h3>{goi_dang_sua ? 'Sửa gói hội viên' : 'Thêm gói hội viên'} <span className="step-badge">(Bước {buoc}/2)</span></h3>
-                        </div>
+            {/* ===== Modal Form (Tạo / Sửa) ===== */}
+            {mo_form && (
+                <div className="modal_overlay" onClick={e => e.target === e.currentTarget && dat_mo_form(false)}>
+                    <div className="modal_content">
+                        <h3>{ma_hv_sua ? 'Chỉnh sửa gói hội viên' : 'Tạo gói hội viên'}</h3>
 
-                        {buoc === 1 && (
-                            <div className="modal-body form-step-1">
-                                <div className="form-group">
-                                    <label>Tên gói *</label>
-                                    <input type="text" value={form.ten_goi} onChange={e => dat_form({ ...form, ten_goi: e.target.value })} required />
-                                </div>
-                                <div className="form-group row">
-                                    <div className="col">
-                                        <label>Giá (VNĐ) *</label>
-                                        <input type="number" value={form.gia} onChange={e => dat_form({ ...form, gia: e.target.value })} required />
-                                    </div>
-                                    <div className="col">
-                                        <label>Thời hạn (tháng) *</label>
-                                        <input type="number" value={form.thoi_han_thang} onChange={e => dat_form({ ...form, thoi_han_thang: e.target.value })} required />
-                                    </div>
-                                </div>
-                                <div className="form-group">
-                                    <label>Mô tả</label>
-                                    <textarea rows="3" value={form.mo_ta} onChange={e => dat_form({ ...form, mo_ta: e.target.value })}></textarea>
-                                </div>
-                                <div className="form-group checkbox-group">
-                                    <label>
-                                        <input type="checkbox" checked={form.hoat_dong} onChange={e => dat_form({ ...form, hoat_dong: e.target.checked })} />
-                                        Kích hoạt ngay
-                                    </label>
-                                </div>
-                                <div className="modal-actions">
-                                    <button className="btn-huy" onClick={() => dat_hien_modal(false)}>Hủy</button>
-                                    <button className="btn-tiep" onClick={chuyen_buoc_2}>Tiếp theo</button>
-                                </div>
-                            </div>
+                        {!ma_hv_sua && (
+                            <p className="mo_ta_buoc">
+                                Sau khi tạo gói, bạn sẽ được chuyển sang bước thêm sách vào gói.
+                            </p>
                         )}
 
-                        {buoc === 2 && (
-                            <div className="modal-body form-step-2">
-                                <div className="step-2-header">
-                                    <input 
-                                        type="text" 
-                                        placeholder="Tìm sách để thêm..." 
-                                        value={tu_khoa_sach}
-                                        onChange={e => { dat_trang_sach(1); dat_tu_khoa_sach(e.target.value); }}
-                                        className="search-book-input"
-                                    />
-                                    <span className="badge-chon">Đã chọn {sach_da_chon.length} sách</span>
-                                </div>
-                                
-                                <div className="book-list-container">
-                                    {dang_tai_sach ? <div className="spinner">Đang tải sách...</div> : (
-                                        <table className="book-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Chọn</th>
-                                                    <th>Ảnh</th>
-                                                    <th>Tên sách</th>
-                                                    <th>Tác giả</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {ds_sach_tim.map(sach => (
-                                                    <tr key={sach.ma_sach} onClick={() => toggle_chon_sach(sach)} className="clickable-row">
-                                                        <td>
-                                                            <input 
-                                                                type="checkbox" 
-                                                                checked={la_da_chon(sach.ma_sach)} 
-                                                                onChange={() => {}} // Handle on tr click
-                                                            />
-                                                        </td>
-                                                        <td><img src={sach.anh_bia_url} alt={sach.ten_sach} className="thumb-anh" /></td>
-                                                        <td>{sach.ten_sach}</td>
-                                                        <td>{sach.tac_gia}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    )}
-                                </div>
-                                
-                                {tong_trang_sach > 1 && (
-                                    <div className="pagination small">
-                                        <button disabled={trang_sach === 1} onClick={() => dat_trang_sach(t => t - 1)}>Trước</button>
-                                        <span>{trang_sach}/{tong_trang_sach}</span>
-                                        <button disabled={trang_sach === tong_trang_sach} onClick={() => dat_trang_sach(t => t + 1)}>Sau</button>
-                                    </div>
-                                )}
+                        <div className="truong_nhap">
+                            <label>Tên gói *</label>
+                            <input type="text" placeholder="VD: Hội Viên Cơ Bản"
+                                value={form.ten_goi}
+                                onChange={e => dat_form(p => ({ ...p, ten_goi: e.target.value }))} />
+                        </div>
 
-                                <div className="modal-actions">
-                                    <button className="btn-huy" onClick={() => dat_buoc(1)}>Quay lại</button>
-                                    <button className="btn-luu" onClick={luu_goi}>Lưu gói hội viên</button>
-                                </div>
+                        <div className="nhom_input">
+                            <div className="truong_nhap">
+                                <label>Giá (VNĐ) *</label>
+                                <input type="number" min="0" step="1000" placeholder="VD: 99000"
+                                    value={form.gia}
+                                    onChange={e => dat_form(p => ({ ...p, gia: e.target.value }))} />
                             </div>
-                        )}
-                    </div>
-                </div>
-            )}
+                            <div className="truong_nhap">
+                                <label>Thời hạn (tháng) *</label>
+                                <input type="number" min="1" step="1" placeholder="VD: 3"
+                                    value={form.thoi_han_thang}
+                                    onChange={e => dat_form(p => ({ ...p, thoi_han_thang: e.target.value }))} />
+                            </div>
+                        </div>
 
-            {/* MODAL CHI TIẾT */}
-            {hien_chi_tiet && chi_tiet && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h3>Chi tiết gói: {chi_tiet.ten_goi}</h3>
+                        <div className="truong_nhap">
+                            <label>Mô tả</label>
+                            <textarea rows="3" placeholder="Mô tả ngắn về gói hội viên..."
+                                className="truong_nhap_textarea"
+                                value={form.mo_ta}
+                                onChange={e => dat_form(p => ({ ...p, mo_ta: e.target.value }))} />
                         </div>
-                        <div className="modal-body detail-view">
-                            <p><strong>Giá:</strong> {Intl.NumberFormat('vi-VN').format(chi_tiet.gia)} ₫</p>
-                            <p><strong>Thời hạn:</strong> {chi_tiet.thoi_han_thang} tháng</p>
-                            <p><strong>Trạng thái:</strong> <span className={`status-badge ${chi_tiet.hoat_dong ? 'active' : ''}`}>{chi_tiet.hoat_dong ? 'Đang hoạt động' : 'Tạm khóa'}</span></p>
-                            <p><strong>Số lượng sách:</strong> {chi_tiet.so_luong_sach}</p>
-                            <p><strong>Mô tả:</strong> {chi_tiet.mo_ta || 'Không có mô tả'}</p>
-                        </div>
-                        <div className="modal-actions right">
-                            <button className="btn-huy" onClick={() => dat_hien_chi_tiet(false)}>Đóng</button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
-            {/* MODAL XÁC NHẬN XÓA */}
-            {hien_xoa && (
-                <div className="modal-overlay">
-                    <div className="modal-content modal-sm">
-                        <div className="modal-header">
-                            <h3>Xác nhận xóa</h3>
-                        </div>
-                        <div className="modal-body">
-                            <p>Bạn có chắc chắn muốn xóa gói này không?</p>
-                        </div>
-                        <div className="modal-actions">
-                            <button className="btn-huy" onClick={() => dat_hien_xoa(false)}>Hủy</button>
-                            <button className="btn-xoa" onClick={xac_nhan_xoa} disabled={dang_xoa}>
-                                {dang_xoa ? 'Đang xóa...' : 'Xóa'}
+                        <label className="label_checkbox">
+                            <input type="checkbox" checked={form.hoat_dong}
+                                onChange={e => dat_form(p => ({ ...p, hoat_dong: e.target.checked }))} />
+                            Kích hoạt ngay
+                        </label>
+
+                        <div className="modal_actions">
+                            <button onClick={() => dat_mo_form(false)}>Hủy</button>
+                            <button className="nut_chinh" onClick={luu_form} disabled={dang_luu}>
+                                {dang_luu ? 'Đang lưu...' : ma_hv_sua ? 'Lưu thay đổi' : 'Tạo gói'}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
+
+            {/* ===== Modal Chọn Sách ===== */}
+            {mo_chon_sach && (
+                <div className="modal_overlay" onClick={e => e.target === e.currentTarget && dong_chon_sach()}>
+                    <div className="modal_chon_sach">
+                        <div className="header_chon_sach">
+                            <div>
+                                <h3>Thêm sách vào gói hội viên</h3>
+                                <p className="ten_ct_chon_sach">{ten_goi_chon}</p>
+                            </div>
+                            <button className="nut_dong_x" onClick={dong_chon_sach}>✕</button>
+                        </div>
+
+                        <div className="thanh_tim_kiem_sach">
+                            <input type="text" placeholder="Tìm theo tên sách hoặc tác giả..."
+                                value={tu_khoa}
+                                onChange={e => dat_tu_khoa(e.target.value)} />
+                            {da_chon.size > 0 && <span className="so_da_chon">Đã chọn: {da_chon.size}</span>}
+                        </div>
+
+                        <div className="luoi_sach_chon">
+                            {dang_tim ? (
+                                <div className="dang_tai">Đang tìm kiếm...</div>
+                            ) : sach_list.length === 0 ? (
+                                <div className="dang_tai">Không tìm thấy sách phù hợp</div>
+                            ) : sach_list.map(s => (
+                                <div key={s.ma_sach}
+                                    className={`the_sach_chon ${da_chon.has(s.ma_sach) ? 'dang_chon' : ''} ${s.trong_chuong_trinh ? 'da_co_trong_ct' : ''}`}
+                                    onClick={() => !s.trong_chuong_trinh && toggle_chon(s.ma_sach)}>
+                                    <img src={s.anh_bia_url} alt={s.ten_sach} />
+                                    <div className="thong_tin_sach_chon">
+                                        <p className="ten_sach_chon">{s.ten_sach}</p>
+                                        <p className="tac_gia_chon">{s.tac_gia}</p>
+                                        <p className="gia_sach_chon">{dinh_dang_gia(s.gia)}</p>
+                                    </div>
+                                    {s.trong_chuong_trinh
+                                        ? <span className="badge_da_co">Đã có</span>
+                                        : da_chon.has(s.ma_sach)
+                                            ? <span className="badge_da_chon">✓</span>
+                                            : null
+                                    }
+                                </div>
+                            ))}
+                        </div>
+
+                        {tong_trang_sach > 1 && (
+                            <div className="phan_trang_sach">
+                                <button onClick={() => tai_sach(trang_sach - 1, tu_khoa)} disabled={trang_sach === 1}>‹</button>
+                                <span>{trang_sach} / {tong_trang_sach}</span>
+                                <button onClick={() => tai_sach(trang_sach + 1, tu_khoa)} disabled={trang_sach === tong_trang_sach}>›</button>
+                            </div>
+                        )}
+
+                        <div className="modal_actions">
+                            <button onClick={dong_chon_sach}>Hoàn thành</button>
+                            <button className="nut_chinh" onClick={them_sach_da_chon}
+                                disabled={da_chon.size === 0 || dang_them}>
+                                {dang_them ? 'Đang thêm...' : `Thêm ${da_chon.size > 0 ? da_chon.size + ' sách' : 'sách đã chọn'}`}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ===== Modal Chi Tiết ===== */}
+            {chi_tiet && (
+                <div className="modal_overlay" onClick={e => e.target === e.currentTarget && dat_chi_tiet(null)}>
+                    <div className="modal_chi_tiet">
+                        <div className="header_chi_tiet">
+                            <div>
+                                <h3>{chi_tiet.ten_goi}</h3>
+                                <span className={`badge ${chi_tiet.hoat_dong ? 'xanh' : 'xam'}`}>
+                                    {chi_tiet.hoat_dong ? 'Đang bật' : 'Đã tắt'}
+                                </span>
+                            </div>
+                            <button className="nut_dong_x" onClick={() => dat_chi_tiet(null)}>✕</button>
+                        </div>
+
+                        {dang_tai_ct ? (
+                            <div className="dang_tai" style={{ padding: '32px' }}>Đang tải...</div>
+                        ) : (
+                            <>
+                                <div className="card_thong_tin_ct">
+                                    <div className="hang_thong_tin">
+                                        <span>💰 Giá:</span>
+                                        <strong>{dinh_dang_gia(chi_tiet.gia)}</strong>
+                                    </div>
+                                    <div className="hang_thong_tin">
+                                        <span>⏱️ Thời hạn:</span>
+                                        <span>{chi_tiet.thoi_han_thang} tháng</span>
+                                    </div>
+                                    {chi_tiet.mo_ta && (
+                                        <div className="hang_thong_tin">
+                                            <span>📝 Mô tả:</span>
+                                            <span>{chi_tiet.mo_ta}</span>
+                                        </div>
+                                    )}
+                                    <div className="hang_thong_tin">
+                                        <span>📚 Số sách:</span>
+                                        <span>{chi_tiet.so_luong_sach} sách</span>
+                                    </div>
+                                </div>
+
+                                <div className="header_sach_trong_ct">
+                                    <h4>Danh sách sách ({chi_tiet.so_luong_sach})</h4>
+                                    <button className="nut_them_sach_ct"
+                                        onClick={() => { dat_chi_tiet(null); mo_chon_sach_modal(chi_tiet.ma_hv, chi_tiet.ten_goi); }}>
+                                        + Thêm sách
+                                    </button>
+                                </div>
+
+                                <div className="luoi_sach_ct">
+                                    {chi_tiet.danh_sach_sach.length === 0 ? (
+                                        <p className="chua_co_sach">Chưa có sách nào.</p>
+                                    ) : chi_tiet.danh_sach_sach.map(s => (
+                                        <div key={s.ma_sach} className="the_sach_ct">
+                                            <img src={s.anh_bia_url} alt={s.ten_sach} />
+                                            <div className="thong_tin_sach_ct">
+                                                <p className="ten_sach_ct">{s.ten_sach}</p>
+                                                <p className="tac_gia_ct">{s.tac_gia}</p>
+                                                <p className="gia_sach_chon" style={{ margin: 0 }}>
+                                                    {dinh_dang_gia(s.gia)}
+                                                </p>
+                                            </div>
+                                            <button className="nut_xoa_sach_ct"
+                                                title="Xóa khỏi gói"
+                                                onClick={() => xoa_sach_khoi_goi(chi_tiet.ma_hv, s.ma_sach)}>
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="modal_actions">
+                                    <button onClick={() => dat_chi_tiet(null)}>Đóng</button>
+                                    <button className="nut_sua"
+                                        onClick={() => { dat_chi_tiet(null); mo_form_sua(chi_tiet); }}>
+                                        Chỉnh sửa thông tin
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
-};
-
-export default QuanLyGoiHoiVien;
+}

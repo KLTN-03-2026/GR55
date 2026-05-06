@@ -87,6 +87,25 @@
   color: #2563eb;
   border: 1px solid #bfdbfe;
 }
+.badge_hoi_vien_chi_tiet {
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #7c3aed;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+.badge_giam_chi_tiet {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  background: #dc2626;
+  color: #fff;
+  letter-spacing: 0.3px;
+  align-self: center;
+}
 .ten_sach_chi_tiet {
   font-size: 26px;
   font-weight: 700;

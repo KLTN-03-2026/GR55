@@ -146,7 +146,7 @@ root.render(
             <Route path="/quan_tri/don_hang" element={<AdminLayout><QuanLyDonHang /></AdminLayout>} />
             <Route path="/quan_tri/don_hang/:id_dh" element={<AdminLayout><ChiTietDonHangAdmin /></AdminLayout>} />
             <Route path="/quan_tri/thong_ke" element={<AdminLayout><ThongKe /></AdminLayout>} />
-            <Route path="/hoi_vien" element={<AdminLayout><GoiHoiVien /></AdminLayout>} />
+            <Route path="/hoi_vien" element={<App><GoiHoiVien /></App>} />
             <Route path="/quan_tri/goi_hoi_vien" element={<AdminLayout><QuanLyGoiHoiVien /></AdminLayout>} />
           </Routes>
 

@@ -136,7 +136,7 @@ public class LichSuDonHangService {
         for (ChiTietDonHang ct : chiTietList) {
             KiemTraTaiThanhToanResponse.SachItem item = new KiemTraTaiThanhToanResponse.SachItem(
                     ct.getMaSach(), ct.getTenSach(), ct.getTacGia(), ct.getAnhBiaUrl(), ct.getDonGia());
-            if (donHangRepository.daMuaSach(maNd, ct.getMaSach())) {
+            if (donHangRepository.daMuaSach(maNd, ct.getMaSach()) > 0) {
                 daSoHuu.add(item);
             } else {
                 chuaSoHuu.add(item);
@@ -166,7 +166,7 @@ public class LichSuDonHangService {
         List<ChiTietDonHang> chiTietList = chiTietDonHangRepository.findByIdDhOrderByMaCtdhAsc(idDh);
 
         List<ChiTietDonHang> sachChuaSoHuu = chiTietList.stream()
-                .filter(ct -> !donHangRepository.daMuaSach(maNd, ct.getMaSach()))
+                .filter(ct -> donHangRepository.daMuaSach(maNd, ct.getMaSach()) == 0)
                 .collect(Collectors.toList());
 
         // Hủy đơn cũ dù kết quả thế nào
@@ -206,7 +206,7 @@ public class LichSuDonHangService {
         }).collect(Collectors.toList());
         chiTietDonHangRepository.saveAll(chiTietMoi);
 
-        String thanhToanUrl = vnpayService.taoUrlThanhToan(saved.getIdDh(), tongTienMoi, maDonHangMoi);
+        String thanhToanUrl = vnpayService.taoUrlThanhToan(saved.getIdDh(), tongTienMoi, maDonHangMoi, false);
         return new TaoDonHangResponse(true, "Tạo đơn thanh toán lại thành công",
                 new TaoDonHangResponse.DonHangData(saved.getIdDh(), saved.getMaDonHang(), thanhToanUrl));
     }

@@ -25,6 +25,17 @@ public class GoiHoiVienAdminResponse {
         private String mo_ta;
         private Boolean hoat_dong;
         private Integer so_luong_sach;
-        private List<Long> danh_sach_sach;
+        private List<SachItem> danh_sach_sach;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SachItem {
+        private Long ma_sach;
+        private String ten_sach;
+        private String tac_gia;
+        private String anh_bia_url;
+        private BigDecimal gia;
     }
 }

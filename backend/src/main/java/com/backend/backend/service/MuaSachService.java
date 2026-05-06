@@ -103,7 +103,7 @@ public class MuaSachService {
             chiTietDonHangRepository.save(chiTiet);
         }
 
-        String thanhToanUrl = vnpayService.taoUrlThanhToan(saved.getIdDh(), tongTien, maDonHang);
+        String thanhToanUrl = vnpayService.taoUrlThanhToan(saved.getIdDh(), tongTien, maDonHang, request.isDungQr());
         TaoDonHangResponse.DonHangData data = new TaoDonHangResponse.DonHangData(
                 saved.getIdDh(), saved.getMaDonHang(), thanhToanUrl);
 
@@ -113,7 +113,9 @@ public class MuaSachService {
     @Caching(evict = {
         @CacheEvict(value = "lich_su_don_hang", allEntries = true),
         @CacheEvict(value = "chi_tiet_don_hang", allEntries = true),
-        @CacheEvict(value = "chi_tiet_sach", allEntries = true)
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true),
+        @CacheEvict(value = "sach_noi_bat", allEntries = true),
+        @CacheEvict(value = "sach_hoi_vien", allEntries = true)
     })
     @Transactional
     public void xuLyThanhToanThanhCong(Long idDh, String maGiaoDichNgoai) {
@@ -131,6 +133,14 @@ public class MuaSachService {
         giaoDich.setMaGiaoDichNgoai(maGiaoDichNgoai);
         giaoDich.setPhanHoi("Giao dịch thành công");
         giaoDichThanhToanRepository.save(giaoDich);
+
+        List<ChiTietDonHang> chiTietList = chiTietDonHangRepository.findByIdDhOrderByMaCtdhAsc(idDh);
+        List<Long> maSachList = chiTietList.stream().map(ChiTietDonHang::getMaSach).toList();
+        List<Sach> sachList = sachRepository.findAllById(maSachList);
+        for (Sach sach : sachList) {
+            sach.setSoLuongDaBan((sach.getSoLuongDaBan() != null ? sach.getSoLuongDaBan() : 0) + 1);
+        }
+        sachRepository.saveAll(sachList);
     }
 
     @Caching(evict = {

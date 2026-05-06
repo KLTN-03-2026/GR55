@@ -31,9 +31,12 @@ public class ChatbotService {
         luuTinNhan(maPhien, "bot", ketQua.vanBan(), maNd, ketQua.yDinh());
 
         List<ChatResponse.SachData> sachGoiY = null;
-        if (ketQua.tuKhoaTimSach() != null && !ketQua.tuKhoaTimSach().isBlank()) {
+        String phanHoi = ketQua.vanBan();
+        String tuKhoa = ketQua.tuKhoaTimSach();
+
+        if (tuKhoa != null && !tuKhoa.isBlank()) {
             sachGoiY = sachRepository
-                    .timKiemSach(ketQua.tuKhoaTimSach(), null, null, null, null, null, null, PageRequest.of(0, 4))
+                    .timKiemSach(tuKhoa, null, null, null, null, null, null, PageRequest.of(0, 4))
                     .getContent().stream()
                     .map(s -> new ChatResponse.SachData(
                             s.getMaSach(),
@@ -44,9 +47,16 @@ public class ChatbotService {
                             s.getDanhGiaTrungBinh() != null ? s.getDanhGiaTrungBinh().doubleValue() : 0.0
                     ))
                     .collect(Collectors.toList());
+
+            if (sachGoiY.isEmpty()) {
+                phanHoi = "Rất tiếc, BookNest hiện chưa có sách nào phù hợp với từ khóa \"" + tuKhoa + "\" trong catalog.\n"
+                        + "Bạn có thể thử tìm với từ khóa khác, hoặc liên hệ support@booknest.vn để được hỗ trợ thêm nhé!";
+                sachGoiY = null;
+                tuKhoa = null;
+            }
         }
 
-        return new ChatResponse(true, ketQua.vanBan(), sachGoiY);
+        return new ChatResponse(true, phanHoi, sachGoiY, tuKhoa);
     }
 
     private void luuTinNhan(String maPhien, String vaiTro, String noiDung, Long maNd, String yDinh) {

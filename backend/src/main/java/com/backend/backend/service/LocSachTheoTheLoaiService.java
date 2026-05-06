@@ -6,6 +6,7 @@ import com.backend.backend.dto.SachTheoTheLoaiResponse;
 import com.backend.backend.entity.DanhMucSach;
 import com.backend.backend.entity.Sach;
 import com.backend.backend.repository.DanhMucSachRepository;
+import com.backend.backend.repository.GoiHoiVienSachRepository;
 import com.backend.backend.repository.SachRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +29,7 @@ public class LocSachTheoTheLoaiService {
     private final SachRepository sachRepository;
     private final DanhMucSachRepository danhMucSachRepository;
     private final QuanLyGiamGiaService quanLyGiamGiaService;
+    private final GoiHoiVienSachRepository goiHoiVienSachRepository;
 
     @Cacheable(value = "sach_theo_the_loai",
                key = "#request.ma_the_loai + '_' + #request.min_gia + '_' + #request.max_gia + '_' + #request.min_danh_gia + '_' + #request.sach_mien_phi + '_' + #request.sach_hoi_vien + '_' + #request.sap_xep + '_' + #request.trang + '_' + #request.kich_thuoc")
@@ -55,6 +57,13 @@ public class LocSachTheoTheLoaiService {
         // Dùng countSachByDanhMuc đã có để lấy tổng số sách trong thể loại
         long tongSoSach = danhMucSachRepository.countSachByDanhMuc(request.getMa_the_loai());
 
+        List<Long> sachIds = page.getContent().stream()
+                .map(Sach::getMaSach)
+                .collect(Collectors.toList());
+        Set<Long> hoiVienIds = sachIds.isEmpty()
+                ? Collections.emptySet()
+                : new HashSet<>(goiHoiVienSachRepository.findActiveSachIdsIn(sachIds));
+
         List<SachTheoTheLoaiResponse.SachData> danhSach = page.getContent().stream()
                 .map(sach -> {
                     GiamGiaInfo info = quanLyGiamGiaService.layGiamGiaInfo(sach.getMaSach());
@@ -66,7 +75,8 @@ public class LocSachTheoTheLoaiService {
                             sach.getGia(),
                             sach.getDanhGiaTrungBinh() != null ? sach.getDanhGiaTrungBinh().doubleValue() : 0.0,
                             info != null ? info.getGia_sau_giam() : null,
-                            info != null ? info.getNhan_giam() : null);
+                            info != null ? info.getNhan_giam() : null,
+                            hoiVienIds.contains(sach.getMaSach()));
                 })
                 .collect(Collectors.toList());
 

@@ -40,11 +40,11 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
            nativeQuery = true)
     Page<Object[]> findSachDaMuaByMaNd(@Param("maNd") Long maNd, Pageable pageable);
 
-    @Query(value = "SELECT COUNT(*) > 0 FROM chi_tiet_don_hang ct " +
+    @Query(value = "SELECT COUNT(*) FROM chi_tiet_don_hang ct " +
                    "INNER JOIN don_hang dh ON ct.id_dh = dh.id_dh " +
                    "WHERE ct.ma_sach = :maSach AND dh.ma_nd = :maNd AND dh.trang_thai = 'da_thanh_toan'",
            nativeQuery = true)
-    boolean daMuaSach(@Param("maNd") Long maNd, @Param("maSach") Long maSach);
+    long daMuaSach(@Param("maNd") Long maNd, @Param("maSach") Long maSach);
 
     @Query("SELECT d FROM DonHang d " +
            "WHERE (:trangThai IS NULL OR d.trangThai = :trangThai) " +
@@ -94,6 +94,13 @@ public interface DonHangRepository extends JpaRepository<DonHang, Long> {
            nativeQuery = true)
     List<Object[]> layDonHangTheoDenNgay(@Param("tuNgay") LocalDateTime tuNgay,
                                           @Param("denNgay") LocalDateTime denNgay);
+
+    @Query(value = "SELECT trang_thai, COUNT(*) AS so_luong, COALESCE(SUM(tong_tien), 0) AS tong_tien " +
+                   "FROM don_hang WHERE ngay_tao BETWEEN :tuNgay AND :denNgay " +
+                   "GROUP BY trang_thai",
+           nativeQuery = true)
+    List<Object[]> thongKeDonHangTheoTrangThai(@Param("tuNgay") LocalDateTime tuNgay,
+                                                @Param("denNgay") LocalDateTime denNgay);
 
     List<DonHang> findTop10ByMaNdOrderByNgayTaoDesc(Long maNd);
 

@@ -62,4 +62,36 @@ public interface DanhGiaRepository extends JpaRepository<DanhGia, Long> {
                                    @Param("tuNgay") LocalDateTime tuNgay,
                                    @Param("denNgay") LocalDateTime denNgay,
                                    Pageable pageable);
+
+    @Query(value = "SELECT so_sao, COUNT(*) AS so_luong FROM danh_gia WHERE hien_thi = true GROUP BY so_sao ORDER BY so_sao DESC",
+           nativeQuery = true)
+    List<Object[]> thongKePhanBoSaoToanHeThong();
+
+    @Query(value = "SELECT COUNT(*), COALESCE(AVG(so_sao), 0) FROM danh_gia WHERE hien_thi = true",
+           nativeQuery = true)
+    List<Object[]> tongQuanDanhGia();
+
+    @Query(value = "SELECT s.ma_sach, s.ten_sach, s.tac_gia, " +
+                   "ROUND(AVG(d.so_sao), 2) AS diem_tb, COUNT(d.ma_dg) AS so_danh_gia " +
+                   "FROM danh_gia d JOIN sach s ON d.ma_sach = s.ma_sach " +
+                   "WHERE d.hien_thi = true AND s.da_xoa = false " +
+                   "GROUP BY s.ma_sach, s.ten_sach, s.tac_gia " +
+                   "HAVING COUNT(d.ma_dg) >= 1 ORDER BY diem_tb DESC, so_danh_gia DESC LIMIT 5",
+           nativeQuery = true)
+    List<Object[]> topSachDanhGiaCao();
+
+    @Query(value = "SELECT s.ma_sach, s.ten_sach, s.tac_gia, " +
+                   "ROUND(AVG(d.so_sao), 2) AS diem_tb, COUNT(d.ma_dg) AS so_danh_gia " +
+                   "FROM danh_gia d JOIN sach s ON d.ma_sach = s.ma_sach " +
+                   "WHERE d.hien_thi = true AND s.da_xoa = false " +
+                   "GROUP BY s.ma_sach, s.ten_sach, s.tac_gia " +
+                   "HAVING COUNT(d.ma_dg) >= 1 ORDER BY diem_tb ASC, so_danh_gia DESC LIMIT 5",
+           nativeQuery = true)
+    List<Object[]> topSachDanhGiaThap();
+
+    @Query(value = "SELECT ROUND(COUNT(DISTINCT d.ma_nd) * 100.0 / " +
+                   "NULLIF((SELECT COUNT(DISTINCT dh.ma_nd) FROM don_hang dh WHERE dh.trang_thai = 'da_thanh_toan'), 0), 1) " +
+                   "FROM danh_gia d WHERE d.hien_thi = true",
+           nativeQuery = true)
+    Double tyLeNguoiMuaDanhGia();
 }

@@ -49,7 +49,7 @@ public class NangCapHoiVienService {
         GoiHoiVien goi = goiHoiVienRepository.findByMaHvAndHoatDongTrue(request.getMa_goi())
                 .orElseThrow(() -> new RuntimeException("Gói hội viên không tồn tại hoặc không còn hoạt động"));
 
-        String thanhToanUrl = vnpayService.taoUrlThanhToanHoiVien(maNd, goi.getMaHv(), goi.getGia());
+        String thanhToanUrl = vnpayService.taoUrlThanhToanHoiVien(maNd, goi.getMaHv(), goi.getGia(), request.isDungQr());
         return new DangKyGoiHoiVienResponse(true, "Tạo yêu cầu thanh toán thành công",
                 new DangKyGoiHoiVienResponse.DangKyData(thanhToanUrl));
     }

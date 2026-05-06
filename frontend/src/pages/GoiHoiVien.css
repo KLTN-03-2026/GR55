@@ -128,6 +128,43 @@
     padding: 4px 0;
 }
 
+/* Chọn phương thức thanh toán */
+.chon_phuong_thuc_hv {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.pt_hv_option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #4b5563;
+    background: #f9fafb;
+    transition: border-color 0.2s, background 0.2s;
+    flex: 1;
+    justify-content: center;
+}
+
+.pt_hv_option input[type="radio"] {
+    accent-color: #4f6ef7;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.pt_hv_active {
+    border-color: #4f6ef7;
+    background: #eef1ff;
+    color: #1a1a2e;
+    font-weight: 500;
+}
+
 /* Nút đăng ký */
 .nut_dang_ky_goi {
     margin-top: auto;

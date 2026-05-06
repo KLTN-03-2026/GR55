@@ -40,5 +40,6 @@ public class SachTheoTheLoaiResponse {
         private Double danh_gia_trung_binh;
         private BigDecimal gia_sau_giam;
         private String nhan_giam;
+        private boolean thuoc_goi_hoi_vien;
     }
 }

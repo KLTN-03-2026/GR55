@@ -14,12 +14,14 @@ export default function KetQuaHoiVien() {
                     <p className="mo_ta_ket_qua">
                         Tài khoản của bạn đã được nâng cấp lên Hội viên. Bắt đầu đọc sách ngay!
                     </p>
-                    <Link to="/sach_hoi_vien" className="nut_chinh_ket_qua">
-                        Khám phá sách hội viên
-                    </Link>
-                    <Link to="/trang_chu" className="nut_phu_ket_qua">
-                        Về trang chủ
-                    </Link>
+                    <div className="nhom_nut_ket_qua">
+                        <Link to="/sach_hoi_vien" className="nut_chinh_ket_qua">
+                            Khám phá sách hội viên
+                        </Link>
+                        <Link to="/trang_chu" className="nut_phu_ket_qua">
+                            Về trang chủ
+                        </Link>
+                    </div>
                 </>
             ) : (
                 <>
@@ -28,12 +30,14 @@ export default function KetQuaHoiVien() {
                     <p className="mo_ta_ket_qua">
                         Giao dịch chưa hoàn tất. Bạn có thể thử lại hoặc chọn gói khác.
                     </p>
-                    <Link to="/hoi_vien" className="nut_chinh_ket_qua">
-                        Thử lại
-                    </Link>
-                    <Link to="/trang_chu" className="nut_phu_ket_qua">
-                        Về trang chủ
-                    </Link>
+                    <div className="nhom_nut_ket_qua">
+                        <Link to="/hoi_vien" className="nut_chinh_ket_qua">
+                            Thử lại
+                        </Link>
+                        <Link to="/trang_chu" className="nut_phu_ket_qua">
+                            Về trang chủ
+                        </Link>
+                    </div>
                 </>
             )}
         </div>

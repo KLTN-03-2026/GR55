@@ -332,8 +332,10 @@
   animation: hien_hop 0.2s ease-out;
 }
 
-.hop_modal_lon {
-  max-width: 880px;
+.hop_modal.hop_modal_lon {
+  flex: 0 1 880px;
+  max-width: calc(100vw - 40px);
+  width: auto;
 }
 
 @keyframes hien_hop {
@@ -365,6 +367,7 @@
 .cot_form {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .nhom_truong_modal {

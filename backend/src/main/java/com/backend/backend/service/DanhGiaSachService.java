@@ -43,7 +43,7 @@ public class DanhGiaSachService {
         }
 
         // Sách trả phí: kiểm tra đã mua
-        if (donHangRepository.daMuaSach(maNd, maSach)) {
+        if (donHangRepository.daMuaSach(maNd, maSach) > 0) {
             return true;
         }
 
@@ -58,7 +58,7 @@ public class DanhGiaSachService {
 
     @Caching(evict = {
         @CacheEvict(value = "danh_gia_sach", allEntries = true),
-        @CacheEvict(value = "chi_tiet_sach", key = "#maSach")
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true)
     })
     @Transactional
     public DanhGiaResponse themDanhGia(Long maNd, Long maSach, ThemDanhGiaRequest request) {
@@ -89,7 +89,7 @@ public class DanhGiaSachService {
 
     @Caching(evict = {
         @CacheEvict(value = "danh_gia_sach", allEntries = true),
-        @CacheEvict(value = "chi_tiet_sach", key = "#maSach")
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true)
     })
     @Transactional
     public DanhGiaResponse suaDanhGia(Long maNd, Long maSach, SuaDanhGiaRequest request) {
@@ -110,7 +110,7 @@ public class DanhGiaSachService {
 
     @Caching(evict = {
         @CacheEvict(value = "danh_gia_sach", allEntries = true),
-        @CacheEvict(value = "chi_tiet_sach", key = "#maSach")
+        @CacheEvict(value = "chi_tiet_sach", allEntries = true)
     })
     @Transactional
     public DanhGiaResponse xoaDanhGia(Long maNd, Long maSach) {

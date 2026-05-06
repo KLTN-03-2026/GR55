@@ -17,6 +17,8 @@ function XacNhanDonHang() {
     so_dien_thoai: '',
   });
 
+  const [phuong_thuc, dat_phuong_thuc] = useState('atm');
+
   const { data: gio_hang, isLoading: dang_tai_gio } = useQuery({
     queryKey: ['gio_hang', nguoiDung?.ma_nguoi_dung],
     queryFn: async () => {
@@ -37,6 +39,7 @@ function XacNhanDonHang() {
       hoTen: thong_tin.ho_ten,
       email: thong_tin.email,
       soDienThoai: thong_tin.so_dien_thoai,
+      dungQr: phuong_thuc === 'qr',
     }),
     onSuccess: (phan_hoi) => {
       if (phan_hoi.data.success) {
@@ -149,7 +152,28 @@ function XacNhanDonHang() {
 
               <div className="xn_phuong_thuc">
                 <label className="xn_nhan">Phương thức thanh toán</label>
-                <div className="xn_vnpay_badge">VNPAY</div>
+                <div className="xn_chon_phuong_thuc">
+                  <label className={`xn_pt_option${phuong_thuc === 'atm' ? ' xn_pt_active' : ''}`}>
+                    <input
+                      type="radio"
+                      name="phuong_thuc"
+                      value="atm"
+                      checked={phuong_thuc === 'atm'}
+                      onChange={() => dat_phuong_thuc('atm')}
+                    />
+                    <span>🏧 Thẻ ATM nội địa</span>
+                  </label>
+                  <label className={`xn_pt_option${phuong_thuc === 'qr' ? ' xn_pt_active' : ''}`}>
+                    <input
+                      type="radio"
+                      name="phuong_thuc"
+                      value="qr"
+                      checked={phuong_thuc === 'qr'}
+                      onChange={() => dat_phuong_thuc('qr')}
+                    />
+                    <span>📱 Quét mã QR</span>
+                  </label>
+                </div>
               </div>
 
               <button

@@ -176,10 +176,10 @@ body {
 
 /* Định dạng cho cái tên hiển thị bên ngoài */
 .user-name {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.95rem;
   white-space: nowrap;
-  /* Ngăn chữ rớt dòng nếu tên dài */
+  color: #111827;
 }
 
 /* Tinh chỉnh lại avatar cho cân đối với nút mới */

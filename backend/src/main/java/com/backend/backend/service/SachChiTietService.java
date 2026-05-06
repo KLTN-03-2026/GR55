@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,6 +54,7 @@ public class SachChiTietService {
         Double diemTrungBinh = danhGiaRepository.tinhDiemTrungBinh(maSach);
         Integer soLuotDanhGia = danhGiaRepository.demSoLuotDanhGia(maSach);
         boolean sachThuocGoiHoiVien = goiHoiVienSachRepository.existsByMaSach(maSach);
+        GiamGiaInfo giamGiaInfo = quanLyGiamGiaService.layGiamGiaInfo(maSach);
 
         boolean daMua = false;
         boolean daYeuThich = false;
@@ -75,7 +74,8 @@ public class SachChiTietService {
                 sach.getTacGia(),
                 sach.getMoTa(),
                 sach.getGia(),
-                quanLyGiamGiaService.tinhGiaDaGiam(maSach),
+                giamGiaInfo != null ? giamGiaInfo.getGia_sau_giam() : null,
+                giamGiaInfo != null ? giamGiaInfo.getNhan_giam() : null,
                 diemTrungBinh != null ? diemTrungBinh : 0.0,
                 soLuotDanhGia != null ? soLuotDanhGia : 0,
                 sach.getAnhBiaUrl(),
@@ -108,6 +108,13 @@ public class SachChiTietService {
         Pageable pageable = PageRequest.of(trang - 1, kichThuoc);
         Page<Sach> page = sachRepository.findSachCungTheLoai(maSach, danhSachMaDm, pageable);
 
+        List<Long> sachIds = page.getContent().stream()
+                .map(Sach::getMaSach)
+                .collect(Collectors.toList());
+        Set<Long> hoiVienIds = sachIds.isEmpty()
+                ? Collections.emptySet()
+                : new HashSet<>(goiHoiVienSachRepository.findActiveSachIdsIn(sachIds));
+
         List<SachLienQuanResponse.SachLienQuanData> danhSach = page.getContent().stream()
                 .map(s -> {
                     GiamGiaInfo info = quanLyGiamGiaService.layGiamGiaInfo(s.getMaSach());
@@ -121,7 +128,8 @@ public class SachChiTietService {
                             s.getLuotXem(),
                             s.getSoLuongDaBan() != null ? s.getSoLuongDaBan() : 0,
                             info != null ? info.getGia_sau_giam() : null,
-                            info != null ? info.getNhan_giam() : null);
+                            info != null ? info.getNhan_giam() : null,
+                            hoiVienIds.contains(s.getMaSach()));
                 })
                 .collect(Collectors.toList());
 

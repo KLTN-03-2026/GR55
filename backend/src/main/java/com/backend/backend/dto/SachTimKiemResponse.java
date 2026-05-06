@@ -32,5 +32,6 @@ public class SachTimKiemResponse {
         private List<String> danh_sach_danh_muc;
         private BigDecimal gia_sau_giam;
         private String nhan_giam;
+        private boolean thuoc_goi_hoi_vien;
     }
 }

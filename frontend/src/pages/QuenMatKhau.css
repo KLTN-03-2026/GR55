@@ -225,12 +225,11 @@
   color: #4338ca;
 }
 
-.thong_bao_loi {
+.loi_o_nhap {
   display: block;
   color: #ef4444;
-  font-size: 13px;
-  margin-top: 6px;
-  min-height: 18px;
+  font-size: 12px;
+  margin-top: 4px;
 }
 
 /* Khung mật khẩu */

@@ -205,7 +205,7 @@ export default function QuenMatKhau() {
                   className={`o_nhap${loi_email ? ' loi' : ''}`}
                   autoComplete="email"
                 />
-                <span className="thong_bao_loi">{loi_email || ''}</span>
+                <span className="loi_o_nhap">{loi_email || ''}</span>
               </div>
 
               <button type="submit" className="nut_chinh" disabled={dang_gui}>
@@ -262,7 +262,7 @@ export default function QuenMatKhau() {
                   autoComplete="one-time-code"
                   inputMode="numeric"
                 />
-                <span className="thong_bao_loi">{loi_buoc2.otp || ''}</span>
+                <span className="loi_o_nhap">{loi_buoc2.otp || ''}</span>
               </div>
 
               <div className="nhom_truong">
@@ -287,7 +287,7 @@ export default function QuenMatKhau() {
                     {hien_mat_khau.mat_khau_moi ? <FiEyeOff /> : <FiEye />}
                   </button>
                 </div>
-                <span className="thong_bao_loi">{loi_buoc2.mat_khau_moi || ''}</span>
+                <span className="loi_o_nhap">{loi_buoc2.mat_khau_moi || ''}</span>
               </div>
 
               <div className="nhom_truong">
@@ -312,7 +312,7 @@ export default function QuenMatKhau() {
                     {hien_mat_khau.xac_nhan_mat_khau_moi ? <FiEyeOff /> : <FiEye />}
                   </button>
                 </div>
-                <span className="thong_bao_loi">{loi_buoc2.xac_nhan_mat_khau_moi || ''}</span>
+                <span className="loi_o_nhap">{loi_buoc2.xac_nhan_mat_khau_moi || ''}</span>
               </div>
 
               <button type="submit" className="nut_chinh" disabled={dang_gui || co_the_gui_lai}>

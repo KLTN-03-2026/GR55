@@ -44,7 +44,8 @@ export default function ChatbotWidget() {
       setDanhSachTinNhan(prev => [...prev, {
         vai_tro: 'bot',
         noi_dung: res.data.phanHoi,
-        sach_goi_y: res.data.sachGoiY || []
+        sach_goi_y: res.data.sachGoiY || [],
+        tu_khoa: res.data.tuKhoaTimKiem || null
       }]);
     } catch {
       setDanhSachTinNhan(prev => [
@@ -98,9 +99,22 @@ export default function ChatbotWidget() {
                                 ? Number(sach.gia).toLocaleString('vi-VN') + 'đ'
                                 : 'Miễn phí'}
                             </div>
+                            {sach.danh_gia_trung_binh > 0 && (
+                              <div className="chatbot-sach-rating">
+                                ⭐ {Number(sach.danh_gia_trung_binh).toFixed(1)}
+                              </div>
+                            )}
                           </div>
                         </Link>
                       ))}
+                      {tin.tu_khoa && (
+                        <Link
+                          to={`/sach?tu_khoa=${encodeURIComponent(tin.tu_khoa)}`}
+                          className="chatbot-xem-them"
+                        >
+                          Xem thêm kết quả →
+                        </Link>
+                      )}
                     </div>
                   )}
                 </div>
@@ -133,14 +147,14 @@ export default function ChatbotWidget() {
           </div>
 
           <div className="chatbot-nhap-lieu">
-            <input
-              type="text"
+            <textarea
               className="chatbot-o-nhap"
               value={noiDungNhap}
               onChange={e => setNoiDungNhap(e.target.value)}
               onKeyDown={xuLyNhanPhim}
               placeholder="Nhập tin nhắn..."
               disabled={dangGui}
+              rows={1}
             />
             <button
               className="chatbot-nut-gui"

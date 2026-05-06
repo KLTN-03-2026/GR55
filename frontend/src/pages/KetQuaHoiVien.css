@@ -1,47 +1,63 @@
 .trang_ket_qua {
-    max-width: 480px;
+    max-width: 440px;
     margin: 80px auto;
-    padding: 48px 32px;
-    text-align: center;
+    padding: 52px 40px;
     background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
-/* Icon */
 .icon_ket_qua {
-    font-size: 64px;
-    margin-bottom: 16px;
-    line-height: 1;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    flex-shrink: 0;
 }
 
 .icon_ket_qua.thanh_cong {
-    color: #27ae60;
+    background: #dcfce7;
+    color: #16a34a;
 }
 
 .icon_ket_qua.that_bai {
-    color: #e74c3c;
+    background: #fee2e2;
+    color: #dc2626;
 }
 
-/* Tiêu đề */
 .tieu_de_ket_qua {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 700;
-    color: #1a1a2e;
-    margin-bottom: 12px;
+    color: #111827;
+    margin: 0 0 12px;
 }
 
-/* Mô tả */
 .mo_ta_ket_qua {
-    color: #555;
-    font-size: 1rem;
-    margin-bottom: 32px;
+    color: #6b7280;
+    font-size: 0.95rem;
     line-height: 1.6;
+    margin: 0 0 32px;
 }
 
-/* Nút chính */
+.nhom_nut_ket_qua {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .nut_chinh_ket_qua {
     display: block;
+    width: 100%;
     padding: 14px 0;
     background: #4f6ef7;
     color: #fff;
@@ -49,36 +65,41 @@
     font-weight: 600;
     font-size: 1rem;
     text-decoration: none;
-    margin-bottom: 12px;
+    text-align: center;
     transition: background 0.2s;
+    box-sizing: border-box;
 }
 
 .nut_chinh_ket_qua:hover {
     background: #3a56d4;
 }
 
-/* Nút phụ */
 .nut_phu_ket_qua {
     display: block;
-    padding: 12px 0;
+    width: 100%;
+    padding: 13px 0;
     color: #4f6ef7;
     font-weight: 500;
     font-size: 0.95rem;
     text-decoration: none;
-    transition: opacity 0.2s;
+    text-align: center;
+    border: 1.5px solid #4f6ef7;
+    border-radius: 10px;
+    transition: background 0.2s;
+    box-sizing: border-box;
 }
 
 .nut_phu_ket_qua:hover {
-    opacity: 0.75;
+    background: #eef2ff;
 }
 
 @media (max-width: 540px) {
     .trang_ket_qua {
-        margin: 32px 16px;
-        padding: 36px 20px;
+        margin: 24px 16px;
+        padding: 40px 24px;
     }
 
     .tieu_de_ket_qua {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
 }

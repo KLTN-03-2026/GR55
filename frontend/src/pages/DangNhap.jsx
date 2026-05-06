@@ -96,7 +96,7 @@ export default function DangNhap() {
               className={`o_nhap${loi.email ? " loi" : ""}`}
               autoComplete="email"
             />
-            <span className="thong_bao_loi">{loi.email || ""}</span>
+            <span className="loi_o_nhap">{loi.email || ""}</span>
           </div>
 
           <div className="nhom_truong">
@@ -123,7 +123,7 @@ export default function DangNhap() {
                 {hien_mat_khau ? <FiEyeOff /> : <FiEye />}
               </button>
             </div>
-            <span className="thong_bao_loi">{loi.mat_khau || ""}</span>
+            <span className="loi_o_nhap">{loi.mat_khau || ""}</span>
           </div>
 
           <button type="submit" className="nut_dang_nhap" disabled={dang_gui}>

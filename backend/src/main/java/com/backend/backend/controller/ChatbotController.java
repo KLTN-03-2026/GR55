@@ -23,7 +23,7 @@ public class ChatbotController {
             @RequestBody ChatRequest request) {
         if (request.getNoiDung() == null || request.getNoiDung().isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(new ChatResponse(false, "Nội dung tin nhắn không được để trống", null));
+                    .body(new ChatResponse(false, "Nội dung tin nhắn không được để trống"));
         }
         Long maNd = layMaNdTuyChon(httpRequest);
         return ResponseEntity.ok(chatbotService.xuLyTinNhan(request.getMaPhien(), request.getNoiDung(), maNd));

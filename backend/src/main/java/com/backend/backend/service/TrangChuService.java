@@ -11,7 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,8 +23,9 @@ public class TrangChuService {
     private final TienDoDocSachRepository tienDoDocSachRepository;
     private final SachDanhMucRepository sachDanhMucRepository;
     private final QuanLyGiamGiaService quanLyGiamGiaService;
+    private final GoiHoiVienSachRepository goiHoiVienSachRepository;
 
-    private SachHomeResponse chuyenDoiSachSangDto(Sach sach) {
+    private SachHomeResponse chuyenDoiSachSangDto(Sach sach, Set<Long> hoiVienIds) {
         GiamGiaInfo info = quanLyGiamGiaService.layGiamGiaInfo(sach.getMaSach());
         return new SachHomeResponse(
                 sach.getMaSach(),
@@ -36,12 +37,20 @@ public class TrangChuService {
                 sach.getLuotXem() != null ? sach.getLuotXem() : 0,
                 sach.getSoLuongDaBan() != null ? sach.getSoLuongDaBan() : 0,
                 info != null ? info.getGia_sau_giam() : null,
-                info != null ? info.getNhan_giam() : null);
+                info != null ? info.getNhan_giam() : null,
+                hoiVienIds.contains(sach.getMaSach()));
     }
 
     private DanhSachSachHomeResponse taoKetQuaPhanTrang(Page<Sach> page) {
+        List<Long> sachIds = page.getContent().stream()
+                .map(Sach::getMaSach)
+                .collect(Collectors.toList());
+        Set<Long> hoiVienIds = sachIds.isEmpty()
+                ? Collections.emptySet()
+                : new HashSet<>(goiHoiVienSachRepository.findActiveSachIdsIn(sachIds));
+
         List<SachHomeResponse> danhSach = page.getContent().stream()
-                .map(this::chuyenDoiSachSangDto)
+                .map(s -> chuyenDoiSachSangDto(s, hoiVienIds))
                 .collect(Collectors.toList());
         return new DanhSachSachHomeResponse(
                 danhSach,

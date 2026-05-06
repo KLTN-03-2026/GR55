@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/admin/goi_hoi_vien")
 @PreAuthorize("hasRole('QUAN_TRI')")
@@ -32,7 +34,7 @@ public class QuanLyGoiHoiVienController {
             @RequestParam(required = false) String tu_khoa,
             @RequestParam(required = false) Long ma_hv,
             @RequestParam(defaultValue = "1") int trang,
-            @RequestParam(defaultValue = "20") int kich_thuoc) {
+            @RequestParam(defaultValue = "12") int kich_thuoc) {
         return ResponseEntity.ok(quanLyGoiHoiVienService.timKiemSachDeChon(tu_khoa, ma_hv, trang, kich_thuoc));
     }
 
@@ -52,6 +54,20 @@ public class QuanLyGoiHoiVienController {
             @PathVariable Long ma_hv,
             @Valid @RequestBody GoiHoiVienAdminRequest request) {
         return ResponseEntity.ok(quanLyGoiHoiVienService.suaGoi(ma_hv, request));
+    }
+
+    @PostMapping("/{ma_hv}/sach")
+    public ResponseEntity<GoiHoiVienAdminResponse> themSach(
+            @PathVariable Long ma_hv,
+            @RequestBody List<Long> sachIds) {
+        return ResponseEntity.ok(quanLyGoiHoiVienService.themSachVaoGoi(ma_hv, sachIds));
+    }
+
+    @DeleteMapping("/{ma_hv}/sach/{ma_sach}")
+    public ResponseEntity<GoiHoiVienAdminResponse> xoaSach(
+            @PathVariable Long ma_hv,
+            @PathVariable Long ma_sach) {
+        return ResponseEntity.ok(quanLyGoiHoiVienService.xoaSachKhoiGoi(ma_hv, ma_sach));
     }
 
     @DeleteMapping("/{ma_hv}")

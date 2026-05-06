@@ -295,6 +295,42 @@
   box-shadow: 0 3px 10px rgba(0,102,204,0.3);
 }
 
+.xn_chon_phuong_thuc {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.xn_pt_option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--xn-border-strong);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--xn-ink-soft);
+  background: var(--xn-bg);
+  transition: border-color 0.2s, background 0.2s;
+  flex: 1;
+  min-width: 160px;
+}
+
+.xn_pt_option input[type="radio"] {
+  accent-color: var(--xn-red);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.xn_pt_active {
+  border-color: var(--xn-red);
+  background: #fff5f7;
+  color: var(--xn-ink);
+  font-weight: 500;
+}
+
 .xn_nut_xac_nhan {
   width: 100%;
   padding: 14px;

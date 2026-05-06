@@ -50,6 +50,9 @@ export default function TheCardSach({ sach, skeleton = false }) {
         {coGiamGia && (
           <span className="badge_giam">{sach.nhan_giam}</span>
         )}
+        {sach.thuoc_goi_hoi_vien && (
+          <span className={`badge_hoi_vien${coGiamGia ? " voi_giam" : ""}`}>Hội viên</span>
+        )}
         <span className={`nhan_gia ${laMienPhi ? "mien_phi" : coGiamGia ? "da_giam" : "tra_phi"}`}>
           {laMienPhi ? "Miễn phí" : dinh_dang_gia(giaHienThi)}
         </span>

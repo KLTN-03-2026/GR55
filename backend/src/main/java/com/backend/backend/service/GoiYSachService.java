@@ -3,6 +3,7 @@ package com.backend.backend.service;
 import com.backend.backend.dto.GiamGiaInfo;
 import com.backend.backend.dto.SachGoiYResponse;
 import com.backend.backend.entity.Sach;
+import com.backend.backend.repository.GoiHoiVienSachRepository;
 import com.backend.backend.repository.LichSuChatRepository;
 import com.backend.backend.repository.SachRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +22,7 @@ public class GoiYSachService {
     private final SachRepository sachRepository;
     private final QuanLyGiamGiaService quanLyGiamGiaService;
     private final LichSuChatRepository lichSuChatRepository;
+    private final GoiHoiVienSachRepository goiHoiVienSachRepository;
 
     @Caching(cacheable = {
         @Cacheable(value = "goi_y_sach_khach", key = "#soLuong", condition = "#maNd == null"),
@@ -79,6 +81,11 @@ public class GoiYSachService {
     }
 
     private SachGoiYResponse xayDungResponse(String thongBao, List<Sach> sachs) {
+        List<Long> sachIds = sachs.stream().map(Sach::getMaSach).collect(Collectors.toList());
+        Set<Long> hoiVienIds = sachIds.isEmpty()
+                ? Collections.emptySet()
+                : new HashSet<>(goiHoiVienSachRepository.findActiveSachIdsIn(sachIds));
+
         List<SachGoiYResponse.SachGoiYData> danhSach = sachs.stream()
                 .map(s -> {
                     GiamGiaInfo info = quanLyGiamGiaService.layGiamGiaInfo(s.getMaSach());
@@ -90,7 +97,8 @@ public class GoiYSachService {
                             s.getGia(),
                             s.getDanhGiaTrungBinh() != null ? s.getDanhGiaTrungBinh().doubleValue() : 0.0,
                             info != null ? info.getGia_sau_giam() : null,
-                            info != null ? info.getNhan_giam() : null);
+                            info != null ? info.getNhan_giam() : null,
+                            hoiVienIds.contains(s.getMaSach()));
                 })
                 .collect(Collectors.toList());
         return new SachGoiYResponse(true, thongBao, danhSach);

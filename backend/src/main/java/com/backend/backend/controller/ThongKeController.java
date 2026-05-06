@@ -51,6 +51,28 @@ public class ThongKeController {
         return ResponseEntity.ok(thongKeService.thongKeSachTheoTheLoai());
     }
 
+    @GetMapping("/hoi_vien")
+    public ResponseEntity<ThongKeHoiVienResponse> thongKeHoiVien() {
+        return ResponseEntity.ok(thongKeService.thongKeHoiVien());
+    }
+
+    @GetMapping("/danh_gia")
+    public ResponseEntity<ThongKeDanhGiaResponse> thongKeDanhGia() {
+        return ResponseEntity.ok(thongKeService.thongKeDanhGia());
+    }
+
+    @GetMapping("/hieu_suat_sach")
+    public ResponseEntity<ThongKeHieuSuatSachResponse> thongKeHieuSuatSach() {
+        return ResponseEntity.ok(thongKeService.thongKeHieuSuatSach());
+    }
+
+    @GetMapping("/don_hang")
+    public ResponseEntity<ThongKeDonHangResponse> thongKeDonHang(
+            @RequestParam String tu_ngay,
+            @RequestParam String den_ngay) {
+        return ResponseEntity.ok(thongKeService.thongKeDonHang(tu_ngay, den_ngay));
+    }
+
     @GetMapping("/xuat_csv/doanh_thu")
     public ResponseEntity<byte[]> xuatCsvDoanhThu(
             @RequestParam String tu_ngay,

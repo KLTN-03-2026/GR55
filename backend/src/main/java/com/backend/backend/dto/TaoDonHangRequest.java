@@ -18,4 +18,6 @@ public class TaoDonHangRequest {
     @NotBlank(message = "Số điện thoại không được để trống")
     @Pattern(regexp = "^0[0-9]{9}$", message = "Số điện thoại phải là 10 số và bắt đầu bằng 0")
     private String soDienThoai;
+
+    private boolean dungQr = false;
 }

@@ -6,6 +6,7 @@ import com.backend.backend.entity.ChuongTrinhGiamGiaSach;
 import com.backend.backend.entity.Sach;
 import com.backend.backend.repository.ChuongTrinhGiamGiaRepository;
 import com.backend.backend.repository.ChuongTrinhGiamGiaSachRepository;
+import com.backend.backend.repository.GoiHoiVienSachRepository;
 import com.backend.backend.repository.SachRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -28,6 +29,7 @@ public class QuanLyGiamGiaService {
 
     private final ChuongTrinhGiamGiaRepository chuongTrinhGiamGiaRepository;
     private final ChuongTrinhGiamGiaSachRepository chuongTrinhGiamGiaSachRepository;
+    private final GoiHoiVienSachRepository goiHoiVienSachRepository;
     private final SachRepository sachRepository;
 
     @Cacheable(value = "chuong_trinh_giam_gia",
@@ -166,10 +168,23 @@ public class QuanLyGiamGiaService {
             return new ChuongTrinhGiamGiaResponse(false, "Danh sách sách không được rỗng", null);
 
         Set<Long> existing = new HashSet<>(chuongTrinhGiamGiaSachRepository.findSachIdsByMaCt(maCt));
-        List<Long> newIds = sachIds.stream().filter(id -> !existing.contains(id)).collect(Collectors.toList());
 
-        if (newIds.isEmpty())
-            return new ChuongTrinhGiamGiaResponse(false, "Tất cả sách đã có trong chương trình", null);
+        // Sách đang thuộc gói hội viên không được thêm vào chương trình giảm giá
+        Set<Long> sachTrongGoi = new HashSet<>(goiHoiVienSachRepository.findSachIdsTrongBatKyGoi(sachIds));
+
+        List<Long> newIds = sachIds.stream()
+                .filter(id -> !existing.contains(id) && !sachTrongGoi.contains(id))
+                .collect(Collectors.toList());
+
+        int boQuaGoi = (int) sachIds.stream().filter(id -> !existing.contains(id) && sachTrongGoi.contains(id)).count();
+        int boQuaDa = (int) sachIds.stream().filter(existing::contains).count();
+
+        if (newIds.isEmpty()) {
+            String msg = boQuaGoi > 0
+                    ? "Không thể thêm: " + boQuaGoi + " sách đang thuộc gói hội viên"
+                    : "Tất cả sách đã có trong chương trình";
+            return new ChuongTrinhGiamGiaResponse(false, msg, null);
+        }
 
         LocalDateTime now = LocalDateTime.now();
         List<ChuongTrinhGiamGiaSach> links = newIds.stream().map(maSach -> {
@@ -181,8 +196,10 @@ public class QuanLyGiamGiaService {
         }).collect(Collectors.toList());
         chuongTrinhGiamGiaSachRepository.saveAll(links);
 
-        return new ChuongTrinhGiamGiaResponse(true,
-                "Đã thêm " + newIds.size() + " sách vào chương trình", null);
+        StringBuilder msg = new StringBuilder("Đã thêm " + newIds.size() + " sách");
+        if (boQuaGoi > 0) msg.append(", bỏ qua ").append(boQuaGoi).append(" sách đang trong gói hội viên");
+        if (boQuaDa > 0) msg.append(", bỏ qua ").append(boQuaDa).append(" sách đã có trong chương trình");
+        return new ChuongTrinhGiamGiaResponse(true, msg.toString(), null);
     }
 
     @Caching(evict = {

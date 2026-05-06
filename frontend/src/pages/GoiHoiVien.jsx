@@ -24,6 +24,7 @@ export default function GoiHoiVien() {
     const { nguoiDung } = useAuth();
     const dieu_huong = useNavigate();
     const [dang_dang_ky, dat_dang_dang_ky] = useState(null);
+    const [phuong_thuc, dat_phuong_thuc] = useState('atm');
 
     const { data: phan_hoi, isLoading: dang_tai, isError } = useQuery({
         queryKey: ['goi_hoi_vien'],
@@ -43,7 +44,7 @@ export default function GoiHoiVien() {
         }
         dat_dang_dang_ky(ma_goi);
         try {
-            const res = await api.post('/hoi_vien/dang_ky', { ma_goi });
+            const res = await api.post('/hoi_vien/dang_ky', { ma_goi, dungQr: phuong_thuc === 'qr' });
             if (res.data.success) {
                 window.location.href = res.data.data.thanh_toan_url;
             } else {
@@ -96,6 +97,29 @@ export default function GoiHoiVien() {
                                     <li key={i} className="muc_quyen_loi">{quyen_loi}</li>
                                 ))}
                             </ul>
+
+                            <div className="chon_phuong_thuc_hv">
+                                <label className={`pt_hv_option${phuong_thuc === 'atm' ? ' pt_hv_active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="phuong_thuc_hv"
+                                        value="atm"
+                                        checked={phuong_thuc === 'atm'}
+                                        onChange={() => dat_phuong_thuc('atm')}
+                                    />
+                                    <span>🏧 Thẻ ATM</span>
+                                </label>
+                                <label className={`pt_hv_option${phuong_thuc === 'qr' ? ' pt_hv_active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="phuong_thuc_hv"
+                                        value="qr"
+                                        checked={phuong_thuc === 'qr'}
+                                        onChange={() => dat_phuong_thuc('qr')}
+                                    />
+                                    <span>📱 Mã QR</span>
+                                </label>
+                            </div>
 
                             <button
                                 className="nut_dang_ky_goi"

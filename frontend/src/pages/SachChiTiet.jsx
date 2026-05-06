@@ -200,6 +200,9 @@ export default function SachChiTiet() {
                 {dm.ten_danh_muc}
               </span>
             ))}
+            {chi_tiet.sach_thuoc_goi_hoi_vien && (
+              <span className="badge_hoi_vien_chi_tiet">Hội viên</span>
+            )}
           </div>
 
           <h1 className="ten_sach_chi_tiet">{chi_tiet.ten_sach}</h1>
@@ -228,12 +231,15 @@ export default function SachChiTiet() {
               <span className="gia_mien_phi">Miễn phí</span>
             ) : chi_tiet.gia_giam ? (
               <>
-                <span className="gia_goc_gach_chan">
-                  {dinh_dang_gia(chi_tiet.gia)}
-                </span>
                 <span className="gia_sau_giam">
                   {dinh_dang_gia(chi_tiet.gia_giam)}
                 </span>
+                <span className="gia_goc_gach_chan">
+                  {dinh_dang_gia(chi_tiet.gia)}
+                </span>
+                {chi_tiet.nhan_giam && (
+                  <span className="badge_giam_chi_tiet">{chi_tiet.nhan_giam}</span>
+                )}
               </>
             ) : (
               <span className="gia_chinh">{dinh_dang_gia(chi_tiet.gia)}</span>
