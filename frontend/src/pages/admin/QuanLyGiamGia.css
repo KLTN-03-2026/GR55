@@ -31,6 +31,16 @@
     align-items: center;
 }
 
+.loc-ngay {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: #374151;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
 .bo_loc_giam_gia input,
 .bo_loc_giam_gia select {
     padding: 8px 12px;

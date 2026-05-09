@@ -89,10 +89,10 @@ export default function QuanLyDanhGia() {
                             <option value="">Tất cả sao</option>
                             {[5, 4, 3, 2, 1].map(s => <option key={s} value={s}>{s} ★</option>)}
                         </select>
-                        <input type="date" className="o_loc_phu" value={bo_loc.tu_ngay}
-                            onChange={e => dat_bo_loc(p => ({ ...p, tu_ngay: e.target.value }))} />
-                        <input type="date" className="o_loc_phu" value={bo_loc.den_ngay}
-                            onChange={e => dat_bo_loc(p => ({ ...p, den_ngay: e.target.value }))} />
+                        <label className="loc-ngay">Từ ngày <input type="date" className="o_loc_phu" value={bo_loc.tu_ngay}
+                            onChange={e => dat_bo_loc(p => ({ ...p, tu_ngay: e.target.value }))} /></label>
+                        <label className="loc-ngay">Đến ngày <input type="date" className="o_loc_phu" value={bo_loc.den_ngay}
+                            onChange={e => dat_bo_loc(p => ({ ...p, den_ngay: e.target.value }))} /></label>
                     </div>
 
                     {/* Bảng */}

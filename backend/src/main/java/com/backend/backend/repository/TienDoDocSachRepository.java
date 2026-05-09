@@ -18,18 +18,9 @@ public interface TienDoDocSachRepository extends JpaRepository<TienDoDocSach, Lo
 
     @Query(value = "SELECT t.* FROM tien_do_doc_sach t " +
                    "WHERE t.ma_nd = :maNd AND t.phan_tram > 0 AND t.phan_tram < 100 " +
-                   "AND EXISTS (" +
-                   "  SELECT 1 FROM chi_tiet_don_hang ct " +
-                   "  INNER JOIN don_hang dh ON ct.id_dh = dh.id_dh " +
-                   "  WHERE dh.ma_nd = :maNd AND dh.trang_thai = 'da_thanh_toan' AND ct.ma_sach = t.ma_sach" +
-                   ") ORDER BY t.lan_doc_cuoi DESC",
+                   "ORDER BY t.lan_doc_cuoi DESC",
            countQuery = "SELECT COUNT(*) FROM tien_do_doc_sach t " +
-                        "WHERE t.ma_nd = :maNd AND t.phan_tram > 0 AND t.phan_tram < 100 " +
-                        "AND EXISTS (" +
-                        "  SELECT 1 FROM chi_tiet_don_hang ct " +
-                        "  INNER JOIN don_hang dh ON ct.id_dh = dh.id_dh " +
-                        "  WHERE dh.ma_nd = :maNd AND dh.trang_thai = 'da_thanh_toan' AND ct.ma_sach = t.ma_sach" +
-                        ")",
+                        "WHERE t.ma_nd = :maNd AND t.phan_tram > 0 AND t.phan_tram < 100",
            nativeQuery = true)
     Page<TienDoDocSach> findSachDangDoc(@Param("maNd") Long maNd, Pageable pageable);
 

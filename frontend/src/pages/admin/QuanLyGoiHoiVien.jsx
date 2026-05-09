@@ -305,12 +305,6 @@ export default function QuanLyGoiHoiVien() {
                     <div className="modal_content">
                         <h3>{ma_hv_sua ? 'Chỉnh sửa gói hội viên' : 'Tạo gói hội viên'}</h3>
 
-                        {!ma_hv_sua && (
-                            <p className="mo_ta_buoc">
-                                Sau khi tạo gói, bạn sẽ được chuyển sang bước thêm sách vào gói.
-                            </p>
-                        )}
-
                         <div className="truong_nhap">
                             <label>Tên gói *</label>
                             <input type="text" placeholder="VD: Hội Viên Cơ Bản"
