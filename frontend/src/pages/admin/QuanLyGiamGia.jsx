@@ -267,8 +267,8 @@ export default function QuanLyGiamGia() {
                     <option value="true">Đang bật</option>
                     <option value="false">Đã tắt</option>
                 </select>
-                <input type="date" value={bo_loc.tu_ngay} onChange={e => dat_bo_loc(p => ({ ...p, tu_ngay: e.target.value }))} />
-                <input type="date" value={bo_loc.den_ngay} onChange={e => dat_bo_loc(p => ({ ...p, den_ngay: e.target.value }))} />
+                <label className="loc-ngay">Từ ngày <input type="date" value={bo_loc.tu_ngay} onChange={e => dat_bo_loc(p => ({ ...p, tu_ngay: e.target.value }))} /></label>
+                <label className="loc-ngay">Đến ngày <input type="date" value={bo_loc.den_ngay} onChange={e => dat_bo_loc(p => ({ ...p, den_ngay: e.target.value }))} /></label>
             </div>
 
             {/* Bảng */}

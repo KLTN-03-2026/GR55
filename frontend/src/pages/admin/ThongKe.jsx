@@ -7,13 +7,15 @@ import {
   PointElement, LineElement, ArcElement, Title, Tooltip, Legend, Filler
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { FiUsers, FiBook, FiShoppingCart, FiDollarSign, FiStar, FiRefreshCw, FiDownload, FiChevronDown, FiList } from 'react-icons/fi';
 import './ThongKe.css';
 
 ChartJS.register(
   CategoryScale, LinearScale, BarElement,
   PointElement, LineElement, ArcElement,
-  Title, Tooltip, Legend, Filler
+  Title, Tooltip, Legend, Filler,
+  ChartDataLabels
 );
 
 function dinh_dang_tien(so) {
@@ -265,6 +267,7 @@ export default function ThongKe() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
+      datalabels: { display: false },
       legend: { display: false },
       tooltip: {
         backgroundColor: 'rgba(15, 23, 42, 0.92)',
@@ -312,6 +315,7 @@ export default function ThongKe() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
+      datalabels: { display: false },
       legend: { display: false },
       tooltip: {
         backgroundColor: 'rgba(15, 23, 42, 0.92)',
@@ -359,6 +363,14 @@ export default function ThongKe() {
         cornerRadius: 8,
         callbacks: {
           label: ctx => `  ${ctx.label}: ${ctx.raw} sách (${du_lieu_the_loai[ctx.dataIndex]?.ty_le?.toFixed(1)}%)`,
+        },
+      },
+      datalabels: {
+        color: '#fff',
+        font: { weight: 'bold', size: 11 },
+        formatter: (value, ctx) => {
+          const tyle = du_lieu_the_loai[ctx.dataIndex]?.ty_le;
+          return tyle >= 3 ? tyle.toFixed(1) + '%' : '';
         },
       },
     },
@@ -418,8 +430,8 @@ export default function ThongKe() {
         <div className="panel chart-panel">
           <h3>Doanh thu</h3>
           <div className="bo-loc-ngang">
-            <input type="date" value={form_doanh_thu.tu_ngay} onChange={e => dat_form_doanh_thu({ ...form_doanh_thu, tu_ngay: e.target.value })} />
-            <input type="date" value={form_doanh_thu.den_ngay} onChange={e => dat_form_doanh_thu({ ...form_doanh_thu, den_ngay: e.target.value })} />
+            <label className="loc-ngay">Từ ngày <input type="date" value={form_doanh_thu.tu_ngay} onChange={e => dat_form_doanh_thu({ ...form_doanh_thu, tu_ngay: e.target.value })} /></label>
+            <label className="loc-ngay">Đến ngày <input type="date" value={form_doanh_thu.den_ngay} onChange={e => dat_form_doanh_thu({ ...form_doanh_thu, den_ngay: e.target.value })} /></label>
             <select value={form_doanh_thu.loai} onChange={e => dat_form_doanh_thu({ ...form_doanh_thu, loai: e.target.value })}>
               <option value="ngay">Theo ngày</option>
               <option value="tuan">Theo tuần</option>
@@ -485,8 +497,8 @@ export default function ThongKe() {
         <div className="panel chart-panel">
           <h3>Người dùng đăng ký mới</h3>
           <div className="bo-loc-ngang">
-            <input type="date" value={form_nguoi_dung.tu_ngay} onChange={e => dat_form_nguoi_dung({ ...form_nguoi_dung, tu_ngay: e.target.value })} />
-            <input type="date" value={form_nguoi_dung.den_ngay} onChange={e => dat_form_nguoi_dung({ ...form_nguoi_dung, den_ngay: e.target.value })} />
+            <label className="loc-ngay">Từ ngày <input type="date" value={form_nguoi_dung.tu_ngay} onChange={e => dat_form_nguoi_dung({ ...form_nguoi_dung, tu_ngay: e.target.value })} /></label>
+            <label className="loc-ngay">Đến ngày <input type="date" value={form_nguoi_dung.den_ngay} onChange={e => dat_form_nguoi_dung({ ...form_nguoi_dung, den_ngay: e.target.value })} /></label>
             <button className="btn btn-primary" onClick={() => dat_loc_nguoi_dung(form_nguoi_dung)}>Xem</button>
             <button className="btn btn-csv" onClick={() => xuat_csv('nguoi_dung_moi', { ...loc_nguoi_dung }, 'nguoi_dung_moi.csv')}><FiDownload /> Xuất CSV</button>
           </div>
@@ -546,8 +558,8 @@ export default function ThongKe() {
       <div className="panel table-panel" style={{ marginBottom: 20 }}>
         <h3>Top 10 Sách Bán Chạy</h3>
         <div className="bo-loc-ngang">
-          <input type="date" value={form_sach_ban_chay.tu_ngay} onChange={e => dat_form_sach_ban_chay({ ...form_sach_ban_chay, tu_ngay: e.target.value })} />
-          <input type="date" value={form_sach_ban_chay.den_ngay} onChange={e => dat_form_sach_ban_chay({ ...form_sach_ban_chay, den_ngay: e.target.value })} />
+          <label className="loc-ngay">Từ ngày <input type="date" value={form_sach_ban_chay.tu_ngay} onChange={e => dat_form_sach_ban_chay({ ...form_sach_ban_chay, tu_ngay: e.target.value })} /></label>
+          <label className="loc-ngay">Đến ngày <input type="date" value={form_sach_ban_chay.den_ngay} onChange={e => dat_form_sach_ban_chay({ ...form_sach_ban_chay, den_ngay: e.target.value })} /></label>
           <button className="btn btn-primary" onClick={() => dat_loc_sach_ban_chay(form_sach_ban_chay)}>Xem</button>
           <button className="btn btn-csv" onClick={() => xuat_csv('sach_ban_chay', { ...loc_sach_ban_chay }, 'sach_ban_chay.csv')}><FiDownload /> Xuất CSV</button>
         </div>
@@ -618,8 +630,8 @@ export default function ThongKe() {
       <div className="panel" style={{ marginBottom: 20 }}>
         <h3>Báo cáo đơn hàng</h3>
         <div className="bo-loc-ngang">
-          <input type="date" value={form_don_hang.tu_ngay} onChange={e => dat_form_don_hang({ ...form_don_hang, tu_ngay: e.target.value })} />
-          <input type="date" value={form_don_hang.den_ngay} onChange={e => dat_form_don_hang({ ...form_don_hang, den_ngay: e.target.value })} />
+          <label className="loc-ngay">Từ ngày <input type="date" value={form_don_hang.tu_ngay} onChange={e => dat_form_don_hang({ ...form_don_hang, tu_ngay: e.target.value })} /></label>
+          <label className="loc-ngay">Đến ngày <input type="date" value={form_don_hang.den_ngay} onChange={e => dat_form_don_hang({ ...form_don_hang, den_ngay: e.target.value })} /></label>
           <button className="btn btn-primary" onClick={() => dat_loc_don_hang(form_don_hang)}>Xem</button>
           <button className="btn btn-csv" onClick={() => xuat_csv('don_hang', { ...loc_don_hang }, 'don_hang.csv')}><FiDownload /> Xuất CSV</button>
         </div>

@@ -130,9 +130,10 @@ export default function Header() {
           {/* Logo */}
           <Link to="/trang_chu" className="logo">
             <span className="logo-icon">📚</span>
-            <span className="logo-text">
-              BookNest
-            </span>
+            <div className="logo-block">
+              <span className="logo-text">BookNest</span>
+              <span className="logo-tagline">Nền tảng đọc sách điện tử</span>
+            </div>
           </Link>
 
           {/* Search Bar */}
@@ -250,7 +251,6 @@ export default function Header() {
               </div>
             </li>
 
-            <li><Link to="/khuyen_mai" className="nav-link">Khuyến mãi</Link></li>
             <li><Link to="/gioi_thieu" className="nav-link">Giới thiệu</Link></li>
           </ul>
         </nav>

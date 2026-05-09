@@ -77,6 +77,12 @@ body {
   }
 }
 
+.logo-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
 .logo-text {
   background: var(--primary-gradient);
   -webkit-background-clip: text;
@@ -85,6 +91,15 @@ body {
   font-weight: 800;
   font-size: 35px;
   letter-spacing: -0.025em;
+  line-height: 1;
+}
+
+.logo-tagline {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 /* SEARCH BAR */
@@ -180,6 +195,10 @@ body {
   font-size: 0.95rem;
   white-space: nowrap;
   color: #111827;
+}
+
+.header .user-name {
+  color: #111827 !important;
 }
 
 /* Tinh chỉnh lại avatar cho cân đối với nút mới */
